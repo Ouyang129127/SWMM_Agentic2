@@ -1,0 +1,12 @@
+{
+  "schema_name": "swmm_ca2d_verification_rules",
+  "schema_version": "0.1",
+  "required_metrics_by_claim_type": {
+    "surface_hotspot": ["max_depth"],
+    "long_duration_ponding": ["ponding_duration"],
+    "major_overflow_node": ["total_flooding_volume", "max_flooding_flow"],
+    "high_load_link": ["max_flow"]
+  },
+  "allow_same_object_type_match": true,
+  "supported_statuses": ["supported", "partially_supported", "unsupported", "uncertain"]
+}

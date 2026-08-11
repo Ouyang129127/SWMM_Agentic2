@@ -1,0 +1,51 @@
+flowchart TD
+    U["用户 / 专家任务<br/>自然语言问题、降雨情景、诊断需求"] --> O["Orchestrator Agent<br/>任务理解、流程拆解、工具选择"]
+
+    O --> SCA["Scenario Agent<br/>降雨事件识别、情景配置、边界条件组织"]
+    O --> SIM["Simulation Agent<br/>SWMM-2D 固定模拟管线调度"]
+    O --> EXT["Data Extraction Agent<br/>模型结果结构化抽取"]
+    O --> DIA["Flood Diagnosis Agent<br/>热点识别、风险排序、致灾因子判断"]
+    O --> VER["Evidence Verification Agent<br/>证据核查、无证据建议拦截"]
+    O --> EXP["Evidence Explanation Agent<br/>结构化证据翻译成人话"]
+    O --> REP["Report Agent<br/>证据约束应急简报生成"]
+
+    SCA --> RF["降雨事件库 / 情景库<br/>events, scenario configs"]
+    SIM --> SWMM["SWMM 管网模型<br/>节点、管段、泵站、子汇水区"]
+    SIM --> CA2D["CA2D 二维地表积水模型<br/>DEM、网格、阻力、节点映射"]
+
+    RF --> SIM
+    SWMM --> RAW1["SWMM 原始输出<br/>nodes.tsv, links.tsv, node_flooding.tsv, rpt/out"]
+    CA2D --> RAW2["CA2D 原始输出<br/>surface_depth.tsv, max depth map, final depth map"]
+
+    RAW1 --> EXT
+    RAW2 --> EXT
+
+    EXT --> EVID["Evidence Table<br/>evidence_id, object_id, metric, value, time, source_file"]
+    EVID --> DIA
+
+    DIA --> CLAIMS["Diagnosis Claims<br/>热点、风险等级、优先级、致灾因子"]
+    CLAIMS --> VER
+    EVID --> VER
+
+    VER --> VERIFIED["Verified Claims and Recommendations<br/>带 evidence_ids 的诊断和建议"]
+    VER --> UNSUP["Unsupported Items<br/>无证据或证据不足的结论/建议"]
+
+    VERIFIED --> EXP
+    UNSUP --> EXP
+    EXP --> REP
+
+    REP --> BRIEF["Evidence-grounded Emergency Brief<br/>管理部门可读简报"]
+    REP --> BENCH["Benchmark Outputs<br/>task success, F1, Spearman, unsupported rate"]
+
+    BENCH --> PAPER["论文 Results<br/>Fig. 4, Fig. 5, Fig. 6, Fig. 7"]
+    BRIEF --> PAPER
+
+    classDef llm fill:#eef5ff,stroke:#4779c4,stroke-width:1px,color:#142033;
+    classDef tool fill:#f1fbf4,stroke:#48a868,stroke-width:1px,color:#142033;
+    classDef evidence fill:#fff7e8,stroke:#d5962f,stroke-width:1px,color:#142033;
+    classDef output fill:#f5f0ff,stroke:#8662c7,stroke-width:1px,color:#142033;
+
+    class O,SCA,DIA,VER,EXP,REP llm;
+    class SIM,SWMM,CA2D,RAW1,RAW2,EXT,RF tool;
+    class EVID,CLAIMS,VERIFIED,UNSUP evidence;
+    class BRIEF,BENCH,PAPER output;

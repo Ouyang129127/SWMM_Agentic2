@@ -1,0 +1,20 @@
+{
+  "schema_name": "swmm_ca2d_diagnosis_rules",
+  "schema_version": "0.1",
+  "surface_depth": {
+    "moderate_m": 0.3,
+    "high_m": 0.5,
+    "critical_m": 0.75
+  },
+  "ponding_duration": {
+    "long_duration_minutes": 60
+  },
+  "node_flooding": {
+    "major_overflow_top_fraction": 0.05,
+    "significant_volume_m3": 10.0
+  },
+  "link_load": {
+    "top_n": 10
+  },
+  "top_n": 10
+}

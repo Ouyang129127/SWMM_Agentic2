@@ -1,0 +1,16 @@
+Static directory absolute path: E:\SWMM_Agentic\SWMM-Agentic\models\songhua_swmm_2d\static
+Directory exists: True
+Number of items: 11
+
+Contents:
+FILE: building_mask.npy
+FILE: build_summary.md
+FILE: cells.csv
+FILE: cell_id_grid.npy
+FILE: config.json
+FILE: elevation.npy
+FILE: flow_mask.npy
+FILE: node_to_cell_mapping.csv
+FILE: resistance.npy
+FILE: smid_grid.npy
+FILE: valid_mask.npy

@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1180" viewBox="0 0 1600 1180">
+  <defs>
+    <style>
+      .bg { fill: #f7f8fa; }
+      .module { fill: #ffffff; stroke: #b8c2d2; stroke-width: 2; rx: 18; }
+      .module-title { font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif; font-size: 24px; font-weight: 700; fill: #172033; }
+      .node { stroke-width: 1.6; rx: 12; }
+      .node-llm { fill: #eef5ff; stroke: #4779c4; }
+      .node-tool { fill: #f1fbf4; stroke: #48a868; }
+      .node-evidence { fill: #fff7e8; stroke: #d5962f; }
+      .node-output { fill: #f5f0ff; stroke: #8662c7; }
+      .node-title { font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #142033; }
+      .node-text { font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif; font-size: 15px; fill: #3b4655; }
+      .edge { fill: none; stroke: #66758a; stroke-width: 2.4; marker-end: url(#arrow); }
+      .edge-light { fill: none; stroke: #93a0b2; stroke-width: 2; marker-end: url(#arrow-light); }
+      .legend-text { font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif; font-size: 15px; fill: #3b4655; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#66758a"/>
+    </marker>
+    <marker id="arrow-light" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#93a0b2"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="1180"/>
+
+  <text class="module-title" x="70" y="56">SWMM-2D-Agentic 论文 Agent 协同工作逻辑图 V5</text>
+  <text class="legend-text" x="70" y="86">方正版：将中层模块互换，右侧承接模型输出形成证据，左侧进行诊断与核查。</text>
+
+  <!-- Modules -->
+  <rect class="module" x="60" y="120" width="700" height="300"/>
+  <text class="module-title" x="90" y="158">1. 任务编排模块</text>
+
+  <rect class="module" x="840" y="120" width="700" height="300"/>
+  <text class="module-title" x="870" y="158">2. 模型计算模块</text>
+
+  <rect class="module" x="60" y="475" width="700" height="265"/>
+  <text class="module-title" x="90" y="513">4. 诊断与核查模块</text>
+
+  <rect class="module" x="840" y="475" width="700" height="265"/>
+  <text class="module-title" x="870" y="513">3. 证据构建模块</text>
+
+  <rect class="module" x="60" y="795" width="1480" height="285"/>
+  <text class="module-title" x="90" y="833">5. 解释、报告与评价模块</text>
+
+  <!-- Module 1 nodes -->
+  <rect class="node node-llm" x="105" y="185" width="255" height="74"/>
+  <text class="node-title" x="125" y="214">用户 / 专家任务</text>
+  <text class="node-text" x="125" y="239">自然语言问题、降雨情景、诊断需求</text>
+
+  <rect class="node node-llm" x="455" y="185" width="255" height="74"/>
+  <text class="node-title" x="475" y="214">Orchestrator Agent</text>
+  <text class="node-text" x="475" y="239">任务理解、流程拆解、工具选择</text>
+
+  <rect class="node node-llm" x="105" y="310" width="255" height="74"/>
+  <text class="node-title" x="125" y="339">Scenario Agent</text>
+  <text class="node-text" x="125" y="364">降雨识别、情景配置、边界条件</text>
+
+  <rect class="node node-tool" x="455" y="310" width="255" height="74"/>
+  <text class="node-title" x="475" y="339">Simulation Agent</text>
+  <text class="node-text" x="475" y="364">SWMM-2D 标准化模拟流程调度</text>
+
+  <!-- Module 2 nodes -->
+  <rect class="node node-tool" x="885" y="185" width="255" height="74"/>
+  <text class="node-title" x="905" y="214">降雨事件库 / 情景库</text>
+  <text class="node-text" x="905" y="239">events, scenario configs</text>
+
+  <rect class="node node-tool" x="1235" y="185" width="255" height="74"/>
+  <text class="node-title" x="1255" y="214">SWMM 管网模型</text>
+  <text class="node-text" x="1255" y="239">节点、管段、泵站、子汇水区</text>
+
+  <rect class="node node-tool" x="885" y="310" width="255" height="74"/>
+  <text class="node-title" x="905" y="339">SWMM 原始输出</text>
+  <text class="node-text" x="905" y="364">nodes、links、node_flooding、rpt/out</text>
+
+  <rect class="node node-tool" x="1235" y="310" width="255" height="74"/>
+  <text class="node-title" x="1255" y="339">CA2D 原始输出</text>
+  <text class="node-text" x="1255" y="364">SWMM 溢流 + CA2D 地表模型共同生成</text>
+
+  <rect class="node node-tool" x="1060" y="265" width="255" height="50"/>
+  <text class="node-title" x="1080" y="297">CA2D 二维地表积水模型</text>
+
+  <!-- Module 4 nodes now left middle -->
+  <rect class="node node-llm" x="105" y="555" width="255" height="74"/>
+  <text class="node-title" x="125" y="584">Flood Diagnosis Agent</text>
+  <text class="node-text" x="125" y="609">热点识别、风险排序、致灾因子</text>
+
+  <rect class="node node-evidence" x="455" y="555" width="255" height="74"/>
+  <text class="node-title" x="475" y="584">Diagnosis Claims</text>
+  <text class="node-text" x="475" y="609">热点、风险等级、优先级</text>
+
+  <rect class="node node-llm" x="105" y="650" width="255" height="56"/>
+  <text class="node-title" x="125" y="684">Evidence Verification Agent</text>
+
+  <rect class="node node-evidence" x="455" y="650" width="255" height="56"/>
+  <text class="node-title" x="475" y="684">Verified / Unsupported</text>
+
+  <!-- Module 3 nodes now right middle -->
+  <rect class="node node-tool" x="885" y="555" width="255" height="74"/>
+  <text class="node-title" x="905" y="584">Data Extraction Agent</text>
+  <text class="node-text" x="905" y="609">模型结果结构化抽取</text>
+
+  <rect class="node node-evidence" x="1235" y="555" width="255" height="74"/>
+  <text class="node-title" x="1255" y="584">Evidence Table</text>
+  <text class="node-text" x="1255" y="609">evidence_id、object、metric、value</text>
+
+  <rect class="node node-evidence" x="1060" y="650" width="255" height="56"/>
+  <text class="node-title" x="1080" y="684">Scenario Summary</text>
+
+  <!-- Module 5 nodes -->
+  <rect class="node node-llm" x="105" y="875" width="285" height="74"/>
+  <text class="node-title" x="125" y="904">Evidence Explanation Agent</text>
+  <text class="node-text" x="125" y="929">结构化证据翻译成人话</text>
+
+  <rect class="node node-llm" x="470" y="875" width="255" height="74"/>
+  <text class="node-title" x="490" y="904">Report Agent</text>
+  <text class="node-text" x="490" y="929">证据约束应急简报生成</text>
+
+  <rect class="node node-output" x="805" y="875" width="285" height="74"/>
+  <text class="node-title" x="825" y="904">Emergency Brief</text>
+  <text class="node-text" x="825" y="929">管理部门可读简报</text>
+
+  <rect class="node node-output" x="805" y="985" width="285" height="56"/>
+  <text class="node-title" x="825" y="1019">Benchmark Outputs</text>
+
+  <rect class="node node-output" x="1195" y="930" width="285" height="74"/>
+  <text class="node-title" x="1215" y="959">论文 Results</text>
+  <text class="node-text" x="1215" y="984">Fig. 4、Fig. 5、Fig. 6、Fig. 7</text>
+
+  <!-- Edges inside modules -->
+  <path class="edge" d="M360 222 C390 222 420 222 455 222"/>
+  <path class="edge-light" d="M582 259 C520 292 360 300 260 310"/>
+  <path class="edge-light" d="M582 259 C600 282 600 294 582 310"/>
+
+  <path class="edge" d="M1140 222 C1175 222 1200 222 1235 222"/>
+  <path class="edge" d="M1362 259 C1320 275 1240 280 1188 265"/>
+  <path class="edge" d="M1362 259 C1280 305 1160 320 1140 347"/>
+  <path class="edge" d="M1140 347 C1175 347 1200 347 1235 347"/>
+  <path class="edge-light" d="M1188 315 C1215 326 1225 335 1235 347"/>
+
+  <path class="edge" d="M360 592 C390 592 420 592 455 592"/>
+  <path class="edge" d="M582 629 C530 644 430 650 360 678"/>
+  <path class="edge" d="M360 678 C390 678 420 678 455 678"/>
+
+  <path class="edge" d="M1140 592 C1175 592 1200 592 1235 592"/>
+  <path class="edge-light" d="M1362 629 C1318 646 1255 650 1188 650"/>
+
+  <path class="edge" d="M390 912 C420 912 440 912 470 912"/>
+  <path class="edge" d="M725 912 C755 912 775 912 805 912"/>
+  <path class="edge-light" d="M725 930 C760 975 770 1005 805 1013"/>
+  <path class="edge" d="M1090 912 C1130 925 1155 940 1195 960"/>
+  <path class="edge-light" d="M1090 1013 C1138 1005 1160 990 1195 970"/>
+
+  <!-- Edges across modules -->
+  <path class="edge" d="M710 347 C780 300 815 245 885 222"/>
+  <path class="edge" d="M710 347 C765 356 822 354 885 347"/>
+
+  <path class="edge" d="M1012 384 C1012 435 1012 505 1012 555"/>
+  <path class="edge" d="M1362 384 C1270 455 1140 505 1012 555"/>
+
+  <path class="edge" d="M1235 592 C1080 585 875 545 710 592"/>
+  <path class="edge-light" d="M1235 592 C1000 640 760 672 710 678"/>
+
+  <path class="edge" d="M710 678 C585 760 440 830 390 912"/>
+
+  <!-- Legend -->
+  <rect class="node node-llm" x="70" y="1110" width="30" height="18"/>
+  <text class="legend-text" x="108" y="1124">LLM / Agent 层</text>
+  <rect class="node node-tool" x="240" y="1110" width="30" height="18"/>
+  <text class="legend-text" x="278" y="1124">确定性工具与模型层</text>
+  <rect class="node node-evidence" x="480" y="1110" width="30" height="18"/>
+  <text class="legend-text" x="518" y="1124">证据与核查层</text>
+  <rect class="node node-output" x="680" y="1110" width="30" height="18"/>
+  <text class="legend-text" x="718" y="1124">报告与论文输出</text>
+</svg>

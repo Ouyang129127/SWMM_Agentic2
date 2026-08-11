@@ -1,0 +1,29 @@
+name: songhua_swmm_2d
+type: swmm_2d
+description: SWMM + CA2D coupled model migrated from E:\ModelCoupling2.
+
+paths:
+  raw: raw
+  static: static
+  swmm: swmm
+  mapping: mapping
+  events: events
+  runs: runs
+
+default_scenario: baseline
+scenarios:
+  baseline:
+    swmm_inp: swmm/scenarios/baseline/model.inp
+
+ca2d:
+  static_model: static
+  node_to_cell_mapping: static/node_to_cell_mapping.csv
+  source_config: static/config.json
+  default_dt_seconds: 10.0
+  default_boundary_interval_minutes: 5.0
+  default_save_interval_minutes: 30.0
+
+notes:
+  - Static CA2D files are built once and reused across rainfall events and SWMM scenarios.
+  - Dynamic simulation outputs should be written under runs/<run_id>/.
+  - This project does not use zoning or database writes in the current Agentic prototype.

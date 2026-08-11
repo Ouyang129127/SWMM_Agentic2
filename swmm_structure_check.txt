@@ -1,0 +1,83 @@
+SWMM输入文件结构检查报告
+==================================================
+检查文件: models/songhua_swmm_2d/swmm/scenarios/baseline/model.inp
+文件存在: 是
+
+各部分检查结果:
+------------------------------
+[OPTIONS]: ✓ 存在
+  内容行数: 36
+  内容预览: ;;Option             Value
+FLOW_UNITS           LPS
+INFILTRATION         HORTON
+FLOW_ROUTING         DYNWAVE
+LINK_OFFSETS         ELEVATION
+MIN_SLOPE            0
+ALLOW_PONDING        NO
+SKIP_STEADY_S...
+
+[RAINGAGES]: ✓ 存在
+  内容行数: 3
+  内容预览: ;;Name           Format    Interval SCF      Source    
+;;-------------- --------- ------ ------ ----------
+rain1            INTENSITY 0:10     1.0      TIMESERIES rain1
+
+[SUBCATCHMENTS]: ✓ 存在
+  内容行数: 10043
+  内容预览: ;;Name           Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  SnowPack        
+;;-------------- ---------------- ---------------- -------- -------- -------- -------- ...
+
+[SUBAREAS]: ✓ 存在
+  内容行数: 10043
+  内容预览: ;;Subcatchment   N-Imperv   N-Perv     S-Imperv   S-Perv     PctZero    RouteTo    PctRouted 
+;;-------------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+0           ...
+
+[INFILTRATION]: ✓ 存在
+  内容行数: 10043
+  内容预览: ;;Subcatchment   Param1     Param2     Param3     Param4     Param5    
+;;-------------- ---------- ---------- ---------- ---------- ----------
+0                3          0.5        4          7     ...
+
+[JUNCTIONS]: ✓ 存在
+  内容行数: 9849
+  内容预览: ;;Name           Elevation  MaxDepth   InitDepth  SurDepth   Aponded   
+;;-------------- ---------- ---------- ---------- ---------- ----------
+017549YSG002     136.987    2.500      0          1.5   ...
+
+[OUTFALLS]: ✓ 存在
+  内容行数: 48
+  内容预览: ;;Name           Elevation  Type       Stage Data       Gated    Route To        
+;;-------------- ---------- ---------- ---------------- -------- ----------------
+out1             111        FREE    ...
+
+[CONDUITS]: ✓ 存在
+  内容行数: 9805
+  内容预览: ;;Name           From Node        To Node          Length     Roughness  InOffset   OutOffset  InitFlow   MaxFlow   
+;;-------------- ---------------- ---------------- ---------- ---------- ----------...
+
+[XSECTIONS]: ✓ 存在
+  内容行数: 9805
+  内容预览: ;;Link           Shape        Geom1            Geom2      Geom3      Geom4      Barrels    Culvert   
+;;-------------- ------------ ---------------- ---------- ---------- ---------- ---------- -------...
+
+[LOSSES]: ✗ 缺失
+
+[TIMESERIES]: ✗ 缺失
+
+[REPORT]: ✓ 存在
+  内容行数: 5
+  内容预览: ;;Reporting Options
+INPUT      YES
+SUBCATCHMENTS ALL
+NODES ALL
+LINKS ALL
+
+潜在ERROR 200问题:
+------------------------------
+• 缺失必需部分: [LOSSES]
+• 缺失必需部分: [TIMESERIES]
+
+建议:
+------------------------------
+1. 添加缺失的必需部分

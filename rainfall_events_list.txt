@@ -1,0 +1,22 @@
+COMPLETE RAINFALL EVENTS INVENTORY
+==================================================
+Project: songhua_swmm_2d
+Events Directory: models\songhua_swmm_2d\events
+Report Generated: tmp_code_1e795b80e7d74653356e6da8a9ca6333be3034259096205d29aec89a4d8b25e9.py
+==================================================
+
+TOTAL RAINFALL EVENTS FOUND: 1
+
+EVENT 1: rain1.txt
+----------------------------------------
+Relative Path: events\rain1.txt
+Full Path: models\songhua_swmm_2d\events\rain1.txt
+File Size: 142 bytes
+File Type: .txt
+Total Lines: 6
+Data Points: 5
+Header Info: 单位：mm/h
+Max Intensity: 9.0 mm/h
+Avg Intensity: 3.6 mm/h
+Total Rainfall: 9.0 mm (30-min intervals)
+

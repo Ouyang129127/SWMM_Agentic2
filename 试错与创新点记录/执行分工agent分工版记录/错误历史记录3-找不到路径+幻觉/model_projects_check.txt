@@ -1,0 +1,32 @@
+SWMM模型项目结构完整性检查报告
+==================================================
+
+检查时间: 2026-07-18 15:28:34
+项目根目录: models
+发现项目数量: 1
+
+项目 1: songhua_swmm_2d
+状态: 不完整
+路径: models\songhua_swmm_2d
+现有文件:
+  ✓ README.md
+缺失文件:
+  ✗ data/
+  ✗ outputs/
+  ✗ runs/
+  ✗ data/model.inp
+建议:
+  • 创建 data/
+  • 创建 outputs/
+  • 创建 runs/
+  • 创建 data/model.inp
+  • 可选文件 data/rainfall.dat 不存在
+  • 可选文件 data/topography.tif 不存在
+  • 可选文件 config.json 不存在
+----------------------------------------
+
+项目状态统计:
+不完整: 1 个项目
+
+总项目数: 1
+检查完成。

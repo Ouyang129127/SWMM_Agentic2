@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM-2D-Agentic Agent Collaboration Logic V3</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: #f7f8fa;
+      color: #18202a;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.35;
+    }
+    p {
+      margin: 0 0 22px;
+      color: #4c5968;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .wrap {
+      max-width: 1800px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #d9dee7;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(20, 32, 50, 0.08);
+      overflow-x: auto;
+    }
+    .mermaid {
+      min-width: 1500px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SWMM-2D-Agentic 论文 Agent 协同工作逻辑图 V3</h1>
+    <p>本版采用“模块内纵向、模块间横向”的布局，并将 Simulation Agent 表述为“标准化模拟流程调度”。</p>
+
+    <pre class="mermaid">
+flowchart LR
+    subgraph M1["任务编排模块"]
+        direction TB
+        U["用户 / 专家任务<br/>自然语言问题、降雨情景、诊断需求"] --> O["Orchestrator Agent<br/>任务理解、流程拆解、工具选择"]
+        O --> SCA["Scenario Agent<br/>降雨事件识别、情景配置、边界条件组织"]
+        O --> SIM["Simulation Agent<br/>SWMM-2D 标准化模拟流程调度"]
+    end
+
+    subgraph M2["模型计算模块"]
+        direction TB
+        RF["降雨事件库 / 情景库<br/>events, scenario configs"] --> SIM_IN["模拟输入组织"]
+        SWMM["SWMM 管网模型<br/>节点、管段、泵站、子汇水区"] --> SWMM_OUT["SWMM 原始输出<br/>nodes.tsv, links.tsv, node_flooding.tsv, rpt/out"]
+        CA2D["CA2D 二维地表积水模型<br/>DEM、网格、阻力、节点映射"] --> CA2D_OUT["CA2D 原始输出<br/>由 SWMM 溢流输入与 CA2D 地表模型共同生成<br/>surface_depth.tsv, max depth map, final depth map"]
+        SIM_IN --> SWMM
+        SWMM_OUT --> CA2D_OUT
+    end
+
+    subgraph M3["证据构建模块"]
+        direction TB
+        EXT["Data Extraction Agent<br/>模型结果结构化抽取"] --> EVID["Evidence Table<br/>evidence_id, object_id, metric, value, time, source_file"]
+        EVID --> SUM["Scenario Summary<br/>run_id、event、scenario、关键统计指标"]
+    end
+
+    subgraph M4["诊断与核查模块"]
+        direction TB
+        DIA["Flood Diagnosis Agent<br/>热点识别、风险排序、致灾因子判断"] --> CLAIMS["Diagnosis Claims<br/>热点、风险等级、优先级、致灾因子"]
+        CLAIMS --> VER["Evidence Verification Agent<br/>证据核查、无证据建议拦截"]
+        VER --> VERIFIED["Verified Claims and Recommendations<br/>带 evidence_ids 的诊断和建议"]
+        VER --> UNSUP["Unsupported Items<br/>无证据或证据不足的结论/建议"]
+    end
+
+    subgraph M5["解释、报告与评价模块"]
+        direction TB
+        EXP["Evidence Explanation Agent<br/>结构化证据翻译成人话"] --> REP["Report Agent<br/>证据约束应急简报生成"]
+        REP --> BRIEF["Evidence-grounded Emergency Brief<br/>管理部门可读简报"]
+        REP --> BENCH["Benchmark Outputs<br/>task success, F1, Spearman, unsupported rate"]
+        BRIEF --> PAPER["论文 Results<br/>Fig. 4, Fig. 5, Fig. 6, Fig. 7"]
+        BENCH --> PAPER
+    end
+
+    SCA --> RF
+    SIM --> SIM_IN
+    SWMM_OUT --> EXT
+    CA2D_OUT --> EXT
+    EVID --> DIA
+    EVID --> VER
+    VERIFIED --> EXP
+    UNSUP --> EXP
+
+    classDef llm fill:#eef5ff,stroke:#4779c4,stroke-width:1px,color:#142033;
+    classDef tool fill:#f1fbf4,stroke:#48a868,stroke-width:1px,color:#142033;
+    classDef evidence fill:#fff7e8,stroke:#d5962f,stroke-width:1px,color:#142033;
+    classDef output fill:#f5f0ff,stroke:#8662c7,stroke-width:1px,color:#142033;
+    classDef module fill:#ffffff,stroke:#b8c2d2,stroke-width:1px,color:#142033;
+
+    class O,SCA,DIA,VER,EXP,REP llm;
+    class SIM,SIM_IN,SWMM,CA2D,SWMM_OUT,CA2D_OUT,EXT,RF tool;
+    class EVID,SUM,CLAIMS,VERIFIED,UNSUP evidence;
+    class BRIEF,BENCH,PAPER output;
+    class M1,M2,M3,M4,M5 module;
+    </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "default",
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 34,
+        rankSpacing: 42
+      }
+    });
+  </script>
+</body>
+</html>

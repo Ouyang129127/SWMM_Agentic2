@@ -1,0 +1,26 @@
+{
+  "terrain_tif": "E:\\ModelCoupling2\\HECModel06\\Terrain\\Terrain.zonghe02.tif",
+  "tile_shp": "C:\\Users\\ouyang\\Desktop\\技能整理\\松花江数据\\地图瓦片.shp",
+  "crs": "PROJCS[\"CGCS2000 / 3-degree Gauss-Kruger CM 126E\",GEOGCS[\"China Geodetic Coordinate System 2000\",DATUM[\"China_2000\",SPHEROID[\"CGCS2000\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"1024\"]],AUTHORITY[\"EPSG\",\"1043\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",126],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+  "bounds": [
+    544461.63856557,
+    5065978.024724092,
+    553967.2064973682,
+    5074263.972474693
+  ],
+  "cell_size": 15.0,
+  "building_threshold": 170.0,
+  "n_cells": 119707,
+  "n_valid_cells": 119707,
+  "n_flow_cells": 88647,
+  "grid_shape": [
+    552,
+    633
+  ],
+  "node_xy_file": "E:\\ModelCoupling2\\NodeSmidXY.txt",
+  "n_nodes": 10040,
+  "n_mapped_nodes": 10040,
+  "node_mapping_distance_median": 6.142284461687409,
+  "node_mapping_distance_95p": 9.750422922516341,
+  "node_mapping_distance_max": 116.61441132106843
+}

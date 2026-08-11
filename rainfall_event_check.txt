@@ -1,0 +1,19 @@
+Rainfall Event File Analysis Report
+========================================
+File: E:\SWMM_Agentic\SWMM-Agentic\events\rain1.txt
+Exists: Yes
+Size: 186 bytes
+Total lines: 9
+Data lines: 9
+Sample format: ['TIMESERIES', 'TS1']
+
+First 10 lines:
+ 1: TIMESERIES TS1
+ 2: Date	Time	Value
+ 3: 06/15/2023	00:00	0.0
+ 4: 06/15/2023	01:00	5.2
+ 5: 06/15/2023	02:00	12.8
+ 6: 06/15/2023	03:00	8.4
+ 7: 06/15/2023	04:00	3.1
+ 8: 06/15/2023	05:00	0.5
+ 9: 06/15/2023	06:00	0.0

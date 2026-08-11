@@ -1,0 +1,26 @@
+[
+  {
+    "task_id": "swmm-2d-project-startup-01",
+    "description": "List available SWMM-2D model projects under the project-root models directory, then check each discovered model project for model.yaml, baseline SWMM scenario, CA2D static model, mapping, events, and runs structure."
+  },
+  {
+    "task_id": "swmm-scenario-rainfall-01",
+    "description": "For the selected model project's baseline SWMM input under models/<model_name>/swmm/scenarios/baseline/model.inp, create a rainfall stress scenario by multiplying rainfall time series values by 1.5, save the modified model under outputs/rainfall_150.inp, then run or prepare code to compare baseline and scenario runoff or link flow."
+  },
+  {
+    "task_id": "swmm-controls-01",
+    "description": "For the selected model project's baseline SWMM input under models/<model_name>/swmm/scenarios/baseline/model.inp, add a SWMM control rule that opens a regulator link when a selected upstream node depth exceeds a threshold. Ask for IDs if they are not known."
+  },
+  {
+    "task_id": "swmm-2d-demo-01",
+    "description": "Create a demo CA2D static model under outputs/ca2d_model_demo, then run the SWMM-2D surface flooding model using a project-root node flooding TSV file, save outputs under outputs/swmm_2d_demo_outputs, and summarize the maximum depth and generated files."
+  },
+  {
+    "task_id": "swmm-2d-check-01",
+    "description": "Check whether the CA2D static model under the selected model project's static/ directory is complete. If it is missing, explain which files are required for SWMM-2D coupling."
+  },
+  {
+    "task_id": "swmm-2d-project-check-01",
+    "description": "List available SWMM-2D model projects, then check each discovered project for complete model.yaml, baseline SWMM scenario, CA2D static model, mapping, events, and runs structure."
+  }
+]
