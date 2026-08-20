@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM-CA2D Agentic Flowchart - Morandi</title>
+  <style>
+    :root {
+      --ink: #2f3437;
+      --muted: #6d7370;
+      --paper: #f3f0ea;
+      --panel: #fbfaf7;
+      --line: #d8d1c7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .wrap {
+      max-width: 1720px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 46px rgba(73, 67, 59, 0.13);
+      overflow-x: auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    p {
+      max-width: 1060px;
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 12px;
+      border: 1px solid rgba(47, 52, 55, 0.24);
+    }
+
+    .s1 { background: #d8cfc4; border-radius: 999px; }
+    .s2 { background: #b8c0b2; }
+    .s3 { background: #ded6bd; transform: rotate(45deg); width: 13px; height: 13px; }
+    .s4 { background: #c7d2d0; }
+    .s5 { background: #d9d0df; }
+    .s6 { background: #c9c4b8; }
+
+    .mermaid {
+      min-width: 1420px;
+      padding: 8px 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SWMM-CA2D Agentic 洪涝灾害成因分析流程图</h1>
+    <p>该版本用不同流程图形状表达不同语义：圆角表示开始/结束，菱形表示状态判断，子程序形状表示 Agent 阶段，数据库/文档形状表示模型、证据与报告产物。</p>
+    <div class="legend" aria-label="图例">
+      <span><i class="swatch s1"></i>输入/输出</span>
+      <span><i class="swatch s2"></i>编排控制</span>
+      <span><i class="swatch s3"></i>状态判断</span>
+      <span><i class="swatch s4"></i>工作流 Agent</span>
+      <span><i class="swatch s5"></i>证据与核查产物</span>
+      <span><i class="swatch s6"></i>论文评价模块</span>
+    </div>
+
+    <pre class="mermaid">
+flowchart LR
+    START([用户 / 专家任务<br/>降雨情景、模型检查、诊断解释]) --> ORCH{{StatefulOrchestrator<br/>任务理解与流程调度}}
+    ORCH --> STAGE{当前 workflow_state<br/>允许进入哪个阶段?}
+
+    STAGE -->|START| SCA[[ScenarioAgent<br/>模型要素检查<br/>降雨事件识别<br/>情景请求生成]]
+    SCA --> REQ[/scenario_request.json<br/>模型-降雨-情景-运行编号/]
+    REQ --> READY1{SCENARIO_READY?}
+
+    READY1 -->|是| SIM[[SimulationAgent<br/>固定 SWMM -> CA2D<br/>耦合模拟管线]]
+    SIM --> MDB[(模型与情景库<br/>SWMM 管网 / CA2D 元胞<br/>events / scenarios)]
+    MDB --> SIM
+    SIM --> RAW[/标准运行输出<br/>summary.json, run.yaml<br/>nodes.tsv, links.tsv<br/>surface_depth.tsv/]
+    RAW --> READY2{RUN_READY?}
+
+    READY2 -->|是| EBA[[EvidenceBuilderAgent<br/>结构化证据构建]]
+    EBA --> EVID[(evidence_table.csv<br/>对象、指标、数值、时段、来源文件)]
+    EBA --> ESUM[/evidence_summary.json<br/>证据数量、指标类型、来源文件/]
+    EVID --> READY3{EVIDENCE_READY?}
+
+    READY3 -->|是| DIA[[DiagnosisAgent<br/>热点识别<br/>风险排序<br/>可能成因判断]]
+    DIA --> CLAIMS[/diagnosis_claims.json<br/>claim_id, severity, possible_cause, evidence_ids/]
+    DIA --> RISK[(risk_ranking.csv<br/>热点网格、溢流节点、高负荷管段)]
+    CLAIMS --> READY4{DIAGNOSIS_READY?}
+
+    READY4 -->|是| VER[[VerificationAgent<br/>证据引用核查<br/>无证据结论拦截]]
+    EVID --> VER
+    VER --> VREP[/verification_report.json<br/>supported / partially_supported / unsupported/]
+    VER --> RATE[(unsupported_rate.txt<br/>无证据结论比例)]
+    VREP --> READY5{VERIFIED_READY?}
+
+    READY5 -->|是| REP[[ReportAgent<br/>证据约束报告<br/>单点成因解释]]
+    EVID --> REP
+    RISK --> REP
+    RATE --> REP
+    REP --> OUT([Evidence-grounded Report<br/>结论-证据-对象-时段-来源文件可追溯])
+
+    OUT --> BENCH{{Benchmark / 论文评价模块<br/>task success, F1, Spearman, unsupported rate}}
+    VREP --> BENCH
+    RATE --> BENCH
+    BENCH --> PAPER([论文 Results 与图表<br/>架构图、证据链、诊断效果、消融对比])
+
+    READY1 -->|否| FIX1[[返回 ScenarioAgent<br/>补齐模型、降雨或情景要素]]
+    READY2 -->|否| FIX2[[返回 SimulationAgent<br/>检查模拟管线与运行输出]]
+    READY3 -->|否| FIX3[[返回 EvidenceBuilderAgent<br/>补齐标准证据表]]
+    READY4 -->|否| FIX4[[返回 DiagnosisAgent<br/>重新生成可证据绑定 claim]]
+    READY5 -->|否| FIX5[[返回 VerificationAgent<br/>修正证据引用或标记 unsupported]]
+
+    FIX1 --> SCA
+    FIX2 --> SIM
+    FIX3 --> EBA
+    FIX4 --> DIA
+    FIX5 --> VER
+
+    classDef input fill:#d8cfc4,stroke:#8f8174,stroke-width:1.2px,color:#2f3437;
+    classDef orchestrator fill:#b8c0b2,stroke:#75816f,stroke-width:1.3px,color:#2f3437;
+    classDef decision fill:#ded6bd,stroke:#a4966e,stroke-width:1.2px,color:#2f3437;
+    classDef agent fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.2px,color:#2f3437;
+    classDef data fill:#d9d0df,stroke:#9586a1,stroke-width:1.2px,color:#2f3437;
+    classDef model fill:#d5c5bd,stroke:#9a7f73,stroke-width:1.2px,color:#2f3437;
+    classDef output fill:#c9c4b8,stroke:#888171,stroke-width:1.2px,color:#2f3437;
+
+    class START,OUT,PAPER input;
+    class ORCH,BENCH orchestrator;
+    class STAGE,READY1,READY2,READY3,READY4,READY5 decision;
+    class SCA,SIM,EBA,DIA,VER,REP,FIX1,FIX2,FIX3,FIX4,FIX5 agent;
+    class REQ,RAW,ESUM,CLAIMS,VREP,EVID,RISK,RATE data;
+    class MDB model;
+  </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
+        primaryTextColor: "#2f3437",
+        lineColor: "#8f8a82",
+        textColor: "#2f3437",
+        mainBkg: "#fbfaf7",
+        nodeBorder: "#8f8a82",
+        clusterBkg: "#fbfaf7",
+        clusterBorder: "#d8d1c7",
+        tertiaryColor: "#f3f0ea"
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 32,
+        rankSpacing: 56,
+        padding: 16
+      }
+    });
+  </script>
+</body>
+</html>

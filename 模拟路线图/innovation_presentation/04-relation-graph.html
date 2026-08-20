@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>创新点四：关系证据网</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>创新点四</strong><span>立体化关系证据网</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html">对象创新</a><a href="02-architecture.html">架构创新</a><a href="03-diagnosis.html">诊断机制</a><a href="04-relation-graph.html" aria-current="page">关系证据网</a><a href="05-evaluation.html">评价优化</a><a href="workflow.html">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>从对象级证据到工程师式成因追溯</h1>
+          <p>当前系统已经完成节点、管段和地表元胞的对象级证据诊断；下一步可构建地表-管网-泵站-分区耦合的关系证据网。</p>
+        </div>
+        <span class="kicker">object-level evidence -> relation-level evidence graph</span>
+      </section>
+
+      <section class="panel green">
+        <h2>成熟工程师的追溯路径</h2>
+        <div class="flow">
+          <div class="step"><small>雨情</small><b>大雨还是中小雨</b><span>判断是系统性超载还是局部设施问题。</span></div>
+          <div class="step"><small>地表</small><b>积水地块</b><span>水深、面积、持续时间、退水速度。</span></div>
+          <div class="step"><small>节点</small><b>附近检查井</b><span>是否冒溢，溢流量和峰值时刻。</span></div>
+          <div class="step"><small>管段</small><b>连接管道</b><span>满流、高负荷、上下游顶托。</span></div>
+          <div class="step"><small>泵站</small><b>调蓄与提升能力</b><span>是否达到能力上限。</span></div>
+          <div class="step"><small>分区</small><b>排水分区关系</b><span>转输压力和系统联动。</span></div>
+        </div>
+      </section>
+
+      <div class="grid-2" style="margin-top:18px">
+        <section class="panel">
+          <h2>已实现</h2>
+          <p>对象级证据表：cell 的水深和持续时间、node 的溢流量和水深、link 的流量和水深。</p>
+        </section>
+        <section class="panel purple">
+          <h2>待深化</h2>
+          <p>关系级证据网：通过坐标、node_to_cell_mapping、上下游拓扑、泵站状态和排水分区关系连接多类证据。</p>
+        </section>
+      </div>
+
+      <section class="panel quote" style="margin-top:18px">
+        <h2>汇报表达</h2>
+        <p>下一步我希望把 Agent 的诊断过程从“找出异常对象”推进到“沿着地理位置和水力拓扑追溯问题来源”，使其更接近给排水工程师判断内涝成因的真实思维路径。</p>
+      </section>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="03-diagnosis.html"><- 上一页</a>
+      <a href="05-evaluation.html">下一页：评价优化 -></a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

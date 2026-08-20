@@ -19,6 +19,7 @@ from tools import (
     check_all_swmm_2d_projects,
     check_ca2d_model,
     check_swmm_2d_project,
+    generate_run_report,
     list_rainfall_events,
     list_swmm_2d_models,
     run_workflow_stage,
@@ -684,6 +685,10 @@ async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
         if continue_result is not None:
             return continue_result
 
+        report_result = report_agent_reply(latest, transcript)
+        if report_result is not None:
+            return report_result
+
         deterministic_workflow = deterministic_workflow_stage_evidence(latest, transcript)
         if deterministic_workflow is not None:
             return deterministic_workflow
@@ -786,7 +791,7 @@ def deterministic_workflow_stage_evidence(message: str, transcript: list[dict[st
     context = "\n".join(item["content"] for item in transcript[-8:])
     combined = f"{context}\n{message}"
     wants_workflow = contains_any(
-        combined,
+        message,
         [
             "workflow",
             "工作流",
@@ -813,8 +818,8 @@ def deterministic_workflow_stage_evidence(message: str, transcript: list[dict[st
     if not run_id:
         return None
 
-    model_name = extract_model_name(combined) or "songhua_swmm_2d"
-    lowered = combined.lower()
+    model_name = extract_model_name(message) or extract_model_name(combined) or "songhua_swmm_2d"
+    lowered = message.lower()
     until_stage = ""
     target_stage = ""
     if contains_any(lowered, ["verification", "核查", "unsupported", "verified_ready", "推进到 verification"]):
@@ -839,6 +844,69 @@ def deterministic_workflow_stage_evidence(message: str, transcript: list[dict[st
         "没有经过旧的 LegacyTaskExecutor / CodeRunner / DataAnalyzer 主路由。\n\n"
         "**结构化工作流结果**\n"
         f"```text\n{result}\n```"
+    )
+
+
+def report_agent_reply(message: str, transcript: list[dict[str, str]]) -> str | None:
+    """Route VERIFIED_READY report/explanation requests to ReportAgent."""
+    wants_report = contains_any(
+        message,
+        [
+            "报告",
+            "分析报告",
+            "总结",
+            "概括",
+            "人话",
+            "解释",
+            "原因",
+            "为什么",
+            "内涝点",
+            "建议",
+            "处置",
+            "report",
+            "summary",
+            "explain",
+            "why",
+            "recommendation",
+        ],
+    )
+    if not wants_report:
+        return None
+
+    context = "\n".join(item["content"] for item in transcript[-10:])
+    combined = f"{context}\n{message}"
+    run_id = extract_workflow_run_id(combined)
+    if not run_id:
+        return None
+    model_name = extract_model_name(combined) or "songhua_swmm_2d"
+
+    try:
+        _run_root, state = load_or_initialize_state(model_name, run_id)
+    except Exception as exc:
+        return (
+            "我识别到你想生成报告或解释，但没有成功读取对应 run 的工作流状态。\n\n"
+            f"```text\n{exc}\n```"
+        )
+
+    if state.get("state") != VERIFIED_READY:
+        return (
+            "我识别到你想要自然语言报告或原因解释，但当前 run 还没有完成证据核查。\n\n"
+            f"当前状态：`{state.get('state')}`\n"
+            f"下一合法阶段：`{state.get('next_allowed_stage')}`\n\n"
+            "请先把工作流推进到 `VERIFIED_READY`。"
+        )
+
+    try:
+        report = generate_run_report(model_name=model_name, run_id=run_id, message=message)
+    except Exception as exc:
+        return (
+            "ReportAgent 读取已验证成果时失败。\n\n"
+            f"```text\n{exc}\n```"
+        )
+    return (
+        "本轮已由 SWMM-Agentic2 的 `ReportAgent` 处理。它只读取已验证的结构化成果，"
+        "不重新执行模拟、诊断或核查。\n\n"
+        + report.replace("ReportAgent completed:\n", "", 1)
     )
 
 
@@ -1273,4 +1341,3 @@ def is_llm_timeout_error(exc: Exception) -> bool:
         or "httpx.readtimeout" in text
         or "httpcore.readtimeout" in text
     )
-

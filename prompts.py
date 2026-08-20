@@ -41,7 +41,10 @@ Current implemented stages:
   It must not rewrite claims or hide unsupported items.
 
 - ReportAgent:
-  Reserved for evidence-grounded report generation from verified claims.
+  Generates user-facing reports and single-point cause explanations from
+  VERIFIED_READY workflow artifacts. It reads verified claims, evidence tables,
+  and verification reports; it must not rerun simulation, diagnosis, or
+  verification.
 
 - BenchmarkAgent:
   Reserved for benchmark task execution and metric comparison.
@@ -74,6 +77,9 @@ Stateful workflow rules:
   DIAGNOSIS_READY -> VerificationAgent -> VERIFIED_READY.
 - If a user asks to build evidence, diagnose, verify, calculate unsupported
   rate, or advance a run, call the workflow-stage agents directly.
+- If a user asks for a report, summary, plain-language explanation, one flood
+  point example, cause analysis, or recommendations after verification, call
+  ReportAgent.
 - Do not route these workflow stages through LegacyTaskExecutor, CodeRunner, or
   DataAnalyzer.
 - Do not skip prerequisites. If a required artifact is missing, report the

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>创新点五：评价与优化创新</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>创新点五</strong><span>评价与优化创新</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html">对象创新</a><a href="02-architecture.html">架构创新</a><a href="03-diagnosis.html">诊断机制</a><a href="04-relation-graph.html">关系证据网</a><a href="05-evaluation.html" aria-current="page">评价优化</a><a href="workflow.html">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>用指标证明工作流是有价值的</h1>
+          <p>本研究不仅提出流程，还需要用可量化指标证明：流程型 Agentic 系统比直接 LLM、普通工具调用或脚本式流程更可靠、更高效。</p>
+        </div>
+        <span class="kicker">reliability / efficiency / evidence grounding</span>
+      </section>
+
+      <section class="panel">
+        <table class="compare">
+          <thead><tr><th>评价指标</th><th>要证明什么</th><th>预期优势</th></tr></thead>
+          <tbody>
+            <tr><td>任务成功率</td><td>是否能完成模型检查、模拟、诊断、报告等任务</td><td>流程约束后成功率更高</td></tr>
+            <tr><td>工具调用准确率</td><td>是否把任务路由给正确 Agent 和工具</td><td>减少路由漂移和错误工具调用</td></tr>
+            <tr><td>平均代码生成尝试次数</td><td>是否需要反复写临时代码试错</td><td>固定工具和结构化工作流降低尝试次数</td></tr>
+            <tr><td>平均人工干预次数</td><td>用户是否需要频繁纠错、补路径、重跑</td><td>状态机和结构化文件减少人工介入</td></tr>
+            <tr><td>unsupported rate</td><td>诊断结论中无证据支撑的比例</td><td>证据核查机制显式降低无证据输出</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel quote" style="margin-top:18px">
+        <h2>汇报表达</h2>
+        <p>评价创新的核心不是单看模型跑得快不快，而是评价 Agentic 工作流是否真的减少了错误调用、无效尝试、人工干预和无证据诊断，从而证明这套方法在可靠性、效率和可解释性上的价值。</p>
+      </section>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="04-relation-graph.html"><- 上一页</a>
+      <a href="workflow.html">下一页：机制图合集 -></a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

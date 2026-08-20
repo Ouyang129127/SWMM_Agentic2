@@ -24,6 +24,7 @@ User / expert request
   -> DIAGNOSIS_READY
   -> VerificationAgent
   -> VERIFIED_READY
+  -> ReportAgent
 ```
 
 The first implementation now covers the pre-run and diagnostic stages:
@@ -40,6 +41,9 @@ The first implementation now covers the pre-run and diagnostic stages:
   `diagnosis/diagnosis_claims.json` plus `diagnosis/risk_ranking.csv`.
 - `VerificationAgent`: checks every claim against cited evidence and writes
   `verification/verification_report.json` plus `verification/unsupported_rate.txt`.
+- `ReportAgent`: reads `VERIFIED_READY` artifacts and turns verified claims,
+  evidence rows, and verification status into natural-language reports or
+  single-point cause explanations.
 
 ## File Map
 
@@ -76,6 +80,7 @@ SimulationAgent
 EvidenceBuilderAgent
 DiagnosisAgent
 VerificationAgent
+ReportAgent
 ```
 
 The legacy capability agents from SWMM-Agentic are retained only as lower-level
@@ -222,6 +227,8 @@ unsupported_rate: 0.0
   `evidence_table.csv`.
 - Do not calculate unsupported rate with LLM free text; use
   `VerificationAgent`.
+- Do not answer user-facing reports by rerunning diagnosis or verification; use
+  `ReportAgent` after `VERIFIED_READY`.
 - Do not skip workflow states unless rerun behavior is explicitly requested and
   recorded in `workflow_state.json`.
 
@@ -229,6 +236,5 @@ unsupported_rate: 0.0
 
 Recommended next stages are:
 
-- `ReportAgent`: render evidence-grounded emergency briefs from verified claims.
 - `BenchmarkAgent`: execute task sets and compare tool-only, tool-using LLM, and
   full workflow-stage Agentic variants.

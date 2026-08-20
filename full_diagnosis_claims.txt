@@ -1,0 +1,21 @@
+=== 关于cell 115176的诊断声明 ===
+
+声明 1:
+{
+  "claim_id": "C001",
+  "claim_type": "surface_hotspot",
+  "object_type": "cell",
+  "object_id": "115176",
+  "severity": "critical",
+  "claim_text": "Cell 115176 is a critical surface ponding hotspot with 5.198 m maximum depth.",
+  "possible_cause": "local_depression_or_concentrated_overflow",
+  "confidence": "medium",
+  "evidence_ids": [
+    "E_C_289668"
+  ],
+  "status": "pending_verification",
+  "rule_id": "surface_hotspot"
+}
+==================================================
+
+总共找到 1 条相关声明

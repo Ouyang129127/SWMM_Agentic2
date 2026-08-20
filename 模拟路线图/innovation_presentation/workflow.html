@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>机制图合集</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>机制图合集</strong><span>工作流、证据表、诊断、核查</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html">对象创新</a><a href="02-architecture.html">架构创新</a><a href="03-diagnosis.html">诊断机制</a><a href="04-relation-graph.html">关系证据网</a><a href="05-evaluation.html">评价优化</a><a href="workflow.html" aria-current="page">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>把“可信诊断机制”讲清楚</h1>
+          <p>这一页用于从创新点切换到系统机制展示。点击卡片可打开已有 HTML 图，也可以直接在下方嵌入图中讲解。</p>
+        </div>
+        <span class="kicker">可直接给老师展示</span>
+      </section>
+
+      <section class="link-list">
+        <a href="../agent_collaboration_logic_morandi_vertical.html"><b>Agent 协同工作逻辑</b><span>展示 Scenario、Simulation、Evidence、Diagnosis、Verification、Report 的完整链路。</span></a>
+        <a href="../evidence_table_generation_flow.html"><b>evidence_table.csv 生成流程</b><span>解释原始 SWMM/CA2D 结果如何被压缩成结构化证据。</span></a>
+        <a href="../diagnosis_agent_workflow.html"><b>DiagnosisAgent 工作机制</b><span>解释诊断 claim 的数据结构、possible_cause 和 confidence。</span></a>
+        <a href="../verification_agent_workflow.html"><b>VerificationAgent 工作机制</b><span>解释 evidence_id 核查、claim_checks 和 unsupported rate。</span></a>
+      </section>
+
+      <section class="panel" style="margin-top:18px">
+        <h2>嵌入展示：Agent 协同工作逻辑</h2>
+        <iframe class="diagram-frame" src="../agent_collaboration_logic_morandi_vertical.html" title="Agent 协同工作逻辑"></iframe>
+      </section>
+
+      <div class="note">
+        建议讲解顺序：先用前面五页讲“为什么创新”，再用本页四张机制图讲“系统如何实现”。按键盘左右方向键可以切换页面。
+      </div>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="05-evaluation.html"><- 上一页</a>
+      <a href="index.html">回到总览</a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

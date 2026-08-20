@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>创新点一：研究对象创新</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>创新点一</strong><span>研究对象创新</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html" aria-current="page">对象创新</a><a href="02-architecture.html">架构创新</a><a href="03-diagnosis.html">诊断机制</a><a href="04-relation-graph.html">关系证据网</a><a href="05-evaluation.html">评价优化</a><a href="workflow.html">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>从给水管网 Agentic 到排水内涝 Agentic</h1>
+          <p>本研究将对标论文中的 EPANET 给水系统对象，迁移到 SWMM-二维元胞耦合的城市排水内涝系统。</p>
+        </div>
+        <span class="kicker">对象复杂性发生变化</span>
+      </section>
+
+      <div class="grid-2">
+        <section class="panel">
+          <h2>对标论文对象</h2>
+          <p>EPANET 给水管网系统，主要面向有压供水网络中的节点、管段、水源、泵阀等对象，任务集中在模型查询、修改和仿真交互。</p>
+        </section>
+        <section class="panel green">
+          <h2>本研究对象</h2>
+          <p>SWMM-CA2D 排水-地表淹没耦合系统，既包含节点、管段、汇水区、降雨事件，也包含检查井冒溢、二维元胞积水、地表扩散和退水过程。</p>
+        </section>
+      </div>
+
+      <section class="panel quote" style="margin-top:18px">
+        <h2>汇报表达</h2>
+        <p>本研究将 Agentic 系统的作用对象由给水管网扩展到城市排水-地表淹没耦合系统，使智能体从处理相对规则的管网水力对象，转向处理降雨驱动、管网-地表耦合、时空动态演化的复杂洪涝模拟对象。</p>
+      </section>
+
+      <div class="grid-3" style="margin-top:18px">
+        <article class="panel blue"><h3>物理过程不同</h3><p>给水侧重输配水；排水内涝包含降雨径流、管网汇流、节点外溢和地表积水扩散。</p></article>
+        <article class="panel purple"><h3>模型对象不同</h3><p>SWMM-CA2D 同时处理 node、link、cell、rainfall event、scenario 等多类对象。</p></article>
+        <article class="panel rose"><h3>智能体任务不同</h3><p>不只是查询和修改模型，还要组织情景、执行耦合模拟、构建证据并解释风险。</p></article>
+      </div>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="index.html"><- 返回总览</a>
+      <a href="02-architecture.html">下一页：架构创新 -></a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

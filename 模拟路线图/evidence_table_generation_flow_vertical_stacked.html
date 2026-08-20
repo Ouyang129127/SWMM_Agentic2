@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>evidence_table.csv 生成流程图</title>
+  <style>
+    :root {
+      --bg: #f3f0ea;
+      --ink: #2f3437;
+      --muted: #6d7370;
+      --line: #d8d1c7;
+      --blue: #c7d2d0;
+      --blue-line: #7c8e8b;
+      --green: #d8ddcf;
+      --green-line: #7d886f;
+      --yellow: #ded6bd;
+      --yellow-line: #a4966e;
+      --rose: #d9c8c0;
+      --rose-line: #9a7f73;
+      --purple: #d9d0df;
+      --purple-line: #9586a1;
+      --card: #fbfaf7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .page {
+      max-width: 1680px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 26px;
+      box-shadow: 0 16px 42px rgba(73, 67, 59, 0.12);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 980px;
+    }
+
+    .tag {
+      border: 1px solid var(--purple-line);
+      background: var(--purple);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .mermaid-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f8f6f1;
+    }
+
+    .mermaid {
+      min-width: 720px;
+    }
+
+    .side {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .section {
+      min-width: 0;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfaf7;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    th,
+    td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 7px;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      background: #f5f2ec;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      color: #2f3437;
+      background: #eee9df;
+      border-radius: 4px;
+      padding: 1px 4px;
+    }
+
+    .talking-points {
+      margin: 0;
+      padding-left: 19px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .talking-points li + li {
+      margin-top: 5px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 13px 15px;
+      border-left: 4px solid var(--yellow-line);
+      background: var(--yellow);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    @media (max-width: 1120px) {
+      .grid,
+      .side {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .tag {
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>evidence_table.csv 生成流程图</h1>
+        <p class="subtitle">
+          将一次 SWMM-CA2D 暴雨模拟的原始时序结果，重构为“对象-指标-数值-时间-来源文件”形式的诊断证据表，供 DiagnosisAgent 和 VerificationAgent 使用。
+        </p>
+      </div>
+      <div class="tag">EvidenceBuilderAgent: 原始结果 -> 结构化证据</div>
+    </header>
+
+    <section class="grid">
+      <div class="mermaid-wrap" aria-label="evidence table generation flowchart">
+        <pre class="mermaid">
+flowchart TD
+    A["一次暴雨模拟运行目录<br/>models/&lt;model&gt;/runs/&lt;run_id&gt;/"] --> B["读取运行元信息<br/>summary.json<br/>run_id / event_name / scenario_name / model_name"]
+
+    A --> C1["SWMM 节点溢流结果<br/>swmm/node_flooding.tsv"]
+    A --> C2["SWMM 节点水深结果<br/>swmm/nodes.tsv"]
+    A --> C3["SWMM 管段结果<br/>swmm/links.tsv"]
+    A --> C4["CA2D 地表水深结果<br/>ca2d/surface_depth.tsv"]
+
+    C1 --> D1["按 node_id 分组<br/>计算累计溢流量、最大溢流流量、溢流持续时间"]
+    C2 --> D2["按 node_id 分组<br/>提取节点最大水深及峰值时刻"]
+    C3 --> D3["按 link_id 分组<br/>提取最大流量、最大管段水深及峰值时刻"]
+    C4 --> D4["按 Smid / cell 分组<br/>提取最大积水深度、积水持续时间"]
+
+    B --> E["补充情景来源字段<br/>run_id / event_name / scenario_name / source_model / source_file"]
+    D1 --> F["形成证据行<br/>object_type=node<br/>metric_name=total_flooding_volume / max_flooding_flow / flooding_duration"]
+    D2 --> F
+    D3 --> G["形成证据行<br/>object_type=link<br/>metric_name=max_flow / max_link_depth"]
+    D4 --> H["形成证据行<br/>object_type=cell<br/>metric_name=max_depth / ponding_duration"]
+
+    E --> I["统一证据字段<br/>object_id / metric_name / value / unit / time_start / time_end / duration_minutes"]
+    F --> I
+    G --> I
+    H --> I
+
+    I --> J["同类指标排序与阈值判断<br/>rank / threshold / exceedance_flag"]
+    J --> K["生成唯一 evidence_id<br/>E_N_xxxxxx / E_L_xxxxxx / E_C_xxxxxx"]
+    K --> L["输出 evidence_table.csv<br/>每行 = 一条可追溯诊断证据"]
+    K --> M["输出 evidence_summary.json<br/>证据数量、指标分布、来源文件列表"]
+
+    L --> N["DiagnosisAgent<br/>只基于证据表生成诊断 claim"]
+    N --> O["VerificationAgent<br/>检查 claim 是否绑定有效 evidence_id"]
+    O --> P["unsupported rate<br/>量化无证据或证据不足的结论比例"]
+
+    classDef source fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.1px,color:#2f3437;
+    classDef calc fill:#d8ddcf,stroke:#7d886f,stroke-width:1.1px,color:#2f3437;
+    classDef evidence fill:#ded6bd,stroke:#a4966e,stroke-width:1.1px,color:#2f3437;
+    classDef agent fill:#d9d0df,stroke:#9586a1,stroke-width:1.1px,color:#2f3437;
+    classDef risk fill:#d9c8c0,stroke:#9a7f73,stroke-width:1.1px,color:#2f3437;
+
+    class A,B,C1,C2,C3,C4 source;
+    class D1,D2,D3,D4,E,I,J,K calc;
+    class F,G,H,L,M evidence;
+    class N,O agent;
+    class P risk;
+        </pre>
+      </div>
+
+      <aside class="side">
+        <section class="section">
+          <h2>证据表字段含义</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>字段类别</th>
+                <th>字段</th>
+                <th>作用</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>来源</td>
+                <td><code>run_id</code>, <code>event_name</code>, <code>scenario_name</code>, <code>source_model</code>, <code>source_file</code></td>
+                <td>说明证据来自哪次模拟、哪场雨、哪个情景和哪个结果文件。</td>
+              </tr>
+              <tr>
+                <td>对象</td>
+                <td><code>object_type</code>, <code>object_id</code></td>
+                <td>定位到节点、管段或二维元胞。</td>
+              </tr>
+              <tr>
+                <td>指标</td>
+                <td><code>metric_name</code>, <code>value</code>, <code>unit</code></td>
+                <td>记录最大水深、累计溢流量、积水持续时间等诊断指标。</td>
+              </tr>
+              <tr>
+                <td>时间</td>
+                <td><code>time_start</code>, <code>time_end</code>, <code>duration_minutes</code></td>
+                <td>保留峰值时刻或超阈值持续时段。</td>
+              </tr>
+              <tr>
+                <td>诊断辅助</td>
+                <td><code>rank</code>, <code>threshold</code>, <code>exceedance_flag</code>, <code>evidence_id</code></td>
+                <td>用于风险排序、阈值判断和后续结论追溯。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>当前提取的核心证据</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>对象</th>
+                <th>证据指标</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SWMM 节点</td>
+                <td><code>total_flooding_volume</code>, <code>max_flooding_flow</code>, <code>flooding_duration</code>, <code>max_node_depth</code></td>
+              </tr>
+              <tr>
+                <td>SWMM 管段</td>
+                <td><code>max_flow</code>, <code>max_link_depth</code></td>
+              </tr>
+              <tr>
+                <td>CA2D 元胞</td>
+                <td><code>max_depth</code>, <code>ponding_duration</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>汇报时的三句话</h2>
+          <ul class="talking-points">
+            <li>证据表不是简单导出结果，而是把原始时序结果压缩为面向诊断的结构化证据。</li>
+            <li>每一条诊断 claim 必须绑定证据表中的 <code>evidence_id</code>，从而能够追溯到对象、指标、时段和来源文件。</li>
+            <li>没有证据支撑的结论会被 VerificationAgent 识别，并进入 <code>unsupported rate</code>，用于量化 Agent 输出可靠性。</li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+
+    <div class="note">
+      对老师说明时，可以把这张图的核心概念概括为：原始模拟结果是“数据”，evidence_table.csv 是“证据”，DiagnosisAgent 输出的是“结论”，VerificationAgent 负责检查“结论和证据之间是否真的连得上”。
+    </div>
+  </main>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
+        primaryTextColor: "#2f3437",
+        lineColor: "#8f8a82",
+        clusterBkg: "#fbfaf7",
+        clusterBorder: "#d8d1c7",
+        tertiaryColor: "#f3f0ea"
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 28,
+        rankSpacing: 42
+      }
+    });
+  </script>
+</body>
+</html>

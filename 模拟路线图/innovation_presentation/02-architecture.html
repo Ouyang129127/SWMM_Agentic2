@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>创新点二：Agent 架构创新</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>创新点二</strong><span>流程型多 Agent 架构</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html">对象创新</a><a href="02-architecture.html" aria-current="page">架构创新</a><a href="03-diagnosis.html">诊断机制</a><a href="04-relation-graph.html">关系证据网</a><a href="05-evaluation.html">评价优化</a><a href="workflow.html">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>从执行层工具分工到灾害评估流程分工</h1>
+          <p>对标论文更偏向按模型操作动作划分 Agent；本研究按照洪涝灾害评估的工作环节组织 Agent。</p>
+        </div>
+        <span class="kicker">工具调用导向 -> 灾害诊断导向</span>
+      </section>
+
+      <section class="panel">
+        <table class="compare">
+          <thead><tr><th>对标论文思路</th><th>本研究思路</th></tr></thead>
+          <tbody>
+            <tr><td>按 EPANET 执行层操作划分 Agent</td><td>按洪涝灾害评估流程划分 Agent</td></tr>
+            <tr><td>核心是模型交互、对象查询、参数修改和模拟执行</td><td>核心是从降雨情景到洪涝诊断的证据化推理</td></tr>
+            <tr><td>Agent 更像工具调用角色</td><td>Agent 更像灾害评估工作环节</td></tr>
+            <tr><td>输出偏向模型操作结果</td><td>输出偏向结论-证据-对象-时段-来源文件链条</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel green" style="margin-top:18px">
+        <h2>当前主链路</h2>
+        <div class="flow">
+          <div class="step"><small>01</small><b>ScenarioAgent</b><span>模型、降雨、情景准备</span></div>
+          <div class="step"><small>02</small><b>SimulationAgent</b><span>SWMM -> CA2D 耦合模拟</span></div>
+          <div class="step"><small>03</small><b>EvidenceBuilderAgent</b><span>原始结果转证据表</span></div>
+          <div class="step"><small>04</small><b>DiagnosisAgent</b><span>证据转诊断 claim</span></div>
+          <div class="step"><small>05</small><b>VerificationAgent</b><span>核查 evidence_id 支撑</span></div>
+          <div class="step"><small>06</small><b>ReportAgent</b><span>生成解释报告</span></div>
+        </div>
+      </section>
+
+      <section class="panel quote" style="margin-top:18px">
+        <h2>汇报表达</h2>
+        <p>本研究提出面向 SWMM-二维元胞耦合内涝分析的流程型多 Agent 架构，将 Agent 分工从传统模型操作层推进到洪涝灾害评估链条，形成“情景准备-耦合模拟-证据构建-灾害诊断-证据核查-解释报告”的闭环。</p>
+      </section>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="01-object.html"><- 上一页</a>
+      <a href="03-diagnosis.html">下一页：诊断机制 -></a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

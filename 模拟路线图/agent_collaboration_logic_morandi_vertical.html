@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM-CA2D Agentic Vertical Flowchart - Morandi</title>
+  <style>
+    :root {
+      --ink: #2f3437;
+      --muted: #6d7370;
+      --paper: #f3f0ea;
+      --panel: #fbfaf7;
+      --line: #d8d1c7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 46px rgba(73, 67, 59, 0.13);
+      overflow-x: auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    p {
+      max-width: 920px;
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 12px;
+      border: 1px solid rgba(47, 52, 55, 0.24);
+    }
+
+    .s1 { background: #d8cfc4; border-radius: 999px; }
+    .s2 { background: #b8c0b2; }
+    .s3 { background: #ded6bd; transform: rotate(45deg); width: 13px; height: 13px; }
+    .s4 { background: #c7d2d0; }
+    .s5 { background: #d9d0df; }
+    .s6 { background: #c9c4b8; }
+
+    .mermaid {
+      min-width: 980px;
+      padding: 6px 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SWMM-CA2D Agentic 洪涝灾害成因分析纵向流程图</h1>
+    <p>纵向版突出主工作链路：用户任务经 StatefulOrchestrator 进入状态机，依次完成情景准备、耦合模拟、证据构建、灾害诊断、证据核查与解释报告；右侧保留关键数据产物，底部承接论文评价模块。</p>
+    <div class="legend" aria-label="图例">
+      <span><i class="swatch s1"></i>输入/输出</span>
+      <span><i class="swatch s2"></i>编排控制</span>
+      <span><i class="swatch s3"></i>状态判断</span>
+      <span><i class="swatch s4"></i>工作流 Agent</span>
+      <span><i class="swatch s5"></i>证据与核查产物</span>
+      <span><i class="swatch s6"></i>论文评价模块</span>
+    </div>
+
+    <pre class="mermaid">
+flowchart TD
+    START([用户 / 专家任务<br/>降雨情景、模型检查、内涝诊断、解释需求])
+    ORCH{{StatefulOrchestrator<br/>任务理解、阶段调度、状态合法性控制}}
+    STATE{workflow_state.json<br/>当前允许进入哪个阶段?}
+
+    START --> ORCH --> STATE
+
+    STATE --> SCA[[ScenarioAgent<br/>模型要素检查<br/>降雨事件识别<br/>情景请求生成]]
+    SCA --> REQ[/scenario_request.json<br/>模型-降雨-情景-运行编号/]
+    REQ --> D1{SCENARIO_READY?}
+
+    D1 -->|是| SIM[[SimulationAgent<br/>固定 SWMM -> CA2D<br/>耦合模拟管线]]
+    D1 -.否：补齐模型、降雨或情景.-> SCA
+
+    SIM --> MODEL[(模型与情景库<br/>SWMM 管网 / CA2D 元胞<br/>events / scenarios)]
+    MODEL --> SIM
+    SIM --> RAW[/标准运行输出<br/>summary.json, run.yaml<br/>nodes.tsv, links.tsv, surface_depth.tsv/]
+    RAW --> D2{RUN_READY?}
+
+    D2 -->|是| EBA[[EvidenceBuilderAgent<br/>结构化证据构建]]
+    D2 -.否：检查模拟管线与输出.-> SIM
+
+    EBA --> EVID[(evidence_table.csv<br/>对象、指标、数值、时段、来源文件)]
+    EBA --> ESUM[/evidence_summary.json<br/>证据数量、指标类型、来源文件/]
+    EVID --> D3{EVIDENCE_READY?}
+
+    D3 -->|是| DIA[[DiagnosisAgent<br/>热点识别<br/>风险排序<br/>可能成因判断]]
+    D3 -.否：补齐标准证据表.-> EBA
+
+    DIA --> CLAIMS[/diagnosis_claims.json<br/>claim_id, severity, possible_cause, evidence_ids/]
+    DIA --> RISK[(risk_ranking.csv<br/>热点网格、溢流节点、高负荷管段)]
+    CLAIMS --> D4{DIAGNOSIS_READY?}
+
+    D4 -->|是| VER[[VerificationAgent<br/>证据引用核查<br/>无证据结论拦截]]
+    D4 -.否：重新生成可证据绑定 claim.-> DIA
+    EVID --> VER
+
+    VER --> VREP[/verification_report.json<br/>supported / partially_supported / unsupported/]
+    VER --> RATE[(unsupported_rate.txt<br/>无证据结论比例)]
+    VREP --> D5{VERIFIED_READY?}
+
+    D5 -->|是| REP[[ReportAgent<br/>证据约束报告<br/>单点成因解释]]
+    D5 -.否：修正证据引用或标记 unsupported.-> VER
+
+    EVID --> REP
+    RISK --> REP
+    RATE --> REP
+    REP --> OUT([Evidence-grounded Report<br/>结论-证据-对象-时段-来源文件可追溯])
+
+    OUT --> BENCH{{Benchmark / 论文评价模块<br/>task success, F1, Spearman, unsupported rate}}
+    VREP --> BENCH
+    RATE --> BENCH
+    BENCH --> PAPER([论文 Results 与图表<br/>架构图、证据链、诊断效果、消融对比])
+
+    classDef input fill:#d8cfc4,stroke:#8f8174,stroke-width:1.2px,color:#2f3437;
+    classDef orchestrator fill:#b8c0b2,stroke:#75816f,stroke-width:1.3px,color:#2f3437;
+    classDef decision fill:#ded6bd,stroke:#a4966e,stroke-width:1.2px,color:#2f3437;
+    classDef agent fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.2px,color:#2f3437;
+    classDef data fill:#d9d0df,stroke:#9586a1,stroke-width:1.2px,color:#2f3437;
+    classDef model fill:#d5c5bd,stroke:#9a7f73,stroke-width:1.2px,color:#2f3437;
+    classDef output fill:#c9c4b8,stroke:#888171,stroke-width:1.2px,color:#2f3437;
+
+    class START,OUT,PAPER input;
+    class ORCH,BENCH orchestrator;
+    class STATE,D1,D2,D3,D4,D5 decision;
+    class SCA,SIM,EBA,DIA,VER,REP agent;
+    class REQ,RAW,ESUM,CLAIMS,VREP,EVID,RISK,RATE data;
+    class MODEL model;
+    </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
+        primaryTextColor: "#2f3437",
+        lineColor: "#8f8a82",
+        textColor: "#2f3437",
+        mainBkg: "#fbfaf7",
+        nodeBorder: "#8f8a82",
+        clusterBkg: "#fbfaf7",
+        clusterBorder: "#d8d1c7",
+        tertiaryColor: "#f3f0ea"
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 34,
+        rankSpacing: 42,
+        padding: 16
+      }
+    });
+  </script>
+</body>
+</html>

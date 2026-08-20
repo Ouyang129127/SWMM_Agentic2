@@ -12,6 +12,7 @@ from ca2d import check_static_model, create_demo_static_model, run_ca2d_simulati
 from workflow_agents import (
     build_evidence_for_run as _build_evidence_for_run,
     diagnose_run_from_evidence as _diagnose_run_from_evidence,
+    generate_report_for_request as _generate_report_for_request,
     run_workflow_stage as _run_workflow_stage,
     verify_diagnosis_claims as _verify_diagnosis_claims,
 )
@@ -1243,3 +1244,21 @@ def run_workflow_stage(
         rerun=rerun,
     )
     return "StatefulOrchestrator completed:\n" + json.dumps(result, ensure_ascii=False, indent=2)
+
+
+def generate_run_report(
+    model_name: Annotated[
+        str,
+        "Name of a SWMM-2D model project under the project-root models/ directory.",
+    ] = "",
+    run_id: Annotated[
+        str,
+        "Run ID under models/<model_name>/runs/. The run must be VERIFIED_READY.",
+    ] = "",
+    message: Annotated[
+        str,
+        "User-facing report request, such as full report, summary, or one-point cause explanation.",
+    ] = "",
+) -> str:
+    result = _generate_report_for_request(model_name=model_name, run_id=run_id, message=message)
+    return "ReportAgent completed:\n" + result["markdown"]

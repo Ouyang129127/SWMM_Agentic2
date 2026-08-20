@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DiagnosisAgent 工作机制流程图</title>
+  <style>
+    :root {
+      --bg: #f3f0ea;
+      --ink: #2f3437;
+      --muted: #6d7370;
+      --line: #d8d1c7;
+      --card: #fbfaf7;
+      --blue: #c7d2d0;
+      --blue-line: #7c8e8b;
+      --green: #d8ddcf;
+      --green-line: #7d886f;
+      --amber: #ded6bd;
+      --amber-line: #a4966e;
+      --purple: #d9d0df;
+      --purple-line: #9586a1;
+      --rose: #d9c8c0;
+      --rose-line: #9a7f73;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .page {
+      max-width: 1700px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 26px;
+      box-shadow: 0 16px 42px rgba(73, 67, 59, 0.12);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 1040px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .tag {
+      border: 1px solid var(--purple-line);
+      background: var(--purple);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .mermaid-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f8f6f1;
+    }
+
+    .mermaid {
+      min-width: 720px;
+    }
+
+    .side {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfaf7;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    th,
+    td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 7px;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f5f2ec;
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      color: #2f3437;
+      background: #eee9df;
+      border-radius: 4px;
+      padding: 1px 4px;
+    }
+
+    .claim-box {
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--amber-line);
+      border-radius: 8px;
+      background: var(--amber);
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .talking {
+      margin: 0;
+      padding-left: 19px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .talking li + li {
+      margin-top: 5px;
+    }
+
+    .plain {
+      margin: 0 0 10px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 13px 15px;
+      border-left: 4px solid var(--green-line);
+      background: var(--green);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    @media (max-width: 1120px) {
+      .layout,
+      .side,
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .tag {
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>DiagnosisAgent 工作机制：从证据表到诊断 claim</h1>
+        <p class="subtitle">
+          DiagnosisAgent 的核心任务是把 EvidenceBuilderAgent 生成的对象级证据，按照洪涝诊断规则筛选为结构化诊断结论，并保留 evidence_id 以供后续核查。
+        </p>
+      </div>
+      <div class="tag">输入 evidence_table.csv，输出 diagnosis_claims.json</div>
+    </header>
+
+    <section class="layout">
+      <div class="mermaid-wrap" aria-label="DiagnosisAgent workflow flowchart">
+        <pre class="mermaid">
+flowchart TD
+    A["输入：evidence_table.csv<br/>每行是一条对象级证据"] --> B["DiagnosisAgent<br/>读取证据表"]
+    R["诊断规则<br/>diagnosis_rules.json"] --> B
+
+    B --> C1["筛选 cell + max_depth<br/>地表最大积水深度"]
+    B --> C2["筛选 cell + ponding_duration<br/>地表积水持续时间"]
+    B --> C3["筛选 node + total_flooding_volume<br/>节点累计溢流量"]
+    B --> C4["筛选 link + max_flow<br/>管段最大流量"]
+
+    C1 --> D1["阈值分级<br/>0.3 m: moderate<br/>0.5 m: high<br/>0.75 m: critical"]
+    C2 --> D2["持续时间阈值<br/>>= 60 min"]
+    C3 --> D3["溢流体积阈值<br/>>= 10 m3"]
+    C4 --> D4["高负荷候选<br/>最大流量 Top 10"]
+
+    D1 --> E1["生成 claim<br/>claim_type = surface_hotspot"]
+    D2 --> E2["生成 claim<br/>claim_type = long_duration_ponding"]
+    D3 --> E3["生成 claim<br/>claim_type = major_overflow_node"]
+    D4 --> E4["生成 claim<br/>claim_type = high_load_link"]
+
+    E1 --> F["统一 claim 结构<br/>claim_id / claim_type / object_type / object_id / severity / claim_text / possible_cause / confidence / evidence_ids / status / rule_id"]
+    E2 --> F
+    E3 --> F
+    E4 --> F
+
+    F --> G["输出：diagnosis_claims.json<br/>结构化诊断结论集合"]
+    F --> H["输出：risk_ranking.csv<br/>风险对象排序表"]
+
+    G --> I["VerificationAgent<br/>逐条检查 claim 是否引用有效 evidence_id"]
+    H --> J["ReportAgent<br/>生成风险摘要与单点解释"]
+    I --> K["unsupported rate<br/>衡量无证据结论比例"]
+
+    classDef input fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.1px,color:#2f3437;
+    classDef rule fill:#d9d0df,stroke:#9586a1,stroke-width:1.1px,color:#2f3437;
+    classDef filter fill:#d8ddcf,stroke:#7d886f,stroke-width:1.1px,color:#2f3437;
+    classDef claim fill:#ded6bd,stroke:#a4966e,stroke-width:1.1px,color:#2f3437;
+    classDef verify fill:#d9c8c0,stroke:#9a7f73,stroke-width:1.1px,color:#2f3437;
+
+    class A input;
+    class R,B rule;
+    class C1,C2,C3,C4,D1,D2,D3,D4 filter;
+    class E1,E2,E3,E4,F,G,H claim;
+    class I,J,K verify;
+        </pre>
+      </div>
+
+      <aside class="side">
+        <section class="section">
+          <h2>诊断 claim 的数据结构</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>字段</th>
+                <th>含义</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>claim_id</code></td>
+                <td>诊断结论编号，例如 <code>C001</code>。</td>
+              </tr>
+              <tr>
+                <td><code>claim_type</code></td>
+                <td>诊断类型，例如 <code>surface_hotspot</code>、<code>major_overflow_node</code>。</td>
+              </tr>
+              <tr>
+                <td><code>object_type</code>, <code>object_id</code></td>
+                <td>诊断对象，可能是 cell、node 或 link。</td>
+              </tr>
+              <tr>
+                <td><code>severity</code></td>
+                <td>风险等级，例如 low、moderate、high、critical。</td>
+              </tr>
+              <tr>
+                <td><code>claim_text</code></td>
+                <td>面向阅读的结论性语句。</td>
+              </tr>
+              <tr>
+                <td><code>possible_cause</code></td>
+                <td>规则给出的可能原因标签，例如管网外溢源、局部低洼或集中溢流。</td>
+              </tr>
+              <tr>
+                <td><code>confidence</code></td>
+                <td>当前结论可信度标签。</td>
+              </tr>
+              <tr>
+                <td><code>evidence_ids</code></td>
+                <td>支撑该结论的证据编号，是后续追溯与核查的关键。</td>
+              </tr>
+              <tr>
+                <td><code>status</code>, <code>rule_id</code></td>
+                <td>结论状态和触发规则。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>claim 示例</h2>
+          <pre class="claim-box"><code>{
+  "claim_id": "C001",
+  "claim_type": "surface_hotspot",
+  "object_type": "cell",
+  "object_id": "115176",
+  "severity": "high",
+  "claim_text": "Cell 115176 is a high surface ponding hotspot with 0.520 m maximum depth.",
+  "possible_cause": "local_depression_or_concentrated_overflow",
+  "confidence": "medium",
+  "evidence_ids": ["E_C_002341"],
+  "status": "pending_verification",
+  "rule_id": "surface_hotspot"
+}</code></pre>
+        </section>
+
+        <section class="section">
+          <h2>为什么它叫诊断结论</h2>
+          <ul class="talking">
+            <li>它不是原始数值，而是经过规则解释后的风险判断，例如“地表积水热点”“主要溢流节点”“高负荷管段”。</li>
+            <li>它保留了对象、风险等级、可能原因和结论性语句，已经从“数据描述”变成“工程判断”。</li>
+            <li>它必须绑定 <code>evidence_ids</code>，因此不是大模型自由生成的判断，而是可追溯的 evidence-grounded claim。</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>possible_cause 如何产生</h2>
+          <p class="plain">
+            当前 <code>possible_cause</code> 是根据诊断类型自动赋予的一级原因标签，用来把异常指标转换成工程可读的初步解释；它还不是基于地表-节点-管段-泵站关系证据网推断出的完整成因链。
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>诊断类型</th>
+                <th>possible_cause</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>surface_hotspot</code> 地表积水热点</td>
+                <td><code>local_depression_or_concentrated_overflow</code></td>
+              </tr>
+              <tr>
+                <td><code>long_duration_ponding</code> 长时间积水</td>
+                <td><code>long_duration_surface_ponding</code></td>
+              </tr>
+              <tr>
+                <td><code>major_overflow_node</code> 主要溢流节点</td>
+                <td><code>network_overflow_source</code></td>
+              </tr>
+              <tr>
+                <td><code>high_load_link</code> 高负荷管段</td>
+                <td><code>possible_network_bottleneck</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>confidence 如何理解</h2>
+          <p class="plain">
+            当前诊断仍主要基于扁平化对象证据表，因此 <code>confidence</code> 先作为规则证据强弱的保守标签：有直接 evidence_id 支撑、且指标与风险关系较直接的结论通常标为 <code>medium</code>；证据较弱或只能作为线索的结论可标为 <code>low</code>。如果后续建立立体化关系证据网，可信度可以进一步根据多源证据的一致性、空间邻近性、上下游拓扑关系和时间同步性进行细化。
+          </p>
+        </section>
+      </aside>
+    </section>
+
+    <div class="note">
+      汇报时可以这样说：DiagnosisAgent 当前做的是对象级诊断，它把 evidence_table.csv 中异常的地表元胞、冒溢节点和高负荷管段转化为结构化 claim；下一步可以在此基础上接入地表-节点-管段-泵站的关系证据网，进一步做成因链诊断。
+    </div>
+  </main>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
+        primaryTextColor: "#2f3437",
+        lineColor: "#8f8a82",
+        clusterBkg: "#fbfaf7",
+        clusterBorder: "#d8d1c7",
+        tertiaryColor: "#f3f0ea"
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 28,
+        rankSpacing: 42
+      }
+    });
+  </script>
+</body>
+</html>

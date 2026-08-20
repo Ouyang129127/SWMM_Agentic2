@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>创新点三：证据约束诊断机制</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>创新点三</strong><span>证据约束的洪涝灾害诊断机制</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html">对象创新</a><a href="02-architecture.html">架构创新</a><a href="03-diagnosis.html" aria-current="page">诊断机制</a><a href="04-relation-graph.html">关系证据网</a><a href="05-evaluation.html">评价优化</a><a href="workflow.html">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>不让 LLM 直接吞海量原始结果</h1>
+          <p>一次 SWMM-CA2D 模拟可能产生几十万条时序数据。直接交给大模型会消耗大量 tokens，也容易让结论脱离证据。</p>
+        </div>
+        <span class="kicker">raw data -> evidence -> claim -> audit -> report</span>
+      </section>
+
+      <div class="grid-2">
+        <section class="panel rose">
+          <h2>直接喂给大模型的问题</h2>
+          <p>数据量大、噪声高、对象关系复杂，模型可能抓不住关键风险对象，也可能输出看似合理但无法追溯的自然语言判断。</p>
+        </section>
+        <section class="panel green">
+          <h2>本研究的处理方式</h2>
+          <p>先由确定性工具提取证据，再由 DiagnosisAgent 形成结构化 claim，最后由 VerificationAgent 计算 unsupported rate。</p>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top:18px">
+        <h2>三层结构化数据</h2>
+        <table class="compare">
+          <thead><tr><th>阶段</th><th>结构化文件</th><th>含义</th></tr></thead>
+          <tbody>
+            <tr><td>证据构建</td><td><code>evidence_table.csv</code></td><td>每行代表某个对象、某个指标、某个时间范围和来源文件的一条诊断证据。</td></tr>
+            <tr><td>诊断生成</td><td><code>diagnosis_claims.json</code></td><td>把异常证据转换成地表热点、冒溢节点、高负荷管段等结构化诊断结论。</td></tr>
+            <tr><td>证据核查</td><td><code>verification_report.json</code></td><td>检查每条 claim 是否引用有效 evidence_id，并统计 unsupported rate。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel quote" style="margin-top:18px">
+        <h2>汇报表达</h2>
+        <p>这套机制的价值不是简单“让 AI 看结果”，而是先把模型输出组织成 AI 可读、可查、可解释、低冗余的证据链，再让 AI 基于证据生成报告。</p>
+      </section>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="02-architecture.html"><- 上一页</a>
+      <a href="04-relation-graph.html">下一页：关系证据网 -></a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

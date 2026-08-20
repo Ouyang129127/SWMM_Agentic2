@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VerificationAgent 工作机制流程图</title>
+  <style>
+    :root {
+      --bg: #f3f0ea;
+      --ink: #2f3437;
+      --muted: #6d7370;
+      --line: #d8d1c7;
+      --card: #fbfaf7;
+      --blue: #c7d2d0;
+      --blue-line: #7c8e8b;
+      --green: #d8ddcf;
+      --green-line: #7d886f;
+      --amber: #ded6bd;
+      --amber-line: #a4966e;
+      --purple: #d9d0df;
+      --purple-line: #9586a1;
+      --rose: #d9c8c0;
+      --rose-line: #9a7f73;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .page {
+      max-width: 1700px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 26px;
+      box-shadow: 0 16px 42px rgba(73, 67, 59, 0.12);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 1060px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .tag {
+      border: 1px solid var(--rose-line);
+      background: var(--rose);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .mermaid-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f8f6f1;
+    }
+
+    .mermaid {
+      min-width: 720px;
+    }
+
+    .side {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfaf7;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    th,
+    td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 7px;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f5f2ec;
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      color: #2f3437;
+      background: #eee9df;
+      border-radius: 4px;
+      padding: 1px 4px;
+    }
+
+    .json-box {
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--amber-line);
+      border-radius: 8px;
+      background: var(--amber);
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .plain {
+      margin: 0 0 10px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .talking {
+      margin: 0;
+      padding-left: 19px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .talking li + li {
+      margin-top: 5px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 13px 15px;
+      border-left: 4px solid var(--rose-line);
+      background: var(--rose);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    @media (max-width: 1120px) {
+      .layout,
+      .side,
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .tag {
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>VerificationAgent 工作机制：从诊断 claim 到证据核查</h1>
+        <p class="subtitle">
+          VerificationAgent 的核心任务是检查每条诊断 claim 是否真的被 evidence_table.csv 支撑，并把无证据或证据不匹配的结论显式计入 unsupported rate。
+        </p>
+      </div>
+      <div class="tag">输入 diagnosis_claims.json + evidence_table.csv，输出 verification_report.json</div>
+    </header>
+
+    <section class="layout">
+      <div class="mermaid-wrap" aria-label="VerificationAgent workflow flowchart">
+        <pre class="mermaid">
+flowchart TD
+    A["DiagnosisAgent 输出<br/>diagnosis_claims.json<br/>claim_id / claim_type / object_id / evidence_ids"] --> C["VerificationAgent<br/>逐条读取诊断 claim"]
+    B["EvidenceBuilderAgent 输出<br/>evidence_table.csv<br/>evidence_id / object_id / metric_name / value"] --> C
+    R["核查规则<br/>verification_rules.json<br/>不同 claim_type 对应必需指标"] --> C
+
+    C --> D1["检查 1<br/>claim 是否填写 evidence_ids"]
+    C --> D2["检查 2<br/>evidence_id 是否能在证据表中找到"]
+    C --> D3["检查 3<br/>引用证据的 metric_name 是否匹配 claim_type"]
+    C --> D4["检查 4<br/>claim object_id 是否与证据 object_id 对应"]
+    C --> D5["检查 5<br/>引用证据值是否为正值"]
+
+    D1 --> E["汇总问题 issues"]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    D5 --> E
+
+    E --> F1["无问题<br/>verification_status = supported"]
+    E --> F2["有指标/对象等轻度问题<br/>verification_status = partially_supported"]
+    E --> F3["缺少 evidence_ids 或找不到 evidence_id<br/>verification_status = unsupported"]
+    E --> F4["预留状态<br/>verification_status = uncertain"]
+
+    F1 --> G["claim_checks<br/>每条 claim 的核查结果"]
+    F2 --> G
+    F3 --> G
+    F4 --> G
+
+    G --> H["summary<br/>total_claims / supported / partially_supported / unsupported / uncertain"]
+    H --> I["unsupported_rate<br/>unsupported / total_claims"]
+    G --> J["输出 verification_report.json<br/>完整核查报告"]
+    I --> K["输出 unsupported_rate.txt<br/>单独保存无证据结论比例"]
+
+    J --> L["ReportAgent<br/>只使用 supported 或 partially_supported 的结论生成报告"]
+    K --> M["论文评价指标<br/>量化 Agent 的无证据输出风险"]
+
+    classDef input fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.1px,color:#2f3437;
+    classDef rule fill:#d9d0df,stroke:#9586a1,stroke-width:1.1px,color:#2f3437;
+    classDef check fill:#d8ddcf,stroke:#7d886f,stroke-width:1.1px,color:#2f3437;
+    classDef status fill:#ded6bd,stroke:#a4966e,stroke-width:1.1px,color:#2f3437;
+    classDef output fill:#d9c8c0,stroke:#9a7f73,stroke-width:1.1px,color:#2f3437;
+
+    class A,B input;
+    class R,C rule;
+    class D1,D2,D3,D4,D5,E check;
+    class F1,F2,F3,F4,G,H status;
+    class I,J,K,L,M output;
+        </pre>
+      </div>
+
+      <aside class="side">
+        <section class="section">
+          <h2>生成的结构化文件</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>文件</th>
+                <th>作用</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>verification/verification_report.json</code></td>
+                <td>完整核查报告，记录总体统计和每条 claim 的核查状态。</td>
+              </tr>
+              <tr>
+                <td><code>verification/unsupported_rate.txt</code></td>
+                <td>单独保存无证据结论比例，便于论文实验统计和方法对比。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>verification_report.json 数据结构</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>字段</th>
+                <th>含义</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>schema_name</code>, <code>schema_version</code></td>
+                <td>标识这是 SWMM-CA2D 诊断核查报告及其版本。</td>
+              </tr>
+              <tr>
+                <td><code>run_id</code>, <code>model_name</code></td>
+                <td>说明核查对应哪次模拟和哪个模型。</td>
+              </tr>
+              <tr>
+                <td><code>summary</code></td>
+                <td>统计总 claim 数、supported、partially_supported、unsupported、uncertain 和 unsupported_rate。</td>
+              </tr>
+              <tr>
+                <td><code>claim_checks</code></td>
+                <td>逐条记录每个 claim 的核查状态、检查过的 evidence_id 和发现的问题。</td>
+              </tr>
+              <tr>
+                <td><code>rules_file</code></td>
+                <td>记录本次核查使用的规则文件路径。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>核查规则映射</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>claim_type</th>
+                <th>必须引用的证据指标</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>surface_hotspot</code></td>
+                <td><code>max_depth</code></td>
+              </tr>
+              <tr>
+                <td><code>long_duration_ponding</code></td>
+                <td><code>ponding_duration</code></td>
+              </tr>
+              <tr>
+                <td><code>major_overflow_node</code></td>
+                <td><code>total_flooding_volume</code> 或 <code>max_flooding_flow</code></td>
+              </tr>
+              <tr>
+                <td><code>high_load_link</code></td>
+                <td><code>max_flow</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section">
+          <h2>JSON 示例</h2>
+          <pre class="json-box"><code>{
+  "summary": {
+    "total_claims": 40,
+    "supported": 40,
+    "partially_supported": 0,
+    "unsupported": 0,
+    "uncertain": 0,
+    "unsupported_rate": 0.0
+  },
+  "claim_checks": [
+    {
+      "claim_id": "C001",
+      "verification_status": "supported",
+      "checked_evidence_ids": ["E_C_002341"],
+      "issues": []
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section class="section">
+          <h2>汇报时的解释</h2>
+          <ul class="talking">
+            <li>DiagnosisAgent 负责生成结论，VerificationAgent 负责检查结论是否真的有证据。</li>
+            <li>核查不是看文字是否合理，而是检查 claim 和 evidence_id、指标类型、对象编号之间能不能对应上。</li>
+            <li><code>unsupported_rate</code> 把“无证据输出”从隐藏的语言问题变成可计算的评价指标。</li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+
+    <div class="note">
+      可以这样总结：VerificationAgent 是诊断机制里的“证据审计员”。它不负责发现新的内涝点，而是保证已有诊断 claim 不能脱离证据表自由发挥。
+    </div>
+  </main>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
+        primaryTextColor: "#2f3437",
+        lineColor: "#8f8a82",
+        clusterBkg: "#fbfaf7",
+        clusterBorder: "#d8d1c7",
+        tertiaryColor: "#f3f0ea"
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 28,
+        rankSpacing: 42
+      }
+    });
+  </script>
+</body>
+</html>

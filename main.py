@@ -33,6 +33,7 @@ from tools import (
     build_run_evidence,
     create_demo_ca2d_model,
     diagnose_run,
+    generate_run_report,
     is_runnable_inp,
     list_rainfall_events,
     list_swmm_2d_models,
@@ -543,6 +544,15 @@ async def WorkflowStageRunner(
     )
 
 
+async def ReportAgent(
+    model_name: Annotated[str, "Model project name under project-root models/."],
+    run_id: Annotated[str, "Run ID under models/<model_name>/runs/. The run must be VERIFIED_READY."],
+    message: Annotated[str, "User-facing report or explanation request."] = "",
+) -> str:
+    """Final user-facing ReportAgent: turn verified claims and evidence into plain language."""
+    return generate_run_report(model_name=model_name, run_id=run_id, message=message)
+
+
 async def explain_validation_evidence(user_message: str, evidence: str) -> str:
     """Explain fixed-validator evidence without deciding project status in the web layer."""
     from llm import deepseekV3
@@ -630,6 +640,7 @@ async def run_web_orchestrator_agent_turn(task_prompt: str, planning_only: bool 
         DiagnosisAgent,
         VerificationAgent,
         WorkflowStageRunner,
+        ReportAgent,
         CodeRunner,
         DataAnalyzer,
     ]
@@ -705,6 +716,7 @@ async def LegacyTaskExecutor(
             diagnose_run,
             verify_run_diagnosis,
             run_workflow_stage,
+            generate_run_report,
             run_swmm_2d_from_flooding,
             run_swmm_2d_project_from_flooding,
             run_swmm_2d_project_from_rainfall,
@@ -734,6 +746,7 @@ async def main(task_description):
             DiagnosisAgent,
             VerificationAgent,
             WorkflowStageRunner,
+            ReportAgent,
             CodeRunner,
             DataAnalyzer,
         ],

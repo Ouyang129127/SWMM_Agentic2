@@ -1,0 +1,36 @@
+OBJECT TYPE DISTRIBUTION ANALYSIS
+==================================================
+
+Object Type Counts:
+--------------------
+cell: 239414
+node: 39563
+link: 19754
+
+Total evidence records: 298731
+
+SPATIAL ASSOCIATION ANALYSIS
+==================================================
+
+Potential spatial relationship columns found:
+- evidence_id
+
+- run_id
+
+- object_id
+
+Cross-references between object types:
+----------------------------------------
+No explicit cross-references found between cell, node, and link types.
+
+OBJECT_ID ANALYSIS
+--------------------
+cell object_id patterns: 119707 unique IDs
+  Sample IDs: ['1', '2', '3']
+
+node object_id patterns: 9893 unique IDs
+  Sample IDs: ['017549YSG002', '017549YSG005', '017549YSG006']
+
+link object_id patterns: 9877 unique IDs
+  Sample IDs: ['1', '101798', '101799']
+

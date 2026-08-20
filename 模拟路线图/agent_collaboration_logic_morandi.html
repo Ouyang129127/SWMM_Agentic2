@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM-CA2D Agentic Workflow - Morandi</title>
+  <style>
+    :root {
+      --ink: #2f3437;
+      --muted: #6e7375;
+      --paper: #f4f1ec;
+      --panel: #fbfaf7;
+      --line: #d8d1c7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .wrap {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 16px 42px rgba(73, 67, 59, 0.12);
+      overflow-x: auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    p {
+      max-width: 980px;
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .mermaid {
+      min-width: 1320px;
+      padding: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SWMM-CA2D Agentic 洪涝灾害成因分析工作链路图</h1>
+    <p>新版图按照当前 SWMM-Agentic2 的真实 Agent 边界组织：以 StatefulOrchestrator 控制状态转移，以 Scenario、Simulation、EvidenceBuilder、Diagnosis、Verification 和 Report 构成从情景准备到证据追溯的闭环；Benchmark 作为论文评价模块单独承接已核查成果。</p>
+
+    <pre class="mermaid">
+flowchart TD
+    U["用户 / 专家任务<br/>降雨情景、模型检查、内涝诊断、解释需求"] --> ORCH["StatefulOrchestrator<br/>任务理解、阶段调度、状态合法性控制"]
+    ORCH --> STATE["workflow_state.json<br/>START / SCENARIO_READY / RUN_READY / EVIDENCE_READY / DIAGNOSIS_READY / VERIFIED_READY"]
+
+    STATE --> SCA["ScenarioAgent<br/>模型要素检查、降雨事件识别、情景请求生成"]
+    SCA --> REQ["scenario_request.json<br/>model_name, event_name, scenario_name, run_id"]
+
+    REQ --> SIM["SimulationAgent<br/>固定 SWMM -> CA2D 耦合模拟管线"]
+    SIM --> SWMM["SWMM 一维排水管网<br/>节点、管段、子汇水区、溢流过程"]
+    SIM --> CA2D["CA2D 二维地表元胞<br/>积水深度、持续时间、空间热点"]
+
+    SWMM --> RAW1["SWMM 标准输出<br/>node_flooding.tsv, nodes.tsv, links.tsv"]
+    CA2D --> RAW2["CA2D 标准输出<br/>surface_depth.tsv, max/final depth maps"]
+    SIM --> RUN["RUN_READY<br/>summary.json, run.yaml, 标准运行目录"]
+
+    RUN --> EBA["EvidenceBuilderAgent<br/>结构化证据构建"]
+    RAW1 --> EBA
+    RAW2 --> EBA
+    EBA --> EVID["evidence_table.csv<br/>evidence_id, object_id, metric, value, time, source_file"]
+    EBA --> ESUM["evidence_summary.json<br/>证据数量、指标类型、来源文件"]
+
+    EVID --> DIA["DiagnosisAgent<br/>热点识别、风险排序、可能成因判断"]
+    DIA --> CLAIMS["diagnosis_claims.json<br/>claim_id, severity, possible_cause, evidence_ids"]
+    DIA --> RISK["risk_ranking.csv<br/>内涝热点、溢流节点、高负荷管段排序"]
+
+    CLAIMS --> VER["VerificationAgent<br/>证据引用核查、无证据结论拦截"]
+    EVID --> VER
+    VER --> VREP["verification_report.json<br/>supported / partially_supported / unsupported"]
+    VER --> RATE["unsupported_rate.txt<br/>无证据结论比例"]
+
+    VREP --> REP["ReportAgent<br/>证据约束解释报告、单点成因分析"]
+    RATE --> REP
+    EVID --> REP
+    RISK --> REP
+    REP --> OUT["Evidence-grounded Report<br/>结论-证据-对象-时段-来源文件可追溯"]
+
+    VREP --> BENCH["Benchmark / 论文评价模块<br/>task success, F1, Spearman, unsupported rate"]
+    RATE --> BENCH
+    OUT --> PAPER["论文 Results 与图表<br/>Agent 架构、证据链、诊断效果、消融对比"]
+    BENCH --> PAPER
+
+    classDef user fill:#d8cfc4,stroke:#8f8174,stroke-width:1.2px,color:#2f3437;
+    classDef orchestrator fill:#b8c0b2,stroke:#75816f,stroke-width:1.2px,color:#2f3437;
+    classDef state fill:#ded6bd,stroke:#a4966e,stroke-width:1.2px,color:#2f3437;
+    classDef agent fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.2px,color:#2f3437;
+    classDef tool fill:#d5c5bd,stroke:#9a7f73,stroke-width:1.2px,color:#2f3437;
+    classDef evidence fill:#d9d0df,stroke:#9586a1,stroke-width:1.2px,color:#2f3437;
+    classDef output fill:#c9c4b8,stroke:#888171,stroke-width:1.2px,color:#2f3437;
+
+    class U user;
+    class ORCH orchestrator;
+    class STATE,RUN state;
+    class SCA,SIM,EBA,DIA,VER,REP agent;
+    class SWMM,CA2D,RAW1,RAW2,REQ tool;
+    class EVID,ESUM,CLAIMS,RISK,VREP,RATE evidence;
+    class OUT,BENCH,PAPER output;
+    </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
+        primaryTextColor: "#2f3437",
+        lineColor: "#8f8a82",
+        textColor: "#2f3437",
+        mainBkg: "#fbfaf7",
+        clusterBkg: "#fbfaf7",
+        clusterBorder: "#d8d1c7"
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+        nodeSpacing: 34,
+        rankSpacing: 52,
+        padding: 16
+      }
+    });
+  </script>
+</body>
+</html>
