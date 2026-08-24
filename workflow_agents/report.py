@@ -27,6 +27,8 @@ def _fmt_value(value: Any, unit: str = "") -> str:
         number = float(value)
     except (TypeError, ValueError):
         return f"{value} {unit}".strip()
+    if unit == "ratio":
+        return f"{number:.3f}"
     if abs(number) >= 100:
         text = f"{number:.1f}"
     elif abs(number) >= 10:
@@ -97,6 +99,54 @@ def _top_rows(risk_ranking: pd.DataFrame, claim_type: str, limit: int = 5) -> pd
     return subset.sort_values("value", ascending=False).head(limit)
 
 
+def _claim_type_title(claim_type: str) -> str:
+    return {
+        "surface_hotspot": "地表积水热点",
+        "long_duration_ponding": "长时间积水区域",
+        "major_overflow_node": "主要冒溢节点",
+        "high_load_link": "高负荷管段",
+        "unstable_flow_direction_link": "流向不稳定管段",
+    }.get(claim_type, claim_type)
+
+
+def _metric_label(metric_name: str) -> str:
+    return {
+        "max_depth": "最大地表积水深度",
+        "ponding_duration": "积水持续时间",
+        "total_flooding_volume": "累计溢流量",
+        "max_flooding_flow": "最大溢流流量",
+        "flooding_duration": "节点溢流持续时间",
+        "max_node_depth": "节点最大水深",
+        "max_fullness": "最大充满度",
+        "max_flow": "最大绝对流量",
+        "max_link_depth": "管段最大水深",
+        "flow_direction_changes": "流向改变次数",
+    }.get(metric_name, metric_name)
+
+
+def _claim_status_lookup(verification: dict[str, Any]) -> dict[str, str]:
+    return {
+        str(item.get("claim_id")): str(item.get("verification_status", "uncertain"))
+        for item in verification.get("claim_checks", [])
+    }
+
+
+def _append_claim_rows(lines: list[str], rows: pd.DataFrame, verification: dict[str, Any]) -> None:
+    if rows.empty:
+        lines.append("- 未生成该类型诊断结论。")
+        return
+    status_by_claim = _claim_status_lookup(verification)
+    for _, row in rows.iterrows():
+        claim_id = str(row.get("claim_id", ""))
+        metric_name = str(row.get("metric_name", ""))
+        status = status_by_claim.get(claim_id, "uncertain")
+        lines.append(
+            f"- `{claim_id}` {row.get('object_type')} `{row.get('object_id')}`："
+            f"{_metric_label(metric_name)} {_fmt_value(row.get('value'), str(row.get('unit', '')))}，"
+            f"风险等级 `{row.get('severity', '')}`，核查 `{status}`，证据 `{row.get('evidence_ids', '')}`。"
+        )
+
+
 def _claim_evidence_lines(claim: dict[str, Any], evidence_lookup: dict[str, dict[str, Any]]) -> list[str]:
     lines = []
     for evidence_id in claim.get("evidence_ids", []):
@@ -154,13 +204,27 @@ def _infer_point_causes(claim: dict[str, Any], evidence: pd.DataFrame) -> list[s
                 f"本次运行中高溢流节点 `{top['object_id']}` 的总溢流体积为 "
                 f"{_fmt_value(top['value'], str(top.get('unit', '')))}，提示地表积水可能与管网节点外溢叠加有关。"
             )
-        link_load = evidence[(evidence["object_type"] == "link") & (evidence["metric_name"] == "max_flow")]
+        link_load = evidence[(evidence["object_type"] == "link") & (evidence["metric_name"] == "max_fullness")]
+        if link_load.empty:
+            link_load = evidence[(evidence["object_type"] == "link") & (evidence["metric_name"] == "max_flow")]
         link_load = link_load.sort_values("value", ascending=False).head(3)
         if not link_load.empty and float(link_load.iloc[0]["value"]) > 0:
             top = link_load.iloc[0]
+            label = "最大充满度" if str(top.get("metric_name", "")) == "max_fullness" else "最大绝对流量"
             causes.append(
-                f"高负荷管段 `{top['object_id']}` 的最大绝对流量为 "
+                f"高负荷管段 `{top['object_id']}` 的{label}为 "
                 f"{_fmt_value(top['value'], str(top.get('unit', '')))}，可作为排水系统压力较高的旁证。"
+            )
+        direction_changes = evidence[
+            (evidence["object_type"] == "link")
+            & (evidence["metric_name"] == "flow_direction_changes")
+        ]
+        direction_changes = direction_changes.sort_values("value", ascending=False).head(3)
+        if not direction_changes.empty and float(direction_changes.iloc[0]["value"]) > 0:
+            top = direction_changes.iloc[0]
+            causes.append(
+                f"管段 `{top['object_id']}` 在模拟过程中发生 "
+                f"{_fmt_value(top['value'], str(top.get('unit', '')))} 次流向改变，提示可能存在顶托、回流或水力震荡线索。"
             )
     if not causes:
         causes.append(f"该对象 `{object_id}` 的诊断结论已有证据引用，但当前证据不足以继续细分成更具体的工程原因。")
@@ -172,11 +236,14 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
     run_root, _state, summary, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
     claims = _supported_claims(diagnosis, verification)
     verification_summary = verification.get("summary", {})
+    metric_counts = evidence["metric_name"].value_counts().to_dict()
+    claim_counts = risk_ranking["claim_type"].value_counts().to_dict() if not risk_ranking.empty else {}
 
     surface = _top_rows(risk_ranking, "surface_hotspot", limit=5)
     ponding = _top_rows(risk_ranking, "long_duration_ponding", limit=5)
     overflow = _top_rows(risk_ranking, "major_overflow_node", limit=5)
     link_load = _top_rows(risk_ranking, "high_load_link", limit=5)
+    unstable_direction = _top_rows(risk_ranking, "unstable_flow_direction_link", limit=5)
 
     lines = [
         "# SWMM-CA2D 内涝分析报告",
@@ -193,10 +260,24 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
         f"- 降雨事件：`{summary.get('event_name', '')}`",
         f"- 情景：`{summary.get('scenario_name', '')}`",
         f"- 证据数量：{len(evidence)} 条",
+        f"- 诊断结论数量：{len(claims)} 条",
         "",
+        "## 证据与诊断概况",
+        "",
+        "本次报告使用的结构化证据包括：",
+    ]
+    for metric_name, count in sorted(metric_counts.items()):
+        lines.append(f"- `{metric_name}`（{_metric_label(str(metric_name))}）：{count} 条。")
+    lines.extend(["", "已核查诊断结论类型包括："])
+    for claim_type, count in sorted(claim_counts.items()):
+        lines.append(f"- `{claim_type}`（{_claim_type_title(str(claim_type))}）：{count} 条。")
+    lines.extend(
+        [
+            "",
         "## 主要风险信号",
         "",
-    ]
+        ]
+    )
 
     if not surface.empty:
         lines.append("地表积水热点主要集中在以下网格：")
@@ -218,7 +299,41 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
     if not link_load.empty:
         lines.extend(["", "管段负荷方面，以下管段可作为排水压力较高的线索："])
         for _, row in link_load.iterrows():
-            lines.append(f"- Link `{row['object_id']}`：最大绝对流量 {_fmt_value(row['value'], str(row.get('unit', '')))}。")
+            label = "最大充满度" if str(row.get("metric_name", "")) == "max_fullness" else "最大绝对流量"
+            lines.append(f"- Link `{row['object_id']}`：{label} {_fmt_value(row['value'], str(row.get('unit', '')))}。")
+
+    if not unstable_direction.empty:
+        lines.extend(["", "管段流向稳定性方面，以下管段存在频繁流向改变信号："])
+        for _, row in unstable_direction.iterrows():
+            lines.append(f"- Link `{row['object_id']}`：流向改变 {_fmt_value(row['value'], str(row.get('unit', '')))} 次。")
+
+    lines.extend(["", "## 完整诊断清单", ""])
+    for claim_type in [
+        "surface_hotspot",
+        "long_duration_ponding",
+        "major_overflow_node",
+        "high_load_link",
+        "unstable_flow_direction_link",
+    ]:
+        rows = risk_ranking[risk_ranking["claim_type"] == claim_type].copy()
+        if not rows.empty:
+            rows = rows.sort_values("value", ascending=False)
+        lines.extend([f"### {_claim_type_title(claim_type)}", ""])
+        _append_claim_rows(lines, rows, verification)
+        lines.append("")
+
+    lines.extend(
+        [
+            "## 证据核查结果",
+            "",
+            f"- 总诊断结论：{verification_summary.get('total_claims', 0)} 条。",
+            f"- supported：{verification_summary.get('supported', 0)} 条。",
+            f"- partially supported：{verification_summary.get('partially_supported', 0)} 条。",
+            f"- unsupported：{verification_summary.get('unsupported', 0)} 条。",
+            f"- uncertain：{verification_summary.get('uncertain', 0)} 条。",
+            f"- unsupported rate：{verification_summary.get('unsupported_rate', 0):.3f}。",
+        ]
+    )
 
     lines.extend(
         [
@@ -226,7 +341,7 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
             "## 综合判断",
             "",
             "本次结果显示，内涝风险应优先从地表积水热点、节点溢流贡献和管段高负荷三条证据线综合理解。"
-            "其中，地表热点说明积水空间位置，节点溢流说明管网向地表释放水量的位置，管段高负荷则提示排水系统在事件过程中的压力状态。",
+            "其中，地表热点说明积水空间位置，节点溢流说明管网向地表释放水量的位置，管段高负荷和流向不稳定则提示排水系统在事件过程中的压力状态与水力扰动。",
             "",
             "## 使用边界",
             "",

@@ -30,6 +30,24 @@ def _severity_for_depth(value: float, rules: dict[str, Any]) -> str:
     return "low"
 
 
+def _severity_for_fullness(value: float, rules: dict[str, Any]) -> str:
+    load_rules = rules.get("link_load", {})
+    if value >= float(load_rules.get("fullness_critical", 0.95)):
+        return "critical"
+    if value >= float(load_rules.get("fullness_high", 0.80)):
+        return "high"
+    return "moderate"
+
+
+def _severity_for_direction_changes(value: float, rules: dict[str, Any]) -> str:
+    direction_rules = rules.get("flow_direction", {})
+    if value >= float(direction_rules.get("critical_changes", 6)):
+        return "critical"
+    if value >= float(direction_rules.get("frequent_changes", 3)):
+        return "high"
+    return "moderate"
+
+
 def _claim_text(claim_type: str, object_id: str, severity: str, value: float, unit: str) -> str:
     if claim_type == "surface_hotspot":
         return f"Cell {object_id} is a {severity} surface ponding hotspot with {value:.3f} {unit} maximum depth."
@@ -38,7 +56,11 @@ def _claim_text(claim_type: str, object_id: str, severity: str, value: float, un
     if claim_type == "major_overflow_node":
         return f"Node {object_id} is a major overflow node with {value:.3f} {unit} total flooding volume."
     if claim_type == "high_load_link":
+        if unit == "ratio":
+            return f"Link {object_id} is a {severity} high-load link with {value:.3f} maximum fullness ratio."
         return f"Link {object_id} is a high-load link with {value:.3f} {unit} maximum absolute flow."
+    if claim_type == "unstable_flow_direction_link":
+        return f"Link {object_id} has unstable flow direction with {value:.0f} flow direction changes."
     return f"{object_id} has a rule-triggered diagnostic signal."
 
 
@@ -115,14 +137,41 @@ def diagnose_run_from_evidence(model_name: str, run_id: str) -> dict[str, Any]:
     for _, row in overflow.iterrows():
         add_claim(row, "major_overflow_node", "high", "network_overflow_source")
 
-    link_top_n = int(rules.get("link_load", {}).get("top_n", top_n))
+    link_rules = rules.get("link_load", {})
+    link_top_n = int(link_rules.get("top_n", top_n))
+    fullness_high = float(link_rules.get("fullness_high", 0.80))
     high_load_links = evidence[
         (evidence["object_type"] == "link")
-        & (evidence["metric_name"] == "max_flow")
-        & (evidence["value"] > 0)
+        & (evidence["metric_name"] == "max_fullness")
+        & (evidence["value"] >= fullness_high)
     ].sort_values(["value", "rank"], ascending=[False, True]).head(link_top_n)
     for _, row in high_load_links.iterrows():
-        add_claim(row, "high_load_link", "moderate", "possible_network_bottleneck", confidence="low")
+        add_claim(row, "high_load_link", _severity_for_fullness(float(row["value"]), rules), "possible_network_bottleneck")
+
+    if high_load_links.empty:
+        high_load_links = evidence[
+            (evidence["object_type"] == "link")
+            & (evidence["metric_name"] == "max_flow")
+            & (evidence["value"] > 0)
+        ].sort_values(["value", "rank"], ascending=[False, True]).head(link_top_n)
+        for _, row in high_load_links.iterrows():
+            add_claim(row, "high_load_link", "moderate", "possible_network_bottleneck", confidence="low")
+
+    direction_rules = rules.get("flow_direction", {})
+    frequent_changes = float(direction_rules.get("frequent_changes", 3))
+    direction_top_n = int(direction_rules.get("top_n", top_n))
+    unstable_direction_links = evidence[
+        (evidence["object_type"] == "link")
+        & (evidence["metric_name"] == "flow_direction_changes")
+        & (evidence["value"] >= frequent_changes)
+    ].sort_values(["value", "rank"], ascending=[False, True]).head(direction_top_n)
+    for _, row in unstable_direction_links.iterrows():
+        add_claim(
+            row,
+            "unstable_flow_direction_link",
+            _severity_for_direction_changes(float(row["value"]), rules),
+            "possible_backwater_or_hydraulic_oscillation",
+        )
 
     payload = {
         "schema_name": DIAGNOSIS_SCHEMA_NAME,

@@ -14,6 +14,13 @@
     "significant_volume_m3": 10.0
   },
   "link_load": {
+    "fullness_high": 0.8,
+    "fullness_critical": 0.95,
+    "top_n": 10
+  },
+  "flow_direction": {
+    "frequent_changes": 3,
+    "critical_changes": 6,
     "top_n": 10
   },
   "top_n": 10

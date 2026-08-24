@@ -14,6 +14,9 @@ from .state import resolve_run_root
 
 POSITIVE_FLOW_LS = 1e-9
 POSITIVE_DEPTH_M = 0.005
+FULLNESS_HIGH_RATIO = 0.80
+FLOW_DIRECTION_CHANGE_THRESHOLD = 3
+FLOW_DIRECTION_EPS_LS = 1e-6
 
 
 def _load_summary(run_root: Path) -> dict[str, Any]:
@@ -67,6 +70,58 @@ def _rank_metric(rows: list[dict[str, Any]], metric_name: str, descending: bool 
     subset.sort(key=lambda row: float(row["value"]), reverse=descending)
     for rank, row in enumerate(subset, start=1):
         row["rank"] = rank
+
+
+def _flow_direction_changes(flow: pd.Series) -> int:
+    signs = []
+    for value in flow:
+        if value > FLOW_DIRECTION_EPS_LS:
+            sign = 1
+        elif value < -FLOW_DIRECTION_EPS_LS:
+            sign = -1
+        else:
+            continue
+        if not signs or signs[-1] != sign:
+            signs.append(sign)
+    if len(signs) < 2:
+        return 0
+    return len(signs) - 1
+
+
+def _parse_link_full_depths(run_root: Path) -> dict[str, float]:
+    """Read SWMM [XSECTIONS] Geom1 as the full-depth reference for each link."""
+    candidates = [
+        run_root / "swmm" / "model_with_event.inp",
+        run_root.parents[1] / "swmm" / "scenarios" / "baseline" / "Model.inp",
+        run_root.parents[1] / "swmm" / "scenarios" / "baseline" / "model.inp",
+        run_root.parents[1] / "swmm" / "Model.inp",
+        run_root.parents[1] / "swmm" / "model.inp",
+    ]
+    inp_path = next((path for path in candidates if path.exists()), None)
+    if inp_path is None:
+        return {}
+
+    full_depths: dict[str, float] = {}
+    in_xsections = False
+    for raw_line in inp_path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("["):
+            in_xsections = line.upper() == "[XSECTIONS]"
+            continue
+        if not in_xsections or line.startswith(";"):
+            continue
+        parts = line.split()
+        if len(parts) < 3:
+            continue
+        try:
+            full_depth = float(parts[2])
+        except ValueError:
+            continue
+        if full_depth > 0:
+            full_depths[str(parts[0])] = full_depth
+    return full_depths
 
 
 def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
@@ -133,8 +188,10 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         rows.append(row)
 
     links = _read_tsv(artifacts.swmm_links, {"link_id", "flow_Ls", "depth_m", "date", "time"})
+    link_full_depths = _parse_link_full_depths(run_root)
     links["DateTime"] = _time_columns(links)
-    links["flow_Ls"] = pd.to_numeric(links["flow_Ls"], errors="coerce").fillna(0.0).abs()
+    links["signed_flow_Ls"] = pd.to_numeric(links["flow_Ls"], errors="coerce").fillna(0.0)
+    links["flow_Ls"] = links["signed_flow_Ls"].abs()
     links["depth_m"] = pd.to_numeric(links["depth_m"], errors="coerce").fillna(0.0)
     for link_id, group in links.groupby("link_id"):
         for metric, col, unit in [("max_flow", "flow_Ls", "L/s"), ("max_link_depth", "depth_m", "m")]:
@@ -151,6 +208,40 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
                     "rank": "",
                     "threshold": 0.0,
                     "exceedance_flag": bool(value > 0.0),
+                }
+            )
+            rows.append(row)
+        direction_changes = _flow_direction_changes(group.sort_values("DateTime")["signed_flow_Ls"])
+        row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, "flow_direction_changes")
+        row.update(
+            {
+                "value": float(direction_changes),
+                "unit": "count",
+                "time_start": pd.Timestamp(group["DateTime"].min()).isoformat(sep=" "),
+                "time_end": pd.Timestamp(group["DateTime"].max()).isoformat(sep=" "),
+                "duration_minutes": 0.0,
+                "rank": "",
+                "threshold": FLOW_DIRECTION_CHANGE_THRESHOLD,
+                "exceedance_flag": bool(direction_changes >= FLOW_DIRECTION_CHANGE_THRESHOLD),
+            }
+        )
+        rows.append(row)
+        full_depth = link_full_depths.get(str(link_id))
+        if full_depth:
+            fullness = (group["depth_m"] / full_depth).clip(lower=0.0)
+            idx = fullness.idxmax()
+            max_fullness = float(fullness.loc[idx])
+            row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, "max_fullness")
+            row.update(
+                {
+                    "value": max_fullness,
+                    "unit": "ratio",
+                    "time_start": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
+                    "time_end": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
+                    "duration_minutes": 0.0,
+                    "rank": "",
+                    "threshold": FULLNESS_HIGH_RATIO,
+                    "exceedance_flag": bool(max_fullness >= FULLNESS_HIGH_RATIO),
                 }
             )
             rows.append(row)
@@ -193,6 +284,8 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         "max_node_depth",
         "max_flow",
         "max_link_depth",
+        "max_fullness",
+        "flow_direction_changes",
         "max_depth",
         "ponding_duration",
     ]:
