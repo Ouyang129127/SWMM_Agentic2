@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>本体论启发的内涝关系证据网三层结构</title>
+  <style>
+    :root {
+      --paper: #f4f1eb;
+      --ink: #3f4542;
+      --muted: #6f7772;
+      --line: #c7c0b5;
+      --object: #b9c7bd;
+      --object-dark: #718878;
+      --relation: #c8b6a6;
+      --relation-dark: #8d7565;
+      --evidence: #aeb9c7;
+      --evidence-dark: #69788c;
+      --risk: #c99f9b;
+      --risk-dark: #8f6662;
+      --cream: #faf8f3;
+      --shadow: rgba(63, 69, 66, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(185, 199, 189, 0.28), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(174, 185, 199, 0.28), transparent 34rem),
+        var(--paper);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 34px 0 42px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 26px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.12;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .tagline {
+      justify-self: end;
+      max-width: 380px;
+      padding: 16px 18px;
+      border: 1px solid rgba(199, 192, 181, 0.8);
+      border-radius: 8px;
+      background: rgba(250, 248, 243, 0.66);
+      box-shadow: 0 12px 28px var(--shadow);
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .tagline strong {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .overview {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin: 24px 0;
+    }
+
+    .overview::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 13%;
+      right: 13%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--line), var(--line), transparent);
+      z-index: 0;
+    }
+
+    .layer-card {
+      position: relative;
+      z-index: 1;
+      min-height: 250px;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid rgba(199, 192, 181, 0.9);
+      background: rgba(250, 248, 243, 0.9);
+      box-shadow: 0 14px 32px var(--shadow);
+    }
+
+    .layer-card.object {
+      border-top: 8px solid var(--object);
+    }
+
+    .layer-card.relation {
+      border-top: 8px solid var(--relation);
+    }
+
+    .layer-card.evidence {
+      border-top: 8px solid var(--evidence);
+    }
+
+    .layer-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .object .layer-label {
+      color: var(--object-dark);
+    }
+
+    .relation .layer-label {
+      color: var(--relation-dark);
+    }
+
+    .evidence .layer-label {
+      color: var(--evidence-dark);
+    }
+
+    h2 {
+      margin: 0 0 9px;
+      font-size: 24px;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    .card-text {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(244, 241, 235, 0.9);
+      border: 1px solid rgba(199, 192, 181, 0.85);
+      color: var(--ink);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.1fr 0.95fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .detail-panel {
+      padding: 20px;
+      border: 1px solid rgba(199, 192, 181, 0.88);
+      border-radius: 8px;
+      background: rgba(250, 248, 243, 0.72);
+    }
+
+    .detail-panel h3 {
+      margin: 0 0 14px;
+      font-size: 21px;
+      letter-spacing: 0;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 102px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(199, 192, 181, 0.65);
+    }
+
+    .item:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .item b {
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .item span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .logic-map {
+      margin-top: 24px;
+      padding: 24px;
+      border: 1px solid rgba(199, 192, 181, 0.9);
+      border-radius: 8px;
+      background: rgba(250, 248, 243, 0.78);
+      box-shadow: 0 14px 32px var(--shadow);
+    }
+
+    .logic-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: baseline;
+      margin-bottom: 18px;
+    }
+
+    .logic-title h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .logic-title p {
+      margin: 0;
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .flow::before {
+      content: "";
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      top: 42px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .flow-node {
+      position: relative;
+      z-index: 1;
+      min-height: 150px;
+      padding: 14px 12px;
+      border-radius: 8px;
+      background: var(--cream);
+      border: 1px solid rgba(199, 192, 181, 0.92);
+      box-shadow: 0 8px 18px rgba(63, 69, 66, 0.08);
+    }
+
+    .flow-node::before {
+      content: "";
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      background: var(--risk);
+      border: 4px solid var(--cream);
+      box-shadow: 0 0 0 1px rgba(199, 192, 181, 0.9);
+    }
+
+    .flow-node:nth-child(2)::before,
+    .flow-node:nth-child(3)::before {
+      background: var(--object);
+    }
+
+    .flow-node:nth-child(4)::before,
+    .flow-node:nth-child(5)::before {
+      background: var(--relation);
+    }
+
+    .flow-node:nth-child(6)::before {
+      background: var(--evidence);
+    }
+
+    .flow-node b {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 15px;
+    }
+
+    .flow-node span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .bottom-note {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    code {
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(199, 192, 181, 0.28);
+      color: var(--ink);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.92em;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .overview,
+      .detail-grid,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .tagline {
+        justify-self: stretch;
+        max-width: none;
+      }
+
+      .overview::before,
+      .flow::before {
+        display: none;
+      }
+
+      .logic-title {
+        display: block;
+      }
+
+      .logic-title p {
+        margin-top: 6px;
+        text-align: left;
+      }
+
+      .flow-node {
+        min-height: auto;
+      }
+    }
+
+    @media print {
+      body {
+        background: var(--paper);
+      }
+
+      .page {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .layer-card,
+      .logic-map {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <h1>本体论启发的内涝关系证据网</h1>
+        <p class="subtitle">
+          将“地表积水、检查井、管段、泵站、排口、排水分区”等对象，以及它们之间的空间邻近、上下游拓扑、服务范围和证据支撑关系统一组织起来，让诊断从扁平证据筛选推进到工程成因追溯。
+        </p>
+      </div>
+      <aside class="tagline">
+        <strong>核心思想</strong>
+        不是把本体论作为额外概念堆叠，而是借用它的“对象-关系-属性/证据”组织方式，为 Agent 提供可查询、可追溯、可解释的关系化证据底座。
+      </aside>
+    </section>
+
+    <section class="overview" aria-label="三层结构总览">
+      <article class="layer-card object">
+        <div class="layer-label"><i class="dot"></i>Layer 1</div>
+        <h2>对象层 Object Layer</h2>
+        <p class="card-text">回答“系统里有哪些工程对象”。对象层负责给每类实体命名、编号、定位，并保留必要工程属性。</p>
+        <div class="chip-list">
+          <span class="chip">RainfallEvent 暴雨事件</span>
+          <span class="chip">SurfaceCell 地表网格</span>
+          <span class="chip">JunctionNode 检查井节点</span>
+          <span class="chip">ConduitLink 排水管段</span>
+          <span class="chip">PumpStation 泵站</span>
+          <span class="chip">Outfall 排口</span>
+          <span class="chip">DrainageDistrict 排水分区</span>
+        </div>
+      </article>
+
+      <article class="layer-card relation">
+        <div class="layer-label"><i class="dot"></i>Layer 2</div>
+        <h2>关系层 Relation Layer</h2>
+        <p class="card-text">回答“这些对象如何相互关联”。关系层负责把坐标邻近、管网拓扑、服务范围和上下游传递路径显式表达出来。</p>
+        <div class="chip-list">
+          <span class="chip">cell_near_node</span>
+          <span class="chip">node_connected_to_link</span>
+          <span class="chip">link_from_node / link_to_node</span>
+          <span class="chip">link_upstream_of_link</span>
+          <span class="chip">pump_serves_district</span>
+          <span class="chip">outfall_receives_from_link</span>
+        </div>
+      </article>
+
+      <article class="layer-card evidence">
+        <div class="layer-label"><i class="dot"></i>Layer 3</div>
+        <h2>证据层 Evidence Layer</h2>
+        <p class="card-text">回答“每个对象有什么模拟证据”。证据层把积水、溢流、充满度、流向变化等结果绑定到对象与关系上。</p>
+        <div class="chip-list">
+          <span class="chip">max_depth 最大积水深度</span>
+          <span class="chip">ponding_duration 积水时长</span>
+          <span class="chip">total_flooding_volume 节点溢流量</span>
+          <span class="chip">max_fullness 管段充满度</span>
+          <span class="chip">flow_direction_changes 流向变化次数</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-grid" aria-label="三层内部内容">
+      <article class="detail-panel">
+        <h3>对象层内部内容</h3>
+        <div class="item"><b>空间对象</b><span>SurfaceCell、Subcatchment、DrainageDistrict，用于定位积水区、汇水范围和管理分区。</span></div>
+        <div class="item"><b>管网对象</b><span>JunctionNode、ConduitLink、Pump、Outfall，用于表达检查井、管段、泵站和出流边界。</span></div>
+        <div class="item"><b>事件对象</b><span>RainfallEvent、Scenario、Run，用于区分不同降雨、工况和模拟批次。</span></div>
+        <div class="item"><b>基础属性</b><span>对象 ID、坐标、高程、管径/断面、所属分区、设计能力等。</span></div>
+      </article>
+
+      <article class="detail-panel">
+        <h3>关系层内部内容</h3>
+        <div class="item"><b>空间邻近</b><span>地表网格与附近节点、管段、汇水区之间的距离或归属关系。</span></div>
+        <div class="item"><b>管网拓扑</b><span>管段起点、终点、上下游连接、节点汇入/流出管段关系。</span></div>
+        <div class="item"><b>服务关系</b><span>泵站服务哪些排水分区，排口接收哪些管段或系统来水。</span></div>
+        <div class="item"><b>追溯关系</b><span>从积水 Cell 追溯到附近溢流节点，再追溯到相连管段、上下游管段和末端设施。</span></div>
+      </article>
+
+      <article class="detail-panel">
+        <h3>证据层内部内容</h3>
+        <div class="item"><b>地表证据</b><span>最大积水深度、积水持续时间、发生时刻、风险等级。</span></div>
+        <div class="item"><b>节点证据</b><span>总溢流量、最大溢流流量、溢流持续时间、节点水深。</span></div>
+        <div class="item"><b>管段证据</b><span>最大充满度、最大流量、管内水深、流向变化次数。</span></div>
+        <div class="item"><b>核查证据</b><span>claim_id、evidence_id、supported / unsupported、unsupported rate。</span></div>
+      </article>
+    </section>
+
+    <section class="logic-map" aria-label="从地表积水到管网成因追溯示例">
+      <div class="logic-title">
+        <h3>一个可讲给老师听的追溯链路</h3>
+        <p>这条链路体现的是“工程师式诊断”：先定位风险，再沿空间和拓扑关系查找排水系统压力来源。</p>
+      </div>
+      <div class="flow">
+        <div class="flow-node">
+          <b>1. 发现积水热点</b>
+          <span>Cell 最大积水深度或积水时长超阈值，说明地表已经形成显著内涝风险。</span>
+        </div>
+        <div class="flow-node">
+          <b>2. 匹配附近节点</b>
+          <span>通过坐标距离或服务区归属找到承担该地块排水的检查井节点。</span>
+        </div>
+        <div class="flow-node">
+          <b>3. 检查节点溢流</b>
+          <span>查看节点是否发生溢流、溢流量多大、持续多久，判断管网是否向地表释放水量。</span>
+        </div>
+        <div class="flow-node">
+          <b>4. 追踪相连管段</b>
+          <span>查询与节点相连的上游、下游管段，重点看充满度、满流时长和流量状态。</span>
+        </div>
+        <div class="flow-node">
+          <b>5. 识别水力扰动</b>
+          <span>若管段频繁改变流向，可能提示顶托、回流、满管流震荡或边界排放受限。</span>
+        </div>
+        <div class="flow-node">
+          <b>6. 延伸到设施分区</b>
+          <span>进一步检查泵站能力、排口边界和排水分区之间的耦合关系，形成成因链。</span>
+        </div>
+      </div>
+      <p class="bottom-note">
+        后续可将这张概念图落成 <code>evidence_relation_table</code> 或 <code>evidence_graph</code>：每一条边都记录 source、target、relation_type、distance/topology_order、evidence_id、confidence 和 data_source，使 Agent 的诊断结论能够沿关系链逐级回溯。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
