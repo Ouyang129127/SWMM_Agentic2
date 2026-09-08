@@ -1,0 +1,18 @@
+SWMM模型时间设置分析报告
+==================================================
+输入文件: models\suanliguanw_swmm_2d\swmm\scenarios\baseline\model.inp
+==================================================
+
+[TIMES] 部分设置:
+------------------------------
+START_TIME: 未找到
+END_TIME: 未找到
+REPORT_START: 未找到
+REPORT_STEP: 未找到
+HYDRAULIC_STEP: 未找到
+
+[OPTIONS] 部分相关设置:
+------------------------------
+FLOW_UNITS: LPS
+INFILTRATION: N/A
+FLOW_ROUTING: DYNWAVE

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM-CA2D Agentic 洪涝诊断流程图（16:9）</title>
+  <style>
+    :root {
+      --ink: #303635;
+      --muted: #6d7470;
+      --paper: #f2efe9;
+      --panel: #fbfaf7;
+      --line: #b9b2a8;
+      --input: #d9d0c4;
+      --control: #bcc4b6;
+      --decision: #e1d8bd;
+      --agent: #c7d4d2;
+      --data: #dcd2e2;
+      --model: #d7c9c1;
+      --output: #cbc5b8;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      padding: 3vh 3vw;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+    }
+
+    .slide {
+      width: min(94vw, 1600px);
+      aspect-ratio: 16 / 9;
+      margin: 0 auto;
+      padding: 3.4% 4.1% 3%; 
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid #d8d1c7;
+      border-radius: 10px;
+      box-shadow: 0 18px 46px rgba(73, 67, 59, .13);
+    }
+
+    .heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; }
+    h1 { margin: 0; font-size: clamp(21px, 2vw, 34px); letter-spacing: .02em; line-height: 1.2; }
+    .sub { margin: 7px 0 0; color: var(--muted); font-size: clamp(11px, .82vw, 15px); line-height: 1.5; }
+    .tag { flex: 0 0 auto; padding: .55em .9em; color: #59615d; background: #e7e3db; border-radius: 999px; font-size: clamp(10px, .78vw, 14px); }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 9px 18px; margin: 2.1% 0 1.6%; color: var(--muted); font-size: clamp(10px, .76vw, 13px); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .swatch { width: 15px; height: 10px; border: 1px solid rgba(47,52,55,.24); }
+    .s-input { background: var(--input); border-radius: 8px; }
+    .s-control { background: var(--control); }
+    .s-decision { width: 11px; height: 11px; background: var(--decision); transform: rotate(45deg); }
+    .s-agent { background: var(--agent); }
+    .s-data { background: var(--data); }
+    .s-output { background: var(--output); border-radius: 8px; }
+
+    .canvas { position: relative; height: 69%; }
+    .lane-title { position: absolute; left: 0; color: #7d827d; font-size: clamp(10px, .72vw, 13px); letter-spacing: .12em; }
+    .lane-title.top { top: 3%; } .lane-title.bottom { top: 54%; }
+    .lane-rule { position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid #e4dfd6; }
+
+    .node { position: absolute; z-index: 2; display: flex; flex-direction: column; justify-content: center; padding: 1.15% 1.05%; border: 1.2px solid var(--line); color: var(--ink); text-align: center; box-shadow: 0 3px 8px rgba(70,64,55,.06); transition: transform .28s ease, box-shadow .28s ease, filter .28s ease; animation: settle .65s both; }
+    .node strong { display: block; margin-bottom: .32em; font-size: clamp(11px, .86vw, 16px); font-weight: 700; line-height: 1.3; }
+    .node small { color: #58605c; font-size: clamp(8px, .61vw, 11px); line-height: 1.45; }
+    .input, .output { border-radius: 11px; }
+    .input { background: var(--input); }
+    .control { background: var(--control); }
+    .agent { background: var(--agent); border-color: #849694; }
+    .data { background: var(--data); border-color: #a092ab; }
+    .model { background: var(--model); border-color: #a48c80; }
+    .output { background: var(--output); }
+    .agent:hover { transform: translateY(-4px); filter: saturate(1.05); box-shadow: 0 10px 20px rgba(70,64,55,.15); }
+    .out-chip { width: fit-content; max-width: 100%; margin: .82em auto 0; padding: .36em .62em; border: 1px solid #afa1bb; background: #eee8f1; color: #5e536b; font-size: clamp(7px, .5vw, 9px); line-height: 1.3; white-space: nowrap; }
+    /* 状态门使用宽矩形，保证中英文状态文本在投影时仍有充足安全边距。 */
+    .decision { width: 9%; height: 16%; padding: .6% .35%; background: var(--decision); border-color: #a79770; border-radius: 5px; box-shadow: none; }
+    .decision .diamond-copy { width: 100%; text-align: center; }
+    .decision strong { margin: 0; font-size: clamp(8px, .62vw, 11px); line-height: 1.18; }
+    .decision small { display: block; margin-top: .24em; font-size: clamp(7px, .5vw, 9px); line-height: 1.2; }
+
+    /* 六个主阶段：上排 1–3，自右向下折返后，下排 4–6。 */
+    #start { left: 1%; top: 18%; width: 10.7%; height: 20%; }
+    #orch { left: 13.4%; top: 18%; width: 11.5%; height: 20%; }
+    #scenario { left: 30%; top: 14%; width: 13%; height: 26%; }
+    #d1 { left: 45.6%; top: 20%; }
+    #simulation { left: 57.6%; top: 14%; width: 13%; height: 26%; }
+    #d2 { left: 73.6%; top: 20%; }
+    #evidence { left: 84.2%; top: 14%; width: 13%; height: 26%; }
+    #diagnosis { left: 68.7%; top: 62%; width: 13%; height: 26%; }
+    #d3 { left: 58.1%; top: 68%; }
+    #verify { left: 40.2%; top: 62%; width: 13%; height: 26%; }
+    #d4 { left: 29.5%; top: 68%; }
+    #report { left: 12.2%; top: 62%; width: 13%; height: 26%; }
+    #result { left: 0; top: 62%; width: 10.2%; height: 26%; }
+
+    .model-note { position: absolute; z-index: 2; left: 56.8%; top: 2%; width: 14.5%; padding: .65% .7%; border: 1px solid #b09487; background: #e5d8d1; color: #5e514a; font-size: clamp(7px, .55vw, 10px); line-height: 1.3; text-align: center; }
+    .benchmark { position: absolute; z-index: 2; left: 0; top: 91%; width: 10.2%; padding: .55% .5%; border: 1px solid #85908a; background: #d7ded4; color: #505b55; font-size: clamp(7px, .55vw, 10px); line-height: 1.25; text-align: center; }
+
+    svg.links { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: visible; }
+    .flow { fill: none; stroke: #777c77; stroke-width: 1.35; stroke-linecap: round; marker-end: url(#arrow); }
+    .spark { fill: none; stroke: #9d97ca; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1 16; opacity: .75; animation: glide 3.8s linear infinite; }
+    @keyframes glide { to { stroke-dashoffset: -136; } }
+    @keyframes settle { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .node, .spark { animation: none; } .agent:hover { transform: none; } }
+
+    .footer { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 1%; padding-top: 1.1%; border-top: 1px solid #e2ddd5; color: var(--muted); font-size: clamp(9px, .67vw, 12px); }
+    .footer strong { color: #575e5a; font-weight: 600; }
+    @media (max-width: 820px) { body { padding: 0; } .slide { width: 100%; border-radius: 0; } }
+  </style>
+</head>
+<body>
+  <main class="slide" aria-labelledby="title">
+    <header class="heading">
+      <div><h1 id="title">SWMM-CA2D Agentic 洪涝灾害成因分析流程</h1><p class="sub">16:9 演示版 · 以“情景—模拟—证据—诊断—核查—报告”为主线，保留状态门控与可追溯数据产物。</p></div>
+      <div class="tag">Evidence-grounded workflow</div>
+    </header>
+    <section class="legend" aria-label="图例"><span><i class="swatch s-input"></i>输入/输出</span><span><i class="swatch s-control"></i>编排控制</span><span><i class="swatch s-decision"></i>状态门控</span><span><i class="swatch s-agent"></i>工作流 Agent</span><span><i class="swatch s-data"></i>证据数据产物</span></section>
+
+    <section class="canvas" aria-label="Agent 协作流程图">
+      <div class="lane-title top">01 · 情景准备与耦合模拟</div><div class="lane-title bottom">02 · 证据诊断、核查与解释</div><div class="lane-rule"></div>
+      <svg class="links" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+        <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6.4" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#777c77"/></marker></defs>
+        <path class="flow" d="M117 168H134"/><path class="flow" d="M249 168C268 168 282 168 300 168"/><path class="flow" d="M430 168H456"/><path class="flow" d="M546 168C558 168 566 168 576 168"/><path class="flow" d="M706 168H736"/><path class="flow" d="M826 168C832 168 837 168 842 168"/>
+        <path class="flow" d="M907 240C907 275 898 306 865 306H790C772 306 760 332 760 372"/><path class="flow" d="M687 450H671"/><path class="flow" d="M581 450C563 450 550 450 532 450"/><path class="flow" d="M402 450H385"/><path class="flow" d="M295 450C278 450 267 450 252 450"/><path class="flow" d="M122 450H102"/>
+        <path class="spark" d="M249 168C268 168 282 168 300 168"/><path class="spark" d="M546 168C558 168 566 168 576 168"/><path class="spark" d="M907 240C907 275 898 306 865 306H790C772 306 760 332 760 372"/><path class="spark" d="M581 450C563 450 550 450 532 450"/><path class="spark" d="M295 450C278 450 267 450 252 450"/>
+      </svg>
+
+      <div class="node input" id="start"><strong>用户 / 专家任务</strong><small>降雨情景、模型检查<br>内涝诊断、解释需求</small></div>
+      <div class="node control" id="orch"><strong>Stateful<br>Orchestrator</strong><small>任务理解 · 阶段调度<br>状态合法性控制</small></div>
+      <div class="node agent" id="scenario"><strong>① ScenarioAgent</strong><small>模型要素检查<br>降雨事件识别 · 情景请求</small><span class="out-chip">scenario_request.json</span></div>
+      <div class="node decision" id="d1"><div class="diamond-copy"><strong>SCENARIO<br>READY?</strong><small>否 → 返回 ①</small></div></div>
+      <div class="node agent" id="simulation"><strong>② SimulationAgent</strong><small>固定 SWMM → CA2D<br>耦合模拟管线</small><span class="out-chip">summary.json · nodes.tsv<br>links.tsv · surface_depth.tsv</span></div>
+      <div class="node decision" id="d2"><div class="diamond-copy"><strong>RUN<br>READY?</strong><small>否 → 返回 ②</small></div></div>
+      <div class="node agent" id="evidence"><strong>③ EvidenceBuilder</strong><small>结构化证据构建<br>对象 · 指标 · 时段 · 来源</small><span class="out-chip">evidence_table.csv<br>evidence_summary.json</span></div>
+      <div class="node agent" id="diagnosis"><strong>④ DiagnosisAgent</strong><small>热点识别 · 风险排序<br>可能成因判断</small><span class="out-chip">diagnosis_claims.json<br>risk_ranking.csv</span></div>
+      <div class="node decision" id="d3"><div class="diamond-copy"><strong>EVIDENCE<br>READY?</strong><small>否 → 返回 ③</small></div></div>
+      <div class="node agent" id="verify"><strong>⑤ VerificationAgent</strong><small>证据引用核查<br>无证据结论拦截</small><span class="out-chip">verification_report.json<br>unsupported_rate.txt</span></div>
+      <div class="node decision" id="d4"><div class="diamond-copy"><strong>VERIFIED<br>READY?</strong><small>否 → 返回 ⑤</small></div></div>
+      <div class="node agent" id="report"><strong>⑥ ReportAgent</strong><small>证据约束报告<br>单点成因解释</small><span class="out-chip">Evidence-grounded Report</span></div>
+      <div class="node output" id="result"><strong>解释报告</strong><small>结论—证据—对象<br>时段—来源可追溯</small></div>
+
+      <div class="model-note">模型与情景库<br>SWMM 管网 · CA2D 元胞 · events / scenarios</div>
+      <div class="benchmark"><strong>Benchmark / 论文评价</strong><br>task success · F1 · Spearman<br>unsupported rate</div>
+    </section>
+    <footer class="footer"><span><strong>核心机制：</strong>每一阶段经状态门控推进；失败分支回流至对应 Agent。</span><span>SWMM-CA2D Agentic</span></footer>
+  </main>
+</body>
+</html>

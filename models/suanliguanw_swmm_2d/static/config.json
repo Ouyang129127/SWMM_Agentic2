@@ -1,0 +1,39 @@
+{
+  "source_inp": "C:\\Users\\ouyang\\Documents\\EPA SWMM Projects\\Samples\\Site_Drainage_Model.inp",
+  "source_backdrop": "C:\\Users\\ouyang\\Documents\\EPA SWMM Projects\\Samples\\Site-Post.jpg",
+  "spatial_units": "metre",
+  "source_map_units": "feet",
+  "source_elevation_units": "feet",
+  "coordinate_conversion": "source feet multiplied by 0.3048",
+  "bounds": [
+    0.0,
+    0.0,
+    433.73040000000003,
+    449.58000000000004
+  ],
+  "source_bounds_ft": [
+    0.0,
+    0.0,
+    1423.0,
+    1475.0
+  ],
+  "crs": null,
+  "cell_size": 3.0,
+  "cell_size_ft": 9.84251968503937,
+  "grid_shape": [
+    150,
+    145
+  ],
+  "n_cells": 21750,
+  "n_valid_cells": 12974,
+  "n_flow_cells": 10116,
+  "n_building_cells": 2858,
+  "n_road_cells": 1272,
+  "n_nodes": 12,
+  "n_mapped_nodes": 12,
+  "node_mapping_distance_median": 1.2160117011772997,
+  "node_mapping_distance_95p": 6.400040720388974,
+  "node_mapping_distance_max": 11.993631985731778,
+  "terrain_method": "IDW interpolation from SWMM node elevations plus backdrop contour control points; conduit buffers depressed as streets",
+  "building_method": "manual synthetic polygons digitized from visible blocks on SWMM sample backdrop"
+}

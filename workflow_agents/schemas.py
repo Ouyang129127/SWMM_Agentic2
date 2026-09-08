@@ -11,6 +11,8 @@ WORKFLOW_SCHEMA_VERSION = "0.1"
 
 SCENARIO_REQUEST_SCHEMA_NAME = "swmm_ca2d_scenario_request"
 EVIDENCE_SCHEMA_NAME = "swmm_ca2d_evidence_table"
+RAINFALL_CONTEXT_SCHEMA_NAME = "swmm_ca2d_rainfall_context"
+EVIDENCE_GRAPH_SCHEMA_NAME = "swmm_ca2d_evidence_graph_schema"
 DIAGNOSIS_SCHEMA_NAME = "swmm_ca2d_diagnosis_claims"
 VERIFICATION_SCHEMA_NAME = "swmm_ca2d_verification_report"
 
@@ -60,6 +62,9 @@ class RunArtifacts:
     ca2d_surface_depth: Path
     evidence_table: Path
     evidence_summary: Path
+    rainfall_context: Path
+    evidence_relation_table: Path
+    overflow_node_evidence_packages: Path
     diagnosis_claims: Path
     risk_ranking: Path
     verification_report: Path
@@ -77,6 +82,9 @@ def artifacts_for_run(run_root: Path) -> RunArtifacts:
         ca2d_surface_depth=run_root / "ca2d" / "surface_depth.tsv",
         evidence_table=run_root / "evidence" / "evidence_table.csv",
         evidence_summary=run_root / "evidence" / "evidence_summary.json",
+        rainfall_context=run_root / "evidence" / "rainfall_context.json",
+        evidence_relation_table=run_root / "evidence" / "evidence_relation_table.csv",
+        overflow_node_evidence_packages=run_root / "evidence" / "overflow_node_evidence_packages.json",
         diagnosis_claims=run_root / "diagnosis" / "diagnosis_claims.json",
         risk_ranking=run_root / "diagnosis" / "risk_ranking.csv",
         verification_report=run_root / "verification" / "verification_report.json",

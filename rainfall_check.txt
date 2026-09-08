@@ -1,0 +1,15 @@
+=== RAINFALL FILE CHECK REPORT ===
+
+File: models\suanliguanw_swmm_2d\events\rain4.txt
+File size: 97 bytes (0.09 KB)
+
+=== FIRST 10 LINES ===
+Line 1: 单位：mm/h
+Line 2: 2024-01-01 00:00:00,30.0
+Line 3: 2024-01-01 00:30:00,30.0
+Line 4: 2024-01-01 01:00:00,30.0
+Line 5: 
+Line 6: 
+
+=== BASIC STATISTICS ===
+Error: Cannot parse as time series: read_csv() got an unexpected keyword argument 'delim_whitespace'

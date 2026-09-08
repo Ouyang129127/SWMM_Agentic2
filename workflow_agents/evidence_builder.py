@@ -8,6 +8,7 @@ from typing import Any
 
 import pandas as pd
 
+from .rainfall_context import build_rainfall_context, write_rainfall_context
 from .schemas import EVIDENCE_SCHEMA_NAME, WORKFLOW_SCHEMA_VERSION, artifacts_for_run
 from .state import resolve_run_root
 
@@ -15,8 +16,11 @@ from .state import resolve_run_root
 POSITIVE_FLOW_LS = 1e-9
 POSITIVE_DEPTH_M = 0.005
 FULLNESS_HIGH_RATIO = 0.80
+FULLNESS_NEAR_FULL_RATIO = 0.95
+FULLNESS_SURCHARGE_RATIO = 1.00
 FLOW_DIRECTION_CHANGE_THRESHOLD = 3
 FLOW_DIRECTION_EPS_LS = 1e-6
+REPEATED_OVERFLOW_EVENT_THRESHOLD = 2
 
 
 def _load_summary(run_root: Path) -> dict[str, Any]:
@@ -24,6 +28,20 @@ def _load_summary(run_root: Path) -> dict[str, Any]:
     if not path.exists():
         raise FileNotFoundError(f"Missing run summary: {path}")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _resolve_rainfall_file(summary: dict[str, Any], run_root: Path) -> Path:
+    for key in ["rainfall_event_copy", "rainfall_file"]:
+        value = summary.get(key)
+        if value:
+            path = Path(str(value))
+            if path.exists():
+                return path
+            candidate = run_root / str(value)
+            if candidate.exists():
+                return candidate
+    candidate = run_root / "rainfall_event.txt"
+    return candidate
 
 
 def _read_tsv(path: Path, required_columns: set[str]) -> pd.DataFrame:
@@ -88,6 +106,18 @@ def _flow_direction_changes(flow: pd.Series) -> int:
     return len(signs) - 1
 
 
+def _positive_event_count(values: pd.Series, threshold: float) -> int:
+    """Count positive-event segments in a time-ordered numeric series."""
+    event_count = 0
+    in_event = False
+    for value in values:
+        positive = value > threshold
+        if positive and not in_event:
+            event_count += 1
+        in_event = positive
+    return event_count
+
+
 def _parse_link_full_depths(run_root: Path) -> dict[str, float]:
     """Read SWMM [XSECTIONS] Geom1 as the full-depth reference for each link."""
     candidates = [
@@ -131,8 +161,17 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
     artifacts = artifacts_for_run(run_root)
     evidence_dir = run_root / "evidence"
     evidence_dir.mkdir(parents=True, exist_ok=True)
+    rainfall_context = build_rainfall_context(
+        _resolve_rainfall_file(summary, run_root),
+        event_name=str(summary.get("event_name", "")),
+        run_id=str(summary.get("run_id", run_root.name)),
+        model_name=str(summary.get("model_name", run_root.parents[1].name)),
+        scenario_name=str(summary.get("scenario_name", "")),
+    )
+    write_rainfall_context(artifacts.rainfall_context, rainfall_context)
 
     rows: list[dict[str, Any]] = []
+    overflow_event_rows: list[dict[str, Any]] = []
 
     flooding = _read_tsv(artifacts.swmm_node_flooding, {"node_id", "date", "time", "flow_Ls"})
     flooding["DateTime"] = _time_columns(flooding)
@@ -140,10 +179,12 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
     step_minutes = _infer_step_minutes(flooding["DateTime"])
     step_seconds = step_minutes * 60.0
     for node_id, group in flooding.groupby("node_id"):
+        group = group.sort_values("DateTime")
         positive = group[group["flow_Ls"] > POSITIVE_FLOW_LS]
         total_volume_m3 = float(group["flow_Ls"].sum() / 1000.0 * step_seconds) if step_seconds else 0.0
         max_flow = float(group["flow_Ls"].max())
         duration = float(len(positive) * step_minutes)
+        overflow_event_count = _positive_event_count(group["flow_Ls"], POSITIVE_FLOW_LS)
         first_time = positive["DateTime"].min() if not positive.empty else group["DateTime"].min()
         last_time = positive["DateTime"].max() if not positive.empty else group["DateTime"].max()
         for metric, value, unit, threshold in [
@@ -165,6 +206,20 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
                 }
             )
             rows.append(row)
+        row = _base_row(summary, run_root, artifacts.swmm_node_flooding, "node", node_id, "overflow_event_count")
+        row.update(
+            {
+                "value": float(overflow_event_count),
+                "unit": "count",
+                "time_start": "" if pd.isna(first_time) else pd.Timestamp(first_time).isoformat(sep=" "),
+                "time_end": "" if pd.isna(last_time) else pd.Timestamp(last_time).isoformat(sep=" "),
+                "duration_minutes": duration,
+                "rank": "",
+                "threshold": REPEATED_OVERFLOW_EVENT_THRESHOLD,
+                "exceedance_flag": bool(overflow_event_count >= REPEATED_OVERFLOW_EVENT_THRESHOLD),
+            }
+        )
+        overflow_event_rows.append(row)
 
     nodes = _read_tsv(artifacts.swmm_nodes, {"node_id", "depth_m", "flooding_Ls", "date", "time"})
     nodes["DateTime"] = _time_columns(nodes)
@@ -190,6 +245,7 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
     links = _read_tsv(artifacts.swmm_links, {"link_id", "flow_Ls", "depth_m", "date", "time"})
     link_full_depths = _parse_link_full_depths(run_root)
     links["DateTime"] = _time_columns(links)
+    link_step_minutes = _infer_step_minutes(links["DateTime"])
     links["signed_flow_Ls"] = pd.to_numeric(links["flow_Ls"], errors="coerce").fillna(0.0)
     links["flow_Ls"] = links["signed_flow_Ls"].abs()
     links["depth_m"] = pd.to_numeric(links["depth_m"], errors="coerce").fillna(0.0)
@@ -245,6 +301,29 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
                 }
             )
             rows.append(row)
+            for metric, threshold in [
+                ("fullness_ge_0_8_duration", FULLNESS_HIGH_RATIO),
+                ("fullness_ge_0_95_duration", FULLNESS_NEAR_FULL_RATIO),
+                ("surcharge_duration", FULLNESS_SURCHARGE_RATIO),
+            ]:
+                exceedance = group[fullness >= threshold] if metric != "surcharge_duration" else group[fullness > threshold]
+                duration = float(len(exceedance) * link_step_minutes)
+                first_time = exceedance["DateTime"].min() if not exceedance.empty else group["DateTime"].min()
+                last_time = exceedance["DateTime"].max() if not exceedance.empty else group["DateTime"].max()
+                duration_row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, metric)
+                duration_row.update(
+                    {
+                        "value": duration,
+                        "unit": "min",
+                        "time_start": "" if pd.isna(first_time) else pd.Timestamp(first_time).isoformat(sep=" "),
+                        "time_end": "" if pd.isna(last_time) else pd.Timestamp(last_time).isoformat(sep=" "),
+                        "duration_minutes": duration,
+                        "rank": "",
+                        "threshold": threshold,
+                        "exceedance_flag": bool(duration > 0.0),
+                    }
+                )
+                rows.append(duration_row)
 
     surface = _read_tsv(artifacts.ca2d_surface_depth, {"Smid", "Date", "Time", "Depth"})
     surface = surface.rename(columns={"Date": "date", "Time": "time", "Depth": "Depth"})
@@ -277,14 +356,20 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
             )
             rows.append(row)
 
+    rows.extend(overflow_event_rows)
+
     for metric in [
         "total_flooding_volume",
         "max_flooding_flow",
         "flooding_duration",
+        "overflow_event_count",
         "max_node_depth",
         "max_flow",
         "max_link_depth",
         "max_fullness",
+        "fullness_ge_0_8_duration",
+        "fullness_ge_0_95_duration",
+        "surcharge_duration",
         "flow_direction_changes",
         "max_depth",
         "ponding_duration",
@@ -332,6 +417,8 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         "evidence_count": int(len(evidence_df)),
         "metrics": evidence_df.groupby("metric_name").size().to_dict(),
         "source_files": sorted(evidence_df["source_file"].unique().tolist()),
+        "rainfall_context": rainfall_context,
+        "rainfall_context_file": str(artifacts.rainfall_context),
     }
     artifacts.evidence_summary.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return summary_payload

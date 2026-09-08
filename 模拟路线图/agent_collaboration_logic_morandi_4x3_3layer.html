@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWMM-CA2D Agentic 协作流程图（4:2.5 三层版）</title>
+  <style>
+    :root { --ink:#2f3437; --muted:#6d7470; --paper:#f2efe9; --panel:#fbfaf7; --line:#777d78; --io:#d9d0c4; --control:#bcc4b6; --agent:#c7d4d2; --decision:#e1d8bd; --store:#ddd3e3; --model:#e4d7d0; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:24px; background:var(--paper); color:var(--ink); font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif; }
+    .slide { width:min(94vw,1200px); aspect-ratio:4 / 2.5; margin:0 auto; padding:3.6% 4.5% 3%; overflow:hidden; background:var(--panel); border:1px solid #d8d1c7; border-radius:10px; box-shadow:0 18px 46px rgba(73,67,59,.13); }
+    header { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+    h1 { margin:0; font-size:clamp(21px,2.35vw,32px); line-height:1.22; letter-spacing:.02em; }
+    .sub { margin:7px 0 0; color:var(--muted); font-size:clamp(10px,.9vw,14px); }
+    .badge { margin-top:.2em; padding:.5em .8em; border-radius:999px; color:#5b635f; background:#e7e3db; font-size:clamp(9px,.75vw,12px); white-space:nowrap; }
+    .legend { display:flex; flex-wrap:wrap; gap:9px 18px; margin:2.2% 0 1.3%; color:var(--muted); font-size:clamp(9px,.72vw,12px); }
+    .legend span { display:inline-flex; align-items:center; gap:6px; }
+    .mark { display:inline-block; width:17px; height:11px; border:1px solid rgba(47,52,55,.28); }
+    .io-mark { background:var(--io); transform:skewX(-20deg); } .process-mark { background:var(--agent); border-radius:4px; } .gate-mark { width:10px; height:10px; background:var(--decision); transform:rotate(45deg); } .store-mark { background:var(--store); border-radius:50% / 28%; }
+    .diagram { height:78%; min-height:0; }
+    svg { display:block; width:100%; height:100%; }
+    .lane { fill:#f7f4ef; stroke:#e1dbd1; stroke-width:1; }
+    .lane-label { fill:#7a817c; font-size:13px; font-weight:600; letter-spacing:1.4px; }
+    .node { stroke-width:1.35; filter:url(#shadow); }
+    .io { fill:var(--io); stroke:#978a7d; } .control { fill:var(--control); stroke:#7f8c78; } .agent { fill:var(--agent); stroke:#7f9693; } .gate { fill:var(--decision); stroke:#aa9b72; } .store { fill:var(--store); stroke:#a293ad; } .model { fill:var(--model); stroke:#ad9286; }
+    .flow { fill:none; stroke:var(--line); stroke-width:1.55; stroke-linecap:round; stroke-linejoin:round; marker-end:url(#arrow); }
+    .feedback { fill:none; stroke:#9a907f; stroke-width:1.15; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:5 4; marker-end:url(#arrow); }
+    .signal { fill:none; stroke:#9992c6; stroke-width:2.4; stroke-linecap:round; stroke-dasharray:1 18; opacity:.72; animation:glide 4s linear infinite; }
+    .link { fill:none; stroke:#a093aa; stroke-width:1.05; stroke-dasharray:4 4; }
+    .title { fill:var(--ink); font-size:15px; font-weight:700; text-anchor:middle; } .copy { fill:#56605b; font-size:11px; text-anchor:middle; } .small { fill:#695f74; font-size:9px; text-anchor:middle; } .gate-text { fill:#3b403d; font-size:10px; font-weight:700; text-anchor:middle; }
+    .tag { fill:#eee8f1; stroke:#aca0b8; stroke-width:1; } .tag-text { fill:#62576d; font-size:8px; text-anchor:middle; }
+    .note { fill:#807a71; font-size:9px; }
+    @keyframes glide { to { stroke-dashoffset:-152; } }
+    @media (prefers-reduced-motion:reduce) { .signal { animation:none; } }
+    @media (max-width:720px) { body { padding:0; } .slide { width:100%; border-radius:0; } }
+  </style>
+</head>
+<body>
+  <main class="slide" aria-labelledby="title">
+    <header><div><h1 id="title">SWMM-CA2D Agentic 洪涝灾害成因分析流程</h1><p class="sub">4:2.5 三层版 · 以标准流程图符号表达输入、处理、状态门控、数据存储与输出。</p></div><span class="badge">Evidence-grounded workflow</span></header>
+    <div class="legend" aria-label="标准符号图例"><span><i class="mark io-mark"></i>输入 / 输出</span><span><i class="mark process-mark"></i>任务处理 / Agent</span><span><i class="mark gate-mark"></i>状态门控</span><span><i class="mark store-mark"></i>模型 / 证据存储</span></div>
+
+    <section class="diagram" aria-label="三层 Agent 协作流程图">
+      <svg viewBox="0 0 1100 700" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">SWMM-CA2D Agentic 三层协作流程</title><desc id="svgDesc">顶层完成任务输入与统一编排，中层完成情景准备、模拟和证据构建，底层完成诊断、核查与可追溯报告输出。</desc>
+        <defs>
+          <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#655e54" flood-opacity=".13"/></filter>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="3.25" orient="auto"><path d="M0 0L0 6.5L7 3.25Z" fill="#777d78"/></marker>
+        </defs>
+
+        <rect class="lane" x="0" y="12" width="1100" height="150" rx="12"/><rect class="lane" x="0" y="180" width="1100" height="218" rx="12"/><rect class="lane" x="0" y="416" width="1100" height="240" rx="12"/>
+        <text class="lane-label" x="20" y="38">LAYER 01 · 任务理解与统一编排</text><text class="lane-label" x="20" y="206">LAYER 02 · 情景准备、耦合模拟与证据构建</text><text class="lane-label" x="20" y="442">LAYER 03 · 诊断、核查与解释报告</text>
+
+        <!-- 第一层：平行四边形输入、圆角处理、圆柱状态库 -->
+        <polygon class="node io" points="66,70 202,70 184,137 48,137"/><text class="title" x="125" y="98">用户 / 专家任务</text><text class="copy" x="125" y="118">情景 · 诊断 · 解释需求</text>
+        <rect class="node control" x="272" y="68" width="175" height="72" rx="12"/><text class="title" x="359" y="96">StatefulOrchestrator</text><text class="copy" x="359" y="117">任务理解 · 阶段调度 · 合法性控制</text>
+        <path class="node store" d="M526,80 C526,62 678,62 678,80 V126 C678,144 526,144 526,126 Z M526,80 C526,98 678,98 678,80"/><text class="title" x="602" y="100">workflow_state.json</text><text class="copy" x="602" y="120">当前允许进入的阶段</text>
+        <path class="node model" d="M760,88 C760,70 904,70 904,88 V129 C904,147 760,147 760,129 Z M760,88 C760,106 904,106 904,88"/><text class="title" x="832" y="108">模型与情景库</text><text class="copy" x="832" y="128">SWMM · CA2D · events / scenarios</text>
+        <path class="flow" d="M202 103H272"/><path class="flow" d="M447 103H526"/>
+        <path class="signal" d="M202 103H272"/><path class="signal" d="M447 103H526"/>
+
+        <!-- 第二层：左至右 -->
+        <rect class="node agent" x="70" y="255" width="174" height="102" rx="12"/><text class="title" x="157" y="284">① ScenarioAgent</text><text class="copy" x="157" y="306">模型要素检查 · 降雨事件识别</text><text class="copy" x="157" y="323">情景请求生成</text><rect class="tag" x="101" y="333" width="112" height="15" rx="3"/><text class="tag-text" x="157" y="344">scenario_request.json</text>
+        <polygon class="node gate" points="298,273 344,319 298,365 252,319"/><text class="gate-text" x="298" y="314">SCENARIO</text><text class="gate-text" x="298" y="327">READY?</text><text class="small" x="298" y="345">是：继续</text>
+        <rect class="node agent" x="396" y="255" width="174" height="102" rx="12"/><text class="title" x="483" y="284">② SimulationAgent</text><text class="copy" x="483" y="306">固定 SWMM → CA2D</text><text class="copy" x="483" y="323">耦合模拟管线</text><rect class="tag" x="419" y="333" width="128" height="15" rx="3"/><text class="tag-text" x="483" y="344">summary.json · nodes.tsv</text>
+        <polygon class="node gate" points="624,273 670,319 624,365 578,319"/><text class="gate-text" x="624" y="314">RUN</text><text class="gate-text" x="624" y="327">READY?</text><text class="small" x="624" y="345">是：继续</text>
+        <rect class="node agent" x="722" y="255" width="174" height="102" rx="12"/><text class="title" x="809" y="284">③ EvidenceBuilder</text><text class="copy" x="809" y="306">结构化证据构建</text><text class="copy" x="809" y="323">对象 · 指标 · 时段 · 来源</text><rect class="tag" x="748" y="333" width="122" height="15" rx="3"/><text class="tag-text" x="809" y="344">evidence_table.csv</text>
+        <path class="flow" d="M602 144V177H157V255"/><path class="flow" d="M244 306H252"/><path class="flow" d="M344 319H396"/><path class="flow" d="M570 306H578"/><path class="flow" d="M670 319H722"/>
+        <path class="feedback" d="M298 365V380H157V357"/><text class="note" x="214" y="376">否</text>
+        <path class="feedback" d="M624 365V380H483V357"/><text class="note" x="548" y="376">否</text>
+        <path class="link" d="M832 147V205H483V255"/><path class="signal" d="M344 319H396"/><path class="signal" d="M670 319H722"/>
+
+        <!-- 第三层：由右向左，形成易读的蛇形主链 -->
+        <rect class="node agent" x="808" y="496" width="174" height="104" rx="12"/><text class="title" x="895" y="525">④ DiagnosisAgent</text><text class="copy" x="895" y="547">热点识别 · 风险排序</text><text class="copy" x="895" y="564">可能成因判断</text><rect class="tag" x="830" y="576" width="130" height="15" rx="3"/><text class="tag-text" x="895" y="587">diagnosis_claims.json</text>
+        <polygon class="node gate" points="724,507 770,553 724,599 678,553"/><text class="gate-text" x="724" y="548">EVIDENCE</text><text class="gate-text" x="724" y="561">READY?</text><text class="small" x="724" y="579">是：继续</text>
+        <rect class="node agent" x="466" y="496" width="174" height="104" rx="12"/><text class="title" x="553" y="525">⑤ VerificationAgent</text><text class="copy" x="553" y="547">证据引用核查</text><text class="copy" x="553" y="564">无证据结论拦截</text><rect class="tag" x="480" y="576" width="146" height="15" rx="3"/><text class="tag-text" x="553" y="587">verification_report.json</text>
+        <polygon class="node gate" points="382,507 428,553 382,599 336,553"/><text class="gate-text" x="382" y="548">VERIFIED</text><text class="gate-text" x="382" y="561">READY?</text><text class="small" x="382" y="579">是：继续</text>
+        <rect class="node agent" x="124" y="496" width="174" height="104" rx="12"/><text class="title" x="211" y="525">⑥ ReportAgent</text><text class="copy" x="211" y="547">证据约束报告</text><text class="copy" x="211" y="564">单点成因解释</text><rect class="tag" x="143" y="576" width="136" height="15" rx="3"/><text class="tag-text" x="211" y="587">Evidence-grounded Report</text>
+        <polygon class="node io" points="49,502 99,502 116,593 66,593"/><text class="title" x="82" y="535">解释</text><text class="title" x="82" y="555">报告</text><text class="small" x="82" y="574">可追溯</text>
+        <path class="flow" d="M809 357V438C809 467 895 467 895 496"/><path class="flow" d="M808 553H770"/><path class="flow" d="M678 553H640"/><path class="flow" d="M466 553H428"/><path class="flow" d="M336 553H298"/><path class="flow" d="M124 553H116"/>
+        <path class="feedback" d="M724 507V385H809V357"/><text class="note" x="775" y="391">否</text>
+        <path class="feedback" d="M382 599V628H553V600"/><text class="note" x="462" y="623">否</text>
+        <path class="signal" d="M809 357V438C809 467 895 467 895 496"/><path class="signal" d="M678 553H640"/><path class="signal" d="M336 553H298"/>
+        <path class="node store" d="M746,617 C746,600 948,600 948,617 V641 C948,658 746,658 746,641 Z M746,617 C746,634 948,634 948,617"/><text class="small" x="847" y="625">Benchmark：task success · F1 · Spearman · unsupported rate</text>
+        <path class="link" d="M847 600V591"/>
+        <text class="note" x="25" y="682">阅读方式：实线为主工作流；紫色流光表示任务与证据在阶段间的连续传递；“否”为虚线回退至相应 Agent。</text>
+      </svg>
+    </section>
+  </main>
+</body>
+</html>

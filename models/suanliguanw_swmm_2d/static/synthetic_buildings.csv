@@ -1,0 +1,7 @@
+building_id,vertices_ft,assumption
+B_NorthWest_Commercial,"[[350, 1130], [560, 1090], [585, 1240], [430, 1300]]",digitized from SWMM sample backdrop
+B_NorthCentral_Block,"[[760, 1050], [985, 1010], [1060, 1160], [820, 1225]]",digitized from SWMM sample backdrop
+B_EastCommercial_Block,"[[1020, 785], [1230, 730], [1275, 930], [1080, 980]]",digitized from SWMM sample backdrop
+B_SouthResidential_Block,"[[570, 315], [790, 175], [920, 385], [685, 535]]",digitized from SWMM sample backdrop
+B_SouthEast_RowHomes,"[[870, 330], [1160, 155], [1300, 390], [1005, 570]]",digitized from SWMM sample backdrop
+B_SouthCentral_Small,"[[465, 505], [620, 395], [700, 555], [545, 665]]",digitized from SWMM sample backdrop

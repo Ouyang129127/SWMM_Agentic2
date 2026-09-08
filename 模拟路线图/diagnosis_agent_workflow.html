@@ -7,20 +7,23 @@
   <style>
     :root {
       --bg: #f3f0ea;
+      --paper: #fbfaf7;
       --ink: #2f3437;
       --muted: #6d7370;
       --line: #d8d1c7;
-      --card: #fbfaf7;
+      --sage: #d8ddcf;
+      --sage-line: #7d886f;
+      --clay: #d9c8c0;
+      --clay-line: #9a7f73;
       --blue: #c7d2d0;
       --blue-line: #7c8e8b;
-      --green: #d8ddcf;
-      --green-line: #7d886f;
-      --amber: #ded6bd;
-      --amber-line: #a4966e;
-      --purple: #d9d0df;
-      --purple-line: #9586a1;
+      --mauve: #d9d0df;
+      --mauve-line: #9586a1;
+      --wheat: #ded6bd;
+      --wheat-line: #a4966e;
       --rose: #d9c8c0;
       --rose-line: #9a7f73;
+      --shadow: 0 16px 42px rgba(73, 67, 59, 0.12);
     }
 
     * {
@@ -30,19 +33,19 @@
     body {
       margin: 0;
       padding: 28px;
-      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
       color: var(--ink);
+      background: var(--bg);
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
     }
 
     .page {
-      max-width: 1700px;
+      max-width: 1680px;
       margin: 0 auto;
-      background: var(--card);
+      padding: 28px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 26px;
-      box-shadow: 0 16px 42px rgba(73, 67, 59, 0.12);
+      background: var(--paper);
+      box-shadow: var(--shadow);
     }
 
     header {
@@ -57,150 +60,680 @@
 
     h1 {
       margin: 0 0 8px;
-      font-size: 24px;
+      font-size: clamp(26px, 3.6vw, 44px);
+      line-height: 1.16;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 21px;
       line-height: 1.35;
       font-weight: 600;
     }
 
-    .subtitle {
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    p {
       margin: 0;
-      max-width: 1040px;
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.72;
+    }
+
+    .subtitle {
+      max-width: 1020px;
+      color: var(--muted);
+      font-size: 15px;
     }
 
     .tag {
-      border: 1px solid var(--purple-line);
-      background: var(--purple);
+      border: 1px solid var(--mauve-line);
+      background: var(--mauve);
       border-radius: 6px;
-      padding: 8px 10px;
+      padding: 9px 11px;
+      color: #4b3f45;
       font-size: 13px;
       white-space: nowrap;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-      align-items: start;
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: var(--paper);
     }
 
-    .mermaid-wrap {
-      overflow-x: auto;
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      min-height: 130px;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .stat small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .stat.input { background: var(--wheat); border-color: var(--wheat-line); }
+    .stat.rule { background: var(--sage); border-color: var(--sage-line); }
+    .stat.graph { background: var(--blue); border-color: var(--blue-line); }
+    .stat.output { background: var(--clay); border-color: var(--clay-line); }
+
+    .main-flow {
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(251, 250, 246, 0.74);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr 44px 1fr 44px 1fr 44px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .flow-card {
+      min-height: 132px;
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 14px;
-      background: #f8f6f1;
+      background: var(--paper);
+      text-align: center;
     }
 
-    .mermaid {
-      min-width: 720px;
+    .flow-card small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
-    .side {
+    .flow-card b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .flow-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.54;
+    }
+
+    .flow-card.input { background: var(--wheat); border-color: var(--wheat-line); }
+    .flow-card.agent { background: var(--mauve); border-color: var(--mauve-line); }
+    .flow-card.verify { background: var(--blue); border-color: var(--blue-line); }
+    .flow-card.result { background: var(--clay); border-color: var(--clay-line); }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .two-column {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-bottom: 18px;
     }
 
-    .section {
-      min-width: 0;
+    .lane {
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 16px;
-      background: #fbfaf7;
+      padding: 18px;
+      background: var(--paper);
     }
 
-    .section h2 {
-      margin: 0 0 10px;
-      font-size: 17px;
-      line-height: 1.4;
+    .lane.object {
+      border-color: var(--sage-line);
+      background: rgba(220, 230, 220, 0.55);
+    }
+
+    .lane.relation {
+      border-color: var(--blue-line);
+      background: rgba(219, 228, 235, 0.58);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .diag-card {
+      min-height: 128px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(251, 250, 246, 0.78);
+    }
+
+    .diag-card b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
       font-weight: 600;
+    }
+
+    .diag-card span,
+    .diag-card li {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .diag-card ul {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+
+    .diag-card.rose { border-color: var(--rose-line); background: var(--rose); }
+    .diag-card.wheat { border-color: var(--wheat-line); background: var(--wheat); }
+    .diag-card.sage { border-color: var(--sage-line); background: var(--sage); }
+    .diag-card.blue { border-color: var(--blue-line); background: var(--blue); }
+    .diag-card.mauve { border-color: var(--mauve-line); background: var(--mauve); }
+
+    .relation-map {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .relation-row {
+      display: grid;
+      grid-template-columns: 1fr 38px 1fr 38px 1fr;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .relation-node {
+      min-height: 102px;
+      display: grid;
+      align-content: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(251, 250, 246, 0.82);
+      text-align: center;
+    }
+
+    .relation-node b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .relation-node span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .relation-node.anchor {
+      min-height: 120px;
+      border: 2px solid var(--mauve-line);
+      background: var(--mauve);
+    }
+
+    .relation-node.surface { border-color: var(--sage-line); background: var(--sage); }
+    .relation-node.network { border-color: var(--blue-line); background: var(--blue); }
+    .relation-node.boundary { border-color: var(--clay-line); background: var(--clay); }
+
+    .vertical-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .vertical-label::before,
+    .vertical-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .vertical-label span {
+      margin: 0 10px;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 250, 246, 0.86);
+    }
+
+    .schema-section {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .json-box {
+      margin: 12px 0 0;
+      max-height: 600px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f7f3ea;
+      color: #33403b;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.55;
+      white-space: pre;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.55;
     }
 
     th,
     td {
+      padding: 10px 9px;
+      border-bottom: 1px solid var(--line);
       text-align: left;
       vertical-align: top;
-      border-bottom: 1px solid var(--line);
-      padding: 8px 7px;
     }
 
     th {
       color: var(--muted);
-      background: #f5f2ec;
+      background: rgba(246, 242, 234, 0.90);
       font-weight: 600;
+      white-space: nowrap;
     }
 
     tr:last-child td {
       border-bottom: 0;
     }
 
+    .judgement-panel h2 {
+      font-size: 30px;
+      margin-bottom: 16px;
+    }
+
+    .judgement-panel table {
+      font-size: 17px;
+      line-height: 1.68;
+    }
+
+    .judgement-panel th,
+    .judgement-panel td {
+      padding: 15px 14px;
+    }
+
+    .judgement-panel code {
+      font-size: 0.95em;
+    }
+
     code {
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 12px;
-      color: #2f3437;
-      background: #eee9df;
+      padding: 1px 5px;
       border-radius: 4px;
-      padding: 1px 4px;
-    }
-
-    .claim-box {
-      margin: 0;
-      padding: 12px;
-      border: 1px solid var(--amber-line);
-      border-radius: 8px;
-      background: var(--amber);
-      overflow-x: auto;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .talking {
-      margin: 0;
-      padding-left: 19px;
-      color: var(--ink);
-      font-size: 14px;
-      line-height: 1.75;
-    }
-
-    .talking li + li {
-      margin-top: 5px;
-    }
-
-    .plain {
-      margin: 0 0 10px;
-      color: var(--ink);
-      font-size: 14px;
-      line-height: 1.75;
+      background: #eee9df;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.92em;
     }
 
     .note {
       margin-top: 18px;
-      padding: 13px 15px;
-      border-left: 4px solid var(--green-line);
-      background: var(--green);
-      font-size: 14px;
-      line-height: 1.75;
+      border-left: 4px solid var(--mauve-line);
+      background: var(--mauve);
+      padding: 14px 16px;
+      border-radius: 8px;
     }
 
-    @media (max-width: 1120px) {
-      .layout,
-      .side,
-      header {
+    .standard-flowchart {
+      margin-top: 18px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(251, 250, 246, 0.78);
+    }
+
+    .flow-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px 12px;
+      margin: -2px 0 16px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .legend-shape {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .legend-shape i {
+      display: inline-block;
+      width: 26px;
+      height: 16px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .legend-shape .terminal {
+      border-radius: 999px;
+      background: var(--wheat);
+      border-color: var(--wheat-line);
+    }
+
+    .legend-shape .process {
+      border-radius: 5px;
+      background: var(--sage);
+      border-color: var(--sage-line);
+    }
+
+    .legend-shape .decision {
+      width: 18px;
+      height: 18px;
+      transform: rotate(45deg);
+      background: var(--mauve);
+      border-color: var(--mauve-line);
+    }
+
+    .legend-shape .data {
+      border-radius: 50% / 26%;
+      background: var(--blue);
+      border-color: var(--blue-line);
+    }
+
+    .flowline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      color: var(--muted);
+      font-size: 30px;
+      font-weight: 600;
+    }
+
+    .flowline.small {
+      font-size: 17px;
+      min-height: 30px;
+    }
+
+    .std-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .std-row.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .std-box {
+      position: relative;
+      min-height: 140px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+      background: var(--paper);
+      text-align: center;
+    }
+
+    .std-box.terminal {
+      border-radius: 999px;
+      background: var(--wheat);
+      border-color: var(--wheat-line);
+      display: grid;
+      align-content: center;
+    }
+
+    .std-box.process {
+      background: var(--sage);
+      border-color: var(--sage-line);
+    }
+
+    .std-box.data {
+      background: var(--blue);
+      border-color: var(--blue-line);
+      border-radius: 50% / 12%;
+    }
+
+    .std-box.output {
+      background: var(--clay);
+      border-color: var(--clay-line);
+    }
+
+    .std-box.subprocess {
+      background: rgba(251, 250, 246, 0.90);
+      border-color: var(--line);
+    }
+
+    .std-box.subprocess::before,
+    .std-box.subprocess::after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      width: 3px;
+      background: rgba(209, 200, 189, 0.72);
+      border-radius: 999px;
+    }
+
+    .std-box.subprocess::before {
+      left: 8px;
+    }
+
+    .std-box.subprocess::after {
+      right: 8px;
+    }
+
+    .std-box b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .std-box small {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .std-box span,
+    .std-box li {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .std-box ul {
+      margin: 7px auto 0;
+      padding-left: 18px;
+      text-align: left;
+      max-width: 360px;
+    }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr 1fr;
+      gap: 18px;
+      align-items: center;
+      margin: 16px 0 10px;
+    }
+
+    .decision-box {
+      width: min(360px, 100%);
+      height: 136px;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--mauve-line);
+      background: var(--mauve);
+      box-shadow: var(--shadow);
+      clip-path: polygon(12% 50%, 50% 0, 88% 50%, 50% 100%);
+      padding: 0 58px;
+    }
+
+    .decision-box > div {
+      max-width: 230px;
+      text-align: center;
+    }
+
+    .decision-box b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 19px;
+      font-weight: 600;
+      line-height: 1.32;
+    }
+
+    .decision-box span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .branch-label {
+      display: inline-flex;
+      width: fit-content;
+      margin: 0 auto 8px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 250, 246, 0.88);
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .claim-flow-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .claim-chip {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(251, 250, 246, 0.82);
+      text-align: center;
+      min-height: 108px;
+    }
+
+    .claim-chip b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .claim-chip span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .claim-chip.surface { background: var(--sage); border-color: var(--sage-line); }
+    .claim-chip.node { background: var(--rose); border-color: var(--rose-line); }
+    .claim-chip.link { background: var(--blue); border-color: var(--blue-line); }
+    .claim-chip.relation { background: var(--mauve); border-color: var(--mauve-line); }
+    .claim-chip.output { background: var(--clay); border-color: var(--clay-line); }
+
+    @media (max-width: 1180px) {
+      header,
+      .overview,
+      .two-column,
+      .schema-section {
         grid-template-columns: 1fr;
       }
 
-      .tag {
-        width: fit-content;
+      .pipeline,
+      .relation-row {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .std-row,
+      .std-row.two,
+      .decision-row,
+      .claim-flow-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .decision-box {
+        width: min(360px, calc(100vw - 92px));
+        height: 132px;
+        padding: 0 52px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 14px;
+      }
+
+      .page {
+        padding: 18px;
       }
     }
   </style>
@@ -209,207 +742,315 @@
   <main class="page">
     <header>
       <div>
-        <h1>DiagnosisAgent 工作机制：从证据表到诊断 claim</h1>
-        <p class="subtitle">
-          DiagnosisAgent 的核心任务是把 EvidenceBuilderAgent 生成的对象级证据，按照洪涝诊断规则筛选为结构化诊断结论，并保留 evidence_id 以供后续核查。
-        </p>
+        <h1>DiagnosisAgent 工作机制流程图</h1>
+        <p class="subtitle">新版机制包含两层诊断：第一层从 <code>evidence_table.csv</code> 中进行对象级规则诊断；第二层在存在 <code>overflow_node_evidence_packages.json</code> 时，进一步读取关系证据包，生成带 <code>relation_path_ids</code>、<code>package_id</code> 和 <code>rainfall_context</code> 的关系型诊断结论。</p>
       </div>
-      <div class="tag">输入 evidence_table.csv，输出 diagnosis_claims.json</div>
+      <div class="tag">updated: 2026-09-05</div>
     </header>
 
-    <section class="layout">
-      <div class="mermaid-wrap" aria-label="DiagnosisAgent workflow flowchart">
-        <pre class="mermaid">
-flowchart TD
-    A["输入：evidence_table.csv<br/>每行是一条对象级证据"] --> B["DiagnosisAgent<br/>读取证据表"]
-    R["诊断规则<br/>diagnosis_rules.json"] --> B
-
-    B --> C1["筛选 cell + max_depth<br/>地表最大积水深度"]
-    B --> C2["筛选 cell + ponding_duration<br/>地表积水持续时间"]
-    B --> C3["筛选 node + total_flooding_volume<br/>节点累计溢流量"]
-    B --> C4["筛选 link + max_flow<br/>管段最大流量"]
-
-    C1 --> D1["阈值分级<br/>0.3 m: moderate<br/>0.5 m: high<br/>0.75 m: critical"]
-    C2 --> D2["持续时间阈值<br/>>= 60 min"]
-    C3 --> D3["溢流体积阈值<br/>>= 10 m3"]
-    C4 --> D4["高负荷候选<br/>最大流量 Top 10"]
-
-    D1 --> E1["生成 claim<br/>claim_type = surface_hotspot"]
-    D2 --> E2["生成 claim<br/>claim_type = long_duration_ponding"]
-    D3 --> E3["生成 claim<br/>claim_type = major_overflow_node"]
-    D4 --> E4["生成 claim<br/>claim_type = high_load_link"]
-
-    E1 --> F["统一 claim 结构<br/>claim_id / claim_type / object_type / object_id / severity / claim_text / possible_cause / confidence / evidence_ids / status / rule_id"]
-    E2 --> F
-    E3 --> F
-    E4 --> F
-
-    F --> G["输出：diagnosis_claims.json<br/>结构化诊断结论集合"]
-    F --> H["输出：risk_ranking.csv<br/>风险对象排序表"]
-
-    G --> I["VerificationAgent<br/>逐条检查 claim 是否引用有效 evidence_id"]
-    H --> J["ReportAgent<br/>生成风险摘要与单点解释"]
-    I --> K["unsupported rate<br/>衡量无证据结论比例"]
-
-    classDef input fill:#c7d2d0,stroke:#7c8e8b,stroke-width:1.1px,color:#2f3437;
-    classDef rule fill:#d9d0df,stroke:#9586a1,stroke-width:1.1px,color:#2f3437;
-    classDef filter fill:#d8ddcf,stroke:#7d886f,stroke-width:1.1px,color:#2f3437;
-    classDef claim fill:#ded6bd,stroke:#a4966e,stroke-width:1.1px,color:#2f3437;
-    classDef verify fill:#d9c8c0,stroke:#9a7f73,stroke-width:1.1px,color:#2f3437;
-
-    class A input;
-    class R,B rule;
-    class C1,C2,C3,C4,D1,D2,D3,D4 filter;
-    class E1,E2,E3,E4,F,G,H claim;
-    class I,J,K verify;
-        </pre>
+    <section class="standard-flowchart" aria-label="DiagnosisAgent 标准流程图">
+      <h2>标准流程图</h2>
+      <div class="flow-legend" aria-label="流程图图例">
+        <span class="legend-shape"><i class="terminal"></i>开始/结束</span>
+        <span class="legend-shape"><i class="data"></i>数据输入/输出</span>
+        <span class="legend-shape"><i class="process"></i>处理步骤</span>
+        <span class="legend-shape"><i class="decision"></i>条件判断</span>
       </div>
 
-      <aside class="side">
-        <section class="section">
-          <h2>诊断 claim 的数据结构</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>字段</th>
-                <th>含义</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>claim_id</code></td>
-                <td>诊断结论编号，例如 <code>C001</code>。</td>
-              </tr>
-              <tr>
-                <td><code>claim_type</code></td>
-                <td>诊断类型，例如 <code>surface_hotspot</code>、<code>major_overflow_node</code>。</td>
-              </tr>
-              <tr>
-                <td><code>object_type</code>, <code>object_id</code></td>
-                <td>诊断对象，可能是 cell、node 或 link。</td>
-              </tr>
-              <tr>
-                <td><code>severity</code></td>
-                <td>风险等级，例如 low、moderate、high、critical。</td>
-              </tr>
-              <tr>
-                <td><code>claim_text</code></td>
-                <td>面向阅读的结论性语句。</td>
-              </tr>
-              <tr>
-                <td><code>possible_cause</code></td>
-                <td>规则给出的可能原因标签，例如管网外溢源、局部低洼或集中溢流。</td>
-              </tr>
-              <tr>
-                <td><code>confidence</code></td>
-                <td>当前结论可信度标签。</td>
-              </tr>
-              <tr>
-                <td><code>evidence_ids</code></td>
-                <td>支撑该结论的证据编号，是后续追溯与核查的关键。</td>
-              </tr>
-              <tr>
-                <td><code>status</code>, <code>rule_id</code></td>
-                <td>结论状态和触发规则。</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+      <div class="std-row">
+        <div class="std-box terminal">
+          <small>Start</small>
+          <b>启动 DiagnosisAgent</b>
+          <span>输入模型名与 run_id，定位本轮模拟成果目录。</span>
+        </div>
+        <div class="std-box data">
+          <small>Data</small>
+          <b>读取 evidence_table.csv</b>
+          <span>获得对象类型、对象 ID、指标名、指标值、单位、rank、evidence_id。</span>
+        </div>
+        <div class="std-box data">
+          <small>Rules</small>
+          <b>读取 diagnosis_rules.json</b>
+          <span>加载深度-时长、节点冒溢、管段充满度、流向变化等阈值。</span>
+        </div>
+      </div>
 
-        <section class="section">
-          <h2>claim 示例</h2>
-          <pre class="claim-box"><code>{
-  "claim_id": "C001",
-  "claim_type": "surface_hotspot",
-  "object_type": "cell",
-  "object_id": "115176",
-  "severity": "high",
-  "claim_text": "Cell 115176 is a high surface ponding hotspot with 0.520 m maximum depth.",
-  "possible_cause": "local_depression_or_concentrated_overflow",
-  "confidence": "medium",
-  "evidence_ids": ["E_C_002341"],
-  "status": "pending_verification",
-  "rule_id": "surface_hotspot"
-}</code></pre>
-        </section>
+      <div class="flowline">↓</div>
 
-        <section class="section">
-          <h2>为什么它叫诊断结论</h2>
-          <ul class="talking">
-            <li>它不是原始数值，而是经过规则解释后的风险判断，例如“地表积水热点”“主要溢流节点”“高负荷管段”。</li>
-            <li>它保留了对象、风险等级、可能原因和结论性语句，已经从“数据描述”变成“工程判断”。</li>
-            <li>它必须绑定 <code>evidence_ids</code>，因此不是大模型自由生成的判断，而是可追溯的 evidence-grounded claim。</li>
+      <div class="std-row">
+        <div class="std-box subprocess">
+          <small>Object-level diagnosis</small>
+          <b>地表积水风险诊断</b>
+          <span><code>surface_ponding_risk</code></span>
+          <ul>
+            <li>联合判断 <code>max_depth</code> 与 <code>ponding_duration</code>。</li>
+            <li>输出地表风险等级。</li>
           </ul>
-        </section>
+        </div>
+        <div class="std-box subprocess">
+          <small>Object-level diagnosis</small>
+          <b>节点冒溢诊断</b>
+          <span><code>major_overflow_node</code></span>
+          <ul>
+            <li>依据 <code>total_flooding_volume</code> 筛选主要冒溢节点。</li>
+            <li>为关系证据包提供锚点。</li>
+          </ul>
+        </div>
+        <div class="std-box subprocess">
+          <small>Object-level diagnosis</small>
+          <b>管段流态诊断</b>
+          <span><code>high_load_link</code> + <code>unstable_flow_direction_link</code></span>
+          <ul>
+            <li>判断充满度、满流持续时间。</li>
+            <li>判断流向变化次数。</li>
+          </ul>
+        </div>
+      </div>
 
-        <section class="section">
-          <h2>possible_cause 如何产生</h2>
-          <p class="plain">
-            当前 <code>possible_cause</code> 是根据诊断类型自动赋予的一级原因标签，用来把异常指标转换成工程可读的初步解释；它还不是基于地表-节点-管段-泵站关系证据网推断出的完整成因链。
-          </p>
+      <div class="flowline">↓</div>
+
+      <div class="decision-row">
+        <div>
+          <span class="branch-label">No</span>
+          <div class="std-box output">
+            <small>Skip relation diagnosis</small>
+            <b>仅保留对象级 claims</b>
+            <span>如果没有关系证据包，则不生成 relation_path 支撑的关系型诊断。</span>
+          </div>
+        </div>
+        <div class="decision-box" aria-label="是否存在关系证据包">
+          <div>
+            <b>是否存在关系证据包？</b>
+            <span><code>overflow_node_evidence_packages.json</code></span>
+          </div>
+        </div>
+        <div>
+          <span class="branch-label">Yes</span>
+          <div class="std-box process">
+            <small>Relation package</small>
+            <b>读取节点中心证据包</b>
+            <span>提取 anchor、rainfall_context、surface_context、network_context 和 relation_paths。</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flowline small">Yes 分支继续进入关系型诊断</div>
+
+      <div class="std-row two">
+        <div class="std-box subprocess">
+          <small>Surface relation</small>
+          <b>节点冒溢与地表积水关联</b>
+          <span><code>node_overflow_with_surface_ponding</code></span>
+          <ul>
+            <li>检查附近 cell 与淹没 cluster。</li>
+            <li>要求 evidence_ids 与 surface relation path 支撑。</li>
+          </ul>
+        </div>
+        <div class="std-box subprocess">
+          <small>Network relation</small>
+          <b>节点冒溢与管网流态关联</b>
+          <span>下游高充满度、上游高负荷、流向不稳定、反复冒溢</span>
+          <ul>
+            <li>读取相连上下游管段证据。</li>
+            <li>保留 network relation path。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flowline">↓</div>
+
+      <div class="std-row">
+        <div class="std-box process">
+          <small>Claim assembly</small>
+          <b>组装结构化 claim</b>
+          <span>写入 claim_type、severity、possible_cause、confidence、rule_id。</span>
+        </div>
+        <div class="std-box process">
+          <small>Traceability</small>
+          <b>挂接证据链字段</b>
+          <span>对象级 claim 保留 evidence_ids；关系型 claim 额外保留 relation_path_ids、package_id、rainfall_context。</span>
+        </div>
+        <div class="std-box data">
+          <small>Output</small>
+          <b>输出诊断成果</b>
+          <span><code>diagnosis_claims.json</code> 与 <code>risk_ranking.csv</code>，状态为 pending_verification。</span>
+        </div>
+      </div>
+
+      <div class="flowline">↓</div>
+
+      <div class="std-row two">
+        <div class="std-box terminal">
+          <small>End</small>
+          <b>交给 VerificationAgent</b>
+          <span>后续核查 evidence_id 与 relation_path 是否真正支撑诊断结论。</span>
+        </div>
+        <div class="std-box terminal">
+          <small>End</small>
+          <b>交给 ReportAgent</b>
+          <span>读取已核查诊断结果，生成可解释、可追溯的内涝分析报告。</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>当前可生成的 claim 类型</h2>
+      <div class="claim-flow-grid">
+        <div class="claim-chip surface"><b>surface_ponding_risk</b><span>深度-时长联合地表积水风险</span></div>
+        <div class="claim-chip node"><b>major_overflow_node</b><span>主要冒溢节点</span></div>
+        <div class="claim-chip link"><b>high_load_link</b><span>高负荷或近满流管段</span></div>
+        <div class="claim-chip link"><b>unstable_flow_direction_link</b><span>流向不稳定管段</span></div>
+        <div class="claim-chip relation"><b>node_overflow_with_surface_ponding</b><span>节点冒溢与地表积水关联</span></div>
+        <div class="claim-chip relation"><b>node_overflow_with_downstream_high_fullness</b><span>下游高充满度关联</span></div>
+        <div class="claim-chip relation"><b>node_overflow_with_upstream_high_load</b><span>上游高负荷关联</span></div>
+        <div class="claim-chip relation"><b>node_overflow_with_flow_direction_instability</b><span>附近流向不稳定关联</span></div>
+        <div class="claim-chip relation"><b>node_repeated_overflow</b><span>反复冒溢信号</span></div>
+        <div class="claim-chip output"><b>pending_verification</b><span>等待核查后进入报告</span></div>
+      </div>
+    </section>
+
+    <section class="schema-section">
+      <article class="panel">
+        <h2>新版 claim 数据结构</h2>
+        <p>对象级 claim 和关系型 claim 共用基本字段；关系型 claim 额外携带证据包与关系路径信息。</p>
+<pre class="json-box"><code>{
+  "claim_id": "C041",
+  "claim_type": "node_overflow_with_downstream_high_fullness",
+  "object_type": "node",
+  "object_id": "C29YSG65184",
+  "severity": "high",
+  "claim_text": "Node C29YSG65184 overflow is associated with high-fullness downstream conduit evidence.",
+  "possible_cause": "possible_downstream_bottleneck_or_backwater",
+  "confidence": "high",
+  "evidence_ids": [
+    "E_node_C29YSG65184_flooding",
+    "E_link_102369_fullness"
+  ],
+  "relation_path_ids": ["rp_network_001"],
+  "package_id": "pkg_node_C29YSG65184",
+  "rainfall_context": {
+    "rainfall_event_id": "rain4",
+    "intensity_class": "heavy_rain",
+    "short_duration_heavy_rainfall": true
+  },
+  "status": "pending_verification",
+  "rule_id": "node_overflow_with_downstream_high_fullness"
+}</code></pre>
+      </article>
+
+      <article class="panel judgement-panel">
+        <h2>DiagnosisAgent 如何判断</h2>
+        <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>诊断类型</th>
+                <th>主要依据</th>
                 <th>possible_cause</th>
+                <th>可信度逻辑</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><code>surface_hotspot</code> 地表积水热点</td>
-                <td><code>local_depression_or_concentrated_overflow</code></td>
+                <td><code>surface_ponding_risk</code></td>
+                <td>地表最大水深 + 积水持续时间</td>
+                <td><code>depth_duration_surface_ponding_risk</code></td>
+                <td>有深度和时长 evidence_id，通常为 medium。</td>
               </tr>
               <tr>
-                <td><code>long_duration_ponding</code> 长时间积水</td>
-                <td><code>long_duration_surface_ponding</code></td>
-              </tr>
-              <tr>
-                <td><code>major_overflow_node</code> 主要溢流节点</td>
+                <td><code>major_overflow_node</code></td>
+                <td>节点累计冒溢量超过阈值并进入 Top N</td>
                 <td><code>network_overflow_source</code></td>
+                <td>对象级证据支撑，通常为 medium。</td>
               </tr>
               <tr>
-                <td><code>high_load_link</code> 高负荷管段</td>
+                <td><code>high_load_link</code></td>
+                <td>最大充满度、接近满流持续时间、超满流持续时间</td>
                 <td><code>possible_network_bottleneck</code></td>
+                <td>有充满度和持续时间证据；若回退到 max_flow，则降为 low。</td>
+              </tr>
+              <tr>
+                <td><code>unstable_flow_direction_link</code></td>
+                <td>管段流向变化次数</td>
+                <td><code>possible_backwater_or_hydraulic_oscillation</code></td>
+                <td>有 flow_direction_changes 证据，通常为 medium。</td>
+              </tr>
+              <tr>
+                <td><code>node_overflow_with_surface_ponding</code></td>
+                <td>冒溢节点 + 附近积水 cell + surface relation path</td>
+                <td><code>overflow_surface_ponding_coupling</code></td>
+                <td>同时有 evidence_ids 和 relation_path_ids 时为 high。</td>
+              </tr>
+              <tr>
+                <td><code>node_overflow_with_downstream_high_fullness</code></td>
+                <td>冒溢节点 + 下游相连管段高充满度</td>
+                <td><code>possible_downstream_bottleneck_or_backwater</code></td>
+                <td>缺 relation_path 时降为 medium；缺 evidence_id 时降为 low。</td>
+              </tr>
+              <tr>
+                <td><code>node_overflow_with_upstream_high_load</code></td>
+                <td>冒溢节点 + 上游相连管段高负荷</td>
+                <td><code>possible_upstream_concentrated_inflow</code></td>
+                <td>同上，取决于证据和关系路径是否齐全。</td>
+              </tr>
+              <tr>
+                <td><code>node_overflow_with_flow_direction_instability</code></td>
+                <td>冒溢节点附近管段流向变化</td>
+                <td><code>possible_backwater_or_hydraulic_oscillation_near_overflow_node</code></td>
+                <td>同上，关系路径越完整可信度越高。</td>
+              </tr>
+              <tr>
+                <td><code>node_repeated_overflow</code></td>
+                <td>overflow_event_count 超过反复冒溢阈值</td>
+                <td><code>repeated_network_overflow_signal</code></td>
+                <td>节点 evidence_id + 任一关系路径共同支撑。</td>
               </tr>
             </tbody>
           </table>
-        </section>
-
-        <section class="section">
-          <h2>confidence 如何理解</h2>
-          <p class="plain">
-            当前诊断仍主要基于扁平化对象证据表，因此 <code>confidence</code> 先作为规则证据强弱的保守标签：有直接 evidence_id 支撑、且指标与风险关系较直接的结论通常标为 <code>medium</code>；证据较弱或只能作为线索的结论可标为 <code>low</code>。如果后续建立立体化关系证据网，可信度可以进一步根据多源证据的一致性、空间邻近性、上下游拓扑关系和时间同步性进行细化。
-          </p>
-        </section>
-      </aside>
+        </div>
+      </article>
     </section>
 
-    <div class="note">
-      汇报时可以这样说：DiagnosisAgent 当前做的是对象级诊断，它把 evidence_table.csv 中异常的地表元胞、冒溢节点和高负荷管段转化为结构化 claim；下一步可以在此基础上接入地表-节点-管段-泵站的关系证据网，进一步做成因链诊断。
-    </div>
-  </main>
+    <section class="panel">
+      <h2>规则阈值与输出文件</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>规则组</th>
+              <th>当前阈值</th>
+              <th>作用</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>surface_ponding_risk</code></td>
+              <td>low: 0.15 m + 30 min；moderate: 0.27 m + 60 min；high: 0.4 m + 120 min；critical: 0.6 m + 120 min</td>
+              <td>从单一水深热点升级为深度-时长联合地表风险诊断。</td>
+            </tr>
+            <tr>
+              <td><code>node_flooding</code></td>
+              <td>significant_volume_m3 = 10.0；repeated_event_count = 2；top_n = 10</td>
+              <td>识别主要冒溢节点，并为关系证据包提供锚点。</td>
+            </tr>
+            <tr>
+              <td><code>link_load</code></td>
+              <td>warning = 0.8；high = 0.95；surcharge = 1.0；near_full_duration = 15 min；warning_duration = 30 min</td>
+              <td>以充满度和持续时间替代单纯流量排序，更符合管段负荷解释。</td>
+            </tr>
+            <tr>
+              <td><code>flow_direction</code></td>
+              <td>frequent_changes = 3；critical_changes = 6</td>
+              <td>识别可能与顶托、回流或水力震荡有关的管段。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-  <script type="module">
-    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
-    mermaid.initialize({
-      startOnLoad: true,
-      securityLevel: "loose",
-      theme: "base",
-      themeVariables: {
-        fontFamily: "Microsoft YaHei, Segoe UI, Arial, sans-serif",
-        primaryTextColor: "#2f3437",
-        lineColor: "#8f8a82",
-        clusterBkg: "#fbfaf7",
-        clusterBorder: "#d8d1c7",
-        tertiaryColor: "#f3f0ea"
-      },
-      flowchart: {
-        htmlLabels: true,
-        curve: "basis",
-        nodeSpacing: 28,
-        rankSpacing: 42
-      }
-    });
-  </script>
+      <div class="note">
+        <p><strong>当前机制边界：</strong>DiagnosisAgent 负责把已构建好的 evidence 和 relation package 转化为结构化 claim。证据包构建、关系表生成和后续 VerificationAgent 核查是相邻环节；DiagnosisAgent 本身不重新执行模拟，也不直接从原始时序结果中重算证据。</p>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

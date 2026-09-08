@@ -1,0 +1,9 @@
+Directory exists: models\suanliguanw_swmm_2d\runs\rain4_event__baseline__20260907_211530
+
+Contents:
+--------------------------------------------------
+DIR:  ca2d/
+FILE: rainfall_event.txt
+FILE: scenario_request.json
+DIR:  swmm/
+FILE: workflow_state.json

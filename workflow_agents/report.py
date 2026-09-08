@@ -22,6 +22,12 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _read_optional_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def _fmt_value(value: Any, unit: str = "") -> str:
     try:
         number = float(value)
@@ -38,7 +44,7 @@ def _fmt_value(value: Any, unit: str = "") -> str:
     return f"{text} {unit}".strip()
 
 
-def _load_report_inputs(model_name: str, run_id: str) -> tuple[Path, dict[str, Any], dict[str, Any], pd.DataFrame, dict[str, Any], pd.DataFrame, dict[str, Any]]:
+def _load_report_inputs(model_name: str, run_id: str) -> tuple[Path, dict[str, Any], dict[str, Any], dict[str, Any], pd.DataFrame, dict[str, Any], pd.DataFrame, dict[str, Any]]:
     run_root, state = load_or_initialize_state(model_name, run_id)
     if state.get("state") != VERIFIED_READY:
         raise ValueError(
@@ -49,6 +55,7 @@ def _load_report_inputs(model_name: str, run_id: str) -> tuple[Path, dict[str, A
     artifacts = artifacts_for_run(run_root)
     summary = _read_json(artifacts.run_summary)
     evidence_summary = _read_json(artifacts.evidence_summary)
+    rainfall_context = _read_optional_json(artifacts.rainfall_context) or evidence_summary.get("rainfall_context", {})
     diagnosis = _read_json(artifacts.diagnosis_claims)
     verification = _read_json(artifacts.verification_report)
     if not artifacts.evidence_table.exists():
@@ -60,7 +67,7 @@ def _load_report_inputs(model_name: str, run_id: str) -> tuple[Path, dict[str, A
     risk_ranking = pd.read_csv(artifacts.risk_ranking, dtype={"claim_id": str, "object_id": str}, low_memory=False)
     evidence["value"] = pd.to_numeric(evidence["value"], errors="coerce").fillna(0.0)
     risk_ranking["value"] = pd.to_numeric(risk_ranking["value"], errors="coerce").fillna(0.0)
-    return run_root, state, summary, evidence, diagnosis, risk_ranking, verification
+    return run_root, state, summary, rainfall_context, evidence, diagnosis, risk_ranking, verification
 
 
 def _verification_status_by_claim(verification: dict[str, Any]) -> dict[str, str]:
@@ -96,16 +103,24 @@ def _top_rows(risk_ranking: pd.DataFrame, claim_type: str, limit: int = 5) -> pd
     subset = risk_ranking[risk_ranking["claim_type"] == claim_type].copy()
     if subset.empty:
         return subset
+    if "severity_score" in subset.columns:
+        return subset.sort_values(["severity_score", "value"], ascending=[False, False]).head(limit)
     return subset.sort_values("value", ascending=False).head(limit)
 
 
 def _claim_type_title(claim_type: str) -> str:
     return {
+        "surface_ponding_risk": "地表积水深度-时间联合风险",
         "surface_hotspot": "地表积水热点",
         "long_duration_ponding": "长时间积水区域",
         "major_overflow_node": "主要冒溢节点",
         "high_load_link": "高负荷管段",
         "unstable_flow_direction_link": "流向不稳定管段",
+        "node_overflow_with_surface_ponding": "冒溢节点-地表积水耦合",
+        "node_overflow_with_downstream_high_fullness": "冒溢节点-下游高充满度耦合",
+        "node_overflow_with_upstream_high_load": "冒溢节点-上游高负荷耦合",
+        "node_overflow_with_flow_direction_instability": "冒溢节点-流向不稳定耦合",
+        "node_repeated_overflow": "反复冒溢节点",
     }.get(claim_type, claim_type)
 
 
@@ -116,12 +131,52 @@ def _metric_label(metric_name: str) -> str:
         "total_flooding_volume": "累计溢流量",
         "max_flooding_flow": "最大溢流流量",
         "flooding_duration": "节点溢流持续时间",
+        "overflow_event_count": "反复溢流次数",
         "max_node_depth": "节点最大水深",
         "max_fullness": "最大充满度",
+        "fullness_ge_0_8_duration": "充满度≥0.80持续时间",
+        "fullness_ge_0_95_duration": "充满度≥0.95持续时间",
+        "surcharge_duration": "超满流持续时间",
         "max_flow": "最大绝对流量",
         "max_link_depth": "管段最大水深",
         "flow_direction_changes": "流向改变次数",
+        "surface_ponding_depth_duration": "地表积水深度-时间联合风险",
+        "link_fullness_load": "管段充满度-持续时间联合负荷",
+        "relation_surface_max_depth": "关系路径内最大积水深度",
+        "relation_downstream_max_fullness": "关系路径内下游最大充满度",
+        "relation_upstream_max_fullness": "关系路径内上游最大充满度",
+        "relation_flow_direction_changes": "关系路径内流向改变次数",
     }.get(metric_name, metric_name)
+
+
+def _rainfall_class_label(intensity_class: str) -> str:
+    return {
+        "light_rain": "小雨",
+        "moderate_rain": "中雨",
+        "heavy_rain": "大雨",
+        "rainstorm": "暴雨",
+        "heavy_rainstorm": "大暴雨",
+        "short_duration_heavy_rainfall": "短时强降水",
+        "unknown": "未知",
+    }.get(intensity_class, intensity_class or "未知")
+
+
+def _append_rainfall_context(lines: list[str], rainfall_context: dict[str, Any]) -> None:
+    if not rainfall_context:
+        lines.append("- 降雨强度背景：当前 run 尚未生成 `rainfall_context.json`。")
+        return
+    intensity_class = str(rainfall_context.get("intensity_class", "unknown"))
+    lines.append(f"- 降雨类型：`{intensity_class}`（{_rainfall_class_label(intensity_class)}）。")
+    lines.append(f"- 累计雨量：{_fmt_value(rainfall_context.get('total_rainfall_mm'), 'mm')}。")
+    lines.append(f"- 降雨历时：{_fmt_value(rainfall_context.get('rainfall_duration_min'), 'min')}。")
+    lines.append(f"- 峰值雨强：{_fmt_value(rainfall_context.get('max_intensity_mm_per_h'), 'mm/h')}。")
+    peak_time = rainfall_context.get("rainfall_peak_time")
+    if peak_time:
+        lines.append(f"- 峰值出现时间：`{peak_time}`。")
+    if rainfall_context.get("short_duration_heavy_rainfall"):
+        lines.append("- 诊断语境：本次事件具有短历时、高强度特征，需优先考虑系统承压和局部排水能力共同作用。")
+    else:
+        lines.append("- 诊断语境：该降雨等级将作为后续成因判断的前置背景，而不单独构成最终原因。")
 
 
 def _claim_status_lookup(verification: dict[str, Any]) -> dict[str, str]:
@@ -162,7 +217,7 @@ def _claim_evidence_lines(claim: dict[str, Any], evidence_lookup: dict[str, dict
 
 
 def _choose_explanation_claim(claims: list[dict[str, Any]], risk_ranking: pd.DataFrame) -> dict[str, Any] | None:
-    preferred_types = ["surface_hotspot", "long_duration_ponding", "major_overflow_node"]
+    preferred_types = ["surface_ponding_risk", "surface_hotspot", "long_duration_ponding", "major_overflow_node"]
     ranking_by_claim = {
         str(row["claim_id"]): float(row["value"])
         for _, row in risk_ranking.iterrows()
@@ -188,6 +243,8 @@ def _infer_point_causes(claim: dict[str, Any], evidence: pd.DataFrame) -> list[s
     object_type = str(claim.get("object_type", ""))
     claim_type = str(claim.get("claim_type", ""))
 
+    if claim_type == "surface_ponding_risk":
+        causes.append("该位置同时满足积水深度和持续时间联合阈值，说明风险不只是瞬时水深峰值，而是具有持续影响。")
     if claim_type == "surface_hotspot":
         causes.append("该位置的最大地表积水深度已经达到规则阈值，说明局部承载或排泄能力不足。")
     if claim_type == "long_duration_ponding":
@@ -233,12 +290,13 @@ def _infer_point_causes(claim: dict[str, Any], evidence: pd.DataFrame) -> list[s
 
 def generate_run_report(model_name: str, run_id: str, report_type: str = "summary_report") -> dict[str, Any]:
     """Generate a user-facing Markdown report from verified workflow artifacts."""
-    run_root, _state, summary, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
+    run_root, _state, summary, rainfall_context, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
     claims = _supported_claims(diagnosis, verification)
     verification_summary = verification.get("summary", {})
     metric_counts = evidence["metric_name"].value_counts().to_dict()
     claim_counts = risk_ranking["claim_type"].value_counts().to_dict() if not risk_ranking.empty else {}
 
+    surface_risk = _top_rows(risk_ranking, "surface_ponding_risk", limit=5)
     surface = _top_rows(risk_ranking, "surface_hotspot", limit=5)
     ponding = _top_rows(risk_ranking, "long_duration_ponding", limit=5)
     overflow = _top_rows(risk_ranking, "major_overflow_node", limit=5)
@@ -262,10 +320,16 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
         f"- 证据数量：{len(evidence)} 条",
         f"- 诊断结论数量：{len(claims)} 条",
         "",
+        "## 降雨强度背景",
+        "",
+    ]
+    _append_rainfall_context(lines, rainfall_context)
+    lines.extend([
+        "",
         "## 证据与诊断概况",
         "",
         "本次报告使用的结构化证据包括：",
-    ]
+    ])
     for metric_name, count in sorted(metric_counts.items()):
         lines.append(f"- `{metric_name}`（{_metric_label(str(metric_name))}）：{count} 条。")
     lines.extend(["", "已核查诊断结论类型包括："])
@@ -279,12 +343,21 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
         ]
     )
 
-    if not surface.empty:
+    if not surface_risk.empty:
+        lines.append("地表积水深度-时间联合风险主要集中在以下网格：")
+        for _, row in surface_risk.iterrows():
+            duration = row.get("ponding_duration_min", "")
+            duration_text = f"，持续时间 {_fmt_value(duration, 'min')}" if str(duration).strip() else ""
+            lines.append(
+                f"- Cell `{row['object_id']}`：最大水深 {_fmt_value(row['value'], str(row.get('unit', '')))}"
+                f"{duration_text}，风险等级 `{row.get('severity', '')}`。"
+            )
+    elif not surface.empty:
         lines.append("地表积水热点主要集中在以下网格：")
         for _, row in surface.iterrows():
             lines.append(f"- Cell `{row['object_id']}`：{_fmt_value(row['value'], str(row.get('unit', '')))}，风险等级 `{row.get('severity', '')}`。")
     else:
-        lines.append("未发现达到规则阈值的地表积水热点。")
+        lines.append("未发现达到联合规则阈值的地表积水风险。")
 
     if not overflow.empty:
         lines.extend(["", "管网溢流方面，以下节点贡献较突出："])
@@ -299,8 +372,10 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
     if not link_load.empty:
         lines.extend(["", "管段负荷方面，以下管段可作为排水压力较高的线索："])
         for _, row in link_load.iterrows():
-            label = "最大充满度" if str(row.get("metric_name", "")) == "max_fullness" else "最大绝对流量"
-            lines.append(f"- Link `{row['object_id']}`：{label} {_fmt_value(row['value'], str(row.get('unit', '')))}。")
+            label = "最大充满度" if str(row.get("metric_name", "")) in {"max_fullness", "link_fullness_load"} else "最大绝对流量"
+            near_full_duration = row.get("fullness_ge_0_95_duration_min", "")
+            duration_text = f"，接近满流持续 {_fmt_value(near_full_duration, 'min')}" if str(near_full_duration).strip() else ""
+            lines.append(f"- Link `{row['object_id']}`：{label} {_fmt_value(row['value'], str(row.get('unit', '')))}{duration_text}。")
 
     if not unstable_direction.empty:
         lines.extend(["", "管段流向稳定性方面，以下管段存在频繁流向改变信号："])
@@ -309,11 +384,17 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
 
     lines.extend(["", "## 完整诊断清单", ""])
     for claim_type in [
+        "surface_ponding_risk",
         "surface_hotspot",
         "long_duration_ponding",
         "major_overflow_node",
         "high_load_link",
         "unstable_flow_direction_link",
+        "node_overflow_with_surface_ponding",
+        "node_overflow_with_downstream_high_fullness",
+        "node_overflow_with_upstream_high_load",
+        "node_overflow_with_flow_direction_instability",
+        "node_repeated_overflow",
     ]:
         rows = risk_ranking[risk_ranking["claim_type"] == claim_type].copy()
         if not rows.empty:
@@ -362,7 +443,7 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
 
 def explain_one_flood_point(model_name: str, run_id: str) -> dict[str, Any]:
     """Explain one representative verified flood point in plain language."""
-    run_root, _state, _summary, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
+    run_root, _state, _summary, _rainfall_context, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
     claims = _supported_claims(diagnosis, verification)
     claim = _choose_explanation_claim(claims, risk_ranking)
     if claim is None:

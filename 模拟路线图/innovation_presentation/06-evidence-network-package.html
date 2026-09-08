@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>关系证据网与诊断证据包</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    :root {
+      --bg: #f3f0ea;
+      --ink: #34403c;
+      --muted: #68736e;
+      --line: #cfc6bb;
+      --panel: #fbfaf6;
+      --panel-2: #f6f2ea;
+      --sage: #dce6dc;
+      --sage-line: #748b76;
+      --dust: #ead9d1;
+      --dust-line: #9b7b6d;
+      --bluegray: #dbe4eb;
+      --bluegray-line: #728796;
+      --mauve: #e5d8dc;
+      --mauve-line: #926f7b;
+      --wheat: #eee2c8;
+      --wheat-line: #9d8758;
+      --shadow: 0 12px 30px rgba(52, 64, 60, 0.08);
+    }
+
+    body {
+      background:
+        linear-gradient(180deg, rgba(220, 230, 220, 0.55), rgba(243, 240, 234, 0) 280px),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    .section-title {
+      border-bottom-color: var(--line);
+    }
+
+    .kicker {
+      border-color: var(--mauve-line);
+      background: var(--mauve);
+    }
+
+    .panel {
+      background: rgba(251, 250, 246, 0.9);
+      border-color: var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .morandi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .layer-card {
+      min-height: 154px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--panel);
+    }
+
+    .layer-card.object {
+      background: var(--sage);
+      border-color: var(--sage-line);
+    }
+
+    .layer-card.relation {
+      background: var(--dust);
+      border-color: var(--dust-line);
+    }
+
+    .layer-card.evidence {
+      background: var(--bluegray);
+      border-color: var(--bluegray-line);
+    }
+
+    .layer-card small,
+    .flow-tag {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .layer-card b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .layer-card p {
+      margin: 0;
+      color: #3f4d48;
+      font-size: 14px;
+      line-height: 1.68;
+    }
+
+    .flowchart {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(251, 250, 246, 0.86);
+      box-shadow: var(--shadow);
+    }
+
+    .flowchart h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: 1fr 52px 1fr 52px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .flow-node {
+      min-height: 126px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--panel);
+    }
+
+    .flow-node b {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .flow-node span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.58;
+    }
+
+    .flow-node.input {
+      border-color: var(--wheat-line);
+      background: var(--wheat);
+    }
+
+    .flow-node.anchor {
+      border: 2px solid var(--mauve-line);
+      background: var(--mauve);
+      text-align: center;
+    }
+
+    .flow-node.surface {
+      border-color: var(--sage-line);
+      background: var(--sage);
+    }
+
+    .flow-node.network {
+      border-color: var(--bluegray-line);
+      background: var(--bluegray);
+    }
+
+    .flow-node.output {
+      border-color: var(--dust-line);
+      background: var(--dust);
+    }
+
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      color: #6d746f;
+      font-size: 25px;
+      font-weight: 600;
+    }
+
+    .branch-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .branch {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(246, 242, 234, 0.82);
+    }
+
+    .branch h3 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .branch.surface {
+      border-color: var(--sage-line);
+    }
+
+    .branch.network {
+      border-color: var(--bluegray-line);
+    }
+
+    .branch-step {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid rgba(207, 198, 187, 0.82);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(251, 250, 246, 0.78);
+    }
+
+    .branch-step i {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--panel-2);
+      color: var(--ink);
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+    }
+
+    .branch-step b {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .branch-step span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.52;
+    }
+
+    .diagnostic-map {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    .map-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: center;
+      justify-content: flex-end;
+      margin: -4px 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend-block {
+      display: grid;
+      gap: 8px;
+      margin: -4px 0 12px;
+    }
+
+    .legend-title {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .legend-icon {
+      position: relative;
+      display: inline-block;
+      flex: 0 0 auto;
+      width: 34px;
+      height: 24px;
+    }
+
+    .legend-icon.cell {
+      display: grid;
+      grid-template-columns: repeat(3, 7px);
+      grid-template-rows: repeat(3, 7px);
+      gap: 1px;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+    }
+
+    .legend-icon.cell i {
+      display: block;
+      border: 1px solid var(--sage-line);
+      border-radius: 2px;
+      background: var(--sage);
+    }
+
+    .legend-icon.cell i:nth-child(5) {
+      background: #c9d8c8;
+      border-width: 2px;
+    }
+
+    .legend-icon.manhole {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--mauve-line);
+      border-radius: 50%;
+      background:
+        repeating-linear-gradient(90deg, rgba(146, 111, 123, 0.32) 0 2px, transparent 2px 5px),
+        var(--mauve);
+      box-shadow: inset 0 0 0 4px rgba(251, 250, 246, 0.45);
+    }
+
+    .legend-icon.pipe {
+      width: 36px;
+      height: 18px;
+      margin-top: 3px;
+      border: 2px solid var(--bluegray-line);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(251, 250, 246, 0.65), transparent 50%),
+        var(--bluegray);
+    }
+
+    .legend-icon.pipe::before,
+    .legend-icon.pipe::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      width: 6px;
+      height: 8px;
+      border: 1px solid var(--bluegray-line);
+      background: rgba(251, 250, 246, 0.62);
+    }
+
+    .legend-icon.pipe::before { left: -3px; }
+    .legend-icon.pipe::after { right: -3px; }
+
+    .legend-icon.evidence {
+      width: 30px;
+      height: 24px;
+      border: 1px solid var(--wheat-line);
+      border-radius: 6px;
+      background: var(--wheat);
+    }
+
+    .legend-icon.evidence::before,
+    .legend-icon.evidence::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      height: 2px;
+      background: rgba(157, 135, 88, 0.7);
+      border-radius: 99px;
+    }
+
+    .legend-icon.evidence::before { top: 8px; }
+    .legend-icon.evidence::after { top: 14px; }
+
+    .legend-icon.flow,
+    .legend-icon.velocity,
+    .legend-icon.fullness,
+    .legend-icon.direction {
+      width: 36px;
+      height: 24px;
+    }
+
+    .legend-icon.flow::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      top: 12px;
+      height: 3px;
+      border-radius: 999px;
+      background: #748b76;
+    }
+
+    .legend-icon.flow::after {
+      content: "";
+      position: absolute;
+      right: 1px;
+      top: 7px;
+      border-left: 9px solid #748b76;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+    }
+
+    .legend-icon.velocity::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 6px;
+      width: 28px;
+      height: 14px;
+      border-top: 3px solid #9b7b6d;
+      border-radius: 50%;
+      transform: rotate(-12deg);
+    }
+
+    .legend-icon.velocity::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 7px;
+      border-left: 8px solid #9b7b6d;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      transform: rotate(-20deg);
+    }
+
+    .legend-icon.fullness {
+      border: 2px solid var(--bluegray-line);
+      border-radius: 5px;
+      overflow: hidden;
+      background: rgba(251, 250, 246, 0.7);
+    }
+
+    .legend-icon.fullness::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 72%;
+      background: var(--bluegray);
+    }
+
+    .legend-icon.direction::before,
+    .legend-icon.direction::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      width: 18px;
+      height: 2px;
+      background: var(--wheat-line);
+    }
+
+    .legend-icon.direction::before { left: 2px; }
+    .legend-icon.direction::after { right: 2px; }
+
+    .legend-icon.direction i::before,
+    .legend-icon.direction i::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .legend-icon.direction i::before {
+      left: 0;
+      border-right: 8px solid var(--wheat-line);
+    }
+
+    .legend-icon.direction i::after {
+      right: 0;
+      border-left: 8px solid var(--wheat-line);
+    }
+
+    .cell-symbol {
+      display: grid;
+      grid-template-columns: repeat(3, 7px);
+      grid-template-rows: repeat(3, 7px);
+      gap: 1px;
+      width: 25px;
+      margin: 0 auto 6px;
+    }
+
+    .cell-symbol i {
+      display: block;
+      border: 1px solid var(--sage-line);
+      border-radius: 2px;
+      background: rgba(220, 230, 220, 0.72);
+    }
+
+    .cell-symbol i:nth-child(5) {
+      background: #c9d8c8;
+      border-width: 2px;
+    }
+
+    .manhole-symbol {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 10px;
+      border: 3px solid var(--mauve-line);
+      border-radius: 50%;
+      background:
+        repeating-linear-gradient(90deg, rgba(146, 111, 123, 0.35) 0 3px, transparent 3px 8px),
+        radial-gradient(circle, rgba(251, 250, 246, 0.36), transparent 58%),
+        var(--mauve);
+      box-shadow:
+        inset 0 0 0 8px rgba(251, 250, 246, 0.42),
+        0 10px 20px rgba(52, 64, 60, 0.08);
+    }
+
+    .pipe-symbol {
+      position: relative;
+      width: 88px;
+      height: 34px;
+      margin: 0 auto 10px;
+      border: 3px solid var(--bluegray-line);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(251, 250, 246, 0.72), transparent 54%),
+        var(--bluegray);
+    }
+
+    .pipe-symbol::before,
+    .pipe-symbol::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      width: 12px;
+      height: 16px;
+      border: 2px solid var(--bluegray-line);
+      background: rgba(251, 250, 246, 0.68);
+    }
+
+    .pipe-symbol::before { left: -7px; }
+    .pipe-symbol::after { right: -7px; }
+
+    .boundary-symbol {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 8px;
+      border: 2px solid var(--dust-line);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(251, 250, 246, 0.72) 0 34%, transparent 36%),
+        var(--dust);
+    }
+
+    .metric-icon {
+      position: relative;
+      display: block;
+      width: 42px;
+      height: 24px;
+      margin: 0 auto 5px;
+    }
+
+    .metric-icon.flow::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      right: 6px;
+      top: 11px;
+      height: 4px;
+      border-radius: 999px;
+      background: #748b76;
+    }
+
+    .metric-icon.flow::after {
+      content: "";
+      position: absolute;
+      right: 1px;
+      top: 6px;
+      border-left: 10px solid #748b76;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+    }
+
+    .metric-icon.velocity::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 7px;
+      width: 30px;
+      height: 13px;
+      border-top: 4px solid #9b7b6d;
+      border-radius: 50%;
+      transform: rotate(-13deg);
+    }
+
+    .metric-icon.velocity::after {
+      content: "";
+      position: absolute;
+      right: 1px;
+      top: 7px;
+      border-left: 9px solid #9b7b6d;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      transform: rotate(-18deg);
+    }
+
+    .metric-icon.fullness {
+      width: 38px;
+      border: 2px solid var(--bluegray-line);
+      border-radius: 5px;
+      overflow: hidden;
+      background: rgba(251, 250, 246, 0.8);
+    }
+
+    .metric-icon.fullness::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 72%;
+      background: var(--bluegray);
+    }
+
+    .metric-icon.direction::before,
+    .metric-icon.direction::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      width: 19px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--wheat-line);
+    }
+
+    .metric-icon.direction::before { left: 1px; }
+    .metric-icon.direction::after { right: 1px; }
+
+    .metric-icon.direction i::before,
+    .metric-icon.direction i::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+    }
+
+    .metric-icon.direction i::before {
+      left: 0;
+      border-right: 10px solid var(--wheat-line);
+    }
+
+    .metric-icon.direction i::after {
+      right: 0;
+      border-left: 10px solid var(--wheat-line);
+    }
+
+    .legend-swatch {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .legend-swatch.surface { background: var(--sage); border-color: var(--sage-line); }
+    .legend-swatch.anchor { background: var(--mauve); border-color: var(--mauve-line); }
+    .legend-swatch.network { background: var(--bluegray); border-color: var(--bluegray-line); }
+    .legend-swatch.evidence { background: var(--wheat); border-color: var(--wheat-line); }
+    .legend-swatch.node {
+      border-radius: 50%;
+      background: var(--mauve);
+      border-color: var(--mauve-line);
+    }
+    .legend-swatch.pipe {
+      width: 28px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--bluegray);
+      border-color: var(--bluegray-line);
+    }
+    .legend-swatch.flow { background: #d6dfd0; border-color: #748b76; }
+    .legend-swatch.velocity { background: #e8d7cc; border-color: #9b7b6d; }
+    .legend-swatch.fullness { background: #d5dfe8; border-color: #728796; }
+    .legend-swatch.direction { background: #e6d9be; border-color: #9d8758; }
+    .legend-line {
+      width: 28px;
+      height: 0;
+      border-top: 2px solid #8a8177;
+    }
+    .legend-line.dashed {
+      border-top-style: dashed;
+    }
+
+    .surface-zone,
+    .anchor-zone,
+    .pipe-zone {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: rgba(251, 250, 246, 0.74);
+    }
+
+    .zone-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .zone-title b {
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .cell-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(116px, 1fr));
+      gap: 8px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .cell-node {
+      min-height: 66px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px solid var(--sage-line);
+      border-radius: 8px;
+      padding: 8px;
+      background: var(--sage);
+      text-align: center;
+      color: #34443a;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .cell-node.seed {
+      border: 2px solid var(--sage-line);
+      background: #cfdccc;
+      font-weight: 600;
+    }
+
+    .cell-node.seed::before {
+      content: "中心";
+      display: inline-block;
+      width: fit-content;
+      margin: 0 auto 4px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(251, 250, 246, 0.68);
+      color: #45534b;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .cell-node.muted-cell {
+      border-style: dashed;
+      opacity: 0.55;
+      background: rgba(220, 230, 220, 0.52);
+    }
+
+    .cell-node.diagonal {
+      border-style: dashed;
+      background: rgba(220, 230, 220, 0.68);
+    }
+
+    .vertical-arrow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .vertical-arrow::before,
+    .vertical-arrow::after {
+      content: "";
+      height: 1px;
+      background: var(--line);
+    }
+
+    .arrow-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(251, 250, 246, 0.92);
+      white-space: nowrap;
+    }
+
+    .anchor-zone {
+      display: grid;
+      grid-template-columns: 1fr minmax(280px, 0.75fr);
+      gap: 14px;
+      align-items: center;
+      border-color: var(--mauve-line);
+      background: rgba(229, 216, 220, 0.34);
+    }
+
+    .center-node {
+      display: grid;
+      place-items: center;
+      min-height: 160px;
+      border: 2px solid var(--mauve-line);
+      border-radius: 8px;
+      background: var(--mauve);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .center-node small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .center-node b {
+      display: block;
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .center-node span {
+      color: #4b5651;
+      font-size: 14px;
+    }
+
+    .criteria-box {
+      display: grid;
+      gap: 8px;
+    }
+
+    .criterion {
+      border: 1px solid var(--wheat-line);
+      border-radius: 8px;
+      padding: 10px;
+      background: var(--wheat);
+    }
+
+    .criterion b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .criterion span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .pipe-trace {
+      display: grid;
+      grid-template-columns: 1fr 34px 1.1fr 34px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pipe-card {
+      min-height: 118px;
+      border: 1px solid var(--bluegray-line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--bluegray);
+    }
+
+    .pipe-card.boundary {
+      border-color: var(--dust-line);
+      background: var(--dust);
+    }
+
+    .pipe-card.anchor-pipe {
+      border: 2px solid var(--mauve-line);
+      background: rgba(229, 216, 220, 0.92);
+      text-align: center;
+    }
+
+    .pipe-card b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .pipe-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .pipe-arrow {
+      color: #6d746f;
+      font-size: 22px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .metrics-band {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .metric-chip {
+      border: 1px solid var(--wheat-line);
+      border-radius: 8px;
+      padding: 9px;
+      background: rgba(238, 226, 200, 0.72);
+      color: #4f4b3f;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .metric-chip.flow { background: #d6dfd0; border-color: #748b76; }
+    .metric-chip.velocity { background: #e8d7cc; border-color: #9b7b6d; }
+    .metric-chip.fullness { background: #d5dfe8; border-color: #728796; }
+    .metric-chip.direction { background: #e6d9be; border-color: #9d8758; }
+
+    .package-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .package-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .package-item {
+      display: grid;
+      grid-template-columns: 172px 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(251, 250, 246, 0.78);
+    }
+
+    .package-item b {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .package-item span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .json-panel {
+      background: #f7f3ea;
+      border-color: var(--wheat-line);
+    }
+
+    .json-panel pre {
+      margin: 12px 0 0;
+      max-height: 620px;
+      overflow: auto;
+      border: 1px solid rgba(157, 135, 88, 0.45);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(251, 250, 246, 0.9);
+      color: #32413c;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12.5px;
+      line-height: 1.55;
+      white-space: pre;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .matrix th,
+    .matrix td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .matrix th {
+      background: rgba(246, 242, 234, 0.9);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .matrix tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(251, 250, 246, 0.76);
+      color: #36443f;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    code {
+      background: #eee9df;
+    }
+
+    @media (max-width: 1120px) {
+      .morandi-grid,
+      .package-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-row {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-arrow {
+        min-height: 24px;
+        transform: rotate(90deg);
+      }
+
+      .branch-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .anchor-zone,
+      .pipe-trace {
+        grid-template-columns: 1fr;
+      }
+
+      .pipe-arrow {
+        transform: rotate(90deg);
+      }
+
+      .cell-grid {
+        grid-template-columns: repeat(3, minmax(82px, 1fr));
+      }
+
+      .metrics-band {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .package-item {
+        grid-template-columns: 1fr;
+      }
+
+      .json-panel pre {
+        font-size: 12px;
+      }
+
+      .cell-grid,
+      .metrics-band {
+        grid-template-columns: 1fr;
+      }
+
+      .map-legend {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><strong>独立补充页</strong><span>关系证据网与诊断证据包</span></div>
+      <nav class="nav" aria-label="页面导航">
+        <a href="index.html">总览</a><a href="01-object.html">对象创新</a><a href="02-architecture.html">架构创新</a><a href="03-diagnosis.html">诊断机制</a><a href="04-relation-graph.html">关系证据网</a><a href="05-evaluation.html">评价优化</a><a href="workflow.html">机制图</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="section-title">
+        <div>
+          <h1>立体化关系证据网与诊断证据包</h1>
+          <p>第一版先构建以冒溢节点为锚点的最小关系证据网，把降雨背景、地表积水响应、节点冒溢证据和上下游管段流态组织为可追溯的诊断输入。</p>
+        </div>
+        <span class="kicker">node-centered evidence package</span>
+      </section>
+
+      <section class="morandi-grid" aria-label="三层证据网">
+        <article class="layer-card object">
+          <small>Layer 1</small>
+          <b>对象层</b>
+          <p>地表 cell、检查井 node、管段 link，以及后续可扩展的泵站、排口、排水分区和降雨事件。</p>
+        </article>
+        <article class="layer-card relation">
+          <small>Layer 2</small>
+          <b>关系层</b>
+          <p>node_near_cell、cell_adjacent_to_cell、node_connected_to_link、link_upstream/downstream_of_link。</p>
+        </article>
+        <article class="layer-card evidence">
+          <small>Layer 3</small>
+          <b>证据层</b>
+          <p>积水深度、积水时长、节点溢流量、冒溢时长、管段充满度、流向变化和降雨强度等级。</p>
+        </article>
+      </section>
+
+      <section class="flowchart" aria-label="以冒溢节点为中心的规范诊断网络图">
+        <h2>以冒溢节点为抓手的初步诊断网络</h2>
+        <div class="legend-block" aria-label="图例">
+          <div class="legend-title">图例</div>
+          <div class="map-legend">
+            <span class="legend-item"><i class="legend-icon cell"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></i>地块 cell</span>
+            <span class="legend-item"><i class="legend-icon manhole"></i>检查井节点</span>
+            <span class="legend-item"><i class="legend-icon pipe"></i>排水管段</span>
+            <span class="legend-item"><i class="legend-icon evidence"></i>筛选/证据条件</span>
+            <span class="legend-item"><i class="legend-line"></i>管网拓扑</span>
+            <span class="legend-item"><i class="legend-line dashed"></i>cell 邻域关系</span>
+          </div>
+          <div class="map-legend">
+            <span class="legend-item"><i class="legend-icon flow"></i>流量变化</span>
+            <span class="legend-item"><i class="legend-icon velocity"></i>流速变化</span>
+            <span class="legend-item"><i class="legend-icon fullness"></i>充满度变化</span>
+            <span class="legend-item"><i class="legend-icon direction"><i></i></i>流向变化</span>
+          </div>
+        </div>
+
+        <div class="diagnostic-map">
+          <section class="surface-zone" aria-label="地表 cell 诊断扩展">
+            <div class="zone-title">
+              <b>地表 cell 积水响应</b>
+              <span>中心格为挂接节点的地块，周围八格为八邻域候选 cell</span>
+            </div>
+            <div class="cell-grid" aria-label="八邻域地表 cell 示意">
+              <div class="cell-node diagonal">邻域 cell<br>水深/时长</div>
+              <div class="cell-node">邻域 cell<br>水深/时长</div>
+              <div class="cell-node diagonal">邻域 cell<br>水深/时长</div>
+              <div class="cell-node">邻域 cell<br>水深/时长</div>
+              <div class="cell-node seed"><span class="cell-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>挂接节点地块<br>积水筛选</div>
+              <div class="cell-node">邻域 cell<br>水深/时长</div>
+              <div class="cell-node diagonal">邻域 cell<br>水深/时长</div>
+              <div class="cell-node">邻域 cell<br>水深/时长</div>
+              <div class="cell-node diagonal">邻域 cell<br>水深/时长</div>
+            </div>
+            <div class="metrics-band">
+              <div class="metric-chip">筛选：是否积水</div>
+              <div class="metric-chip">证据：积水深度</div>
+              <div class="metric-chip">证据：淹没时间</div>
+              <div class="metric-chip">可扩展：地表高程/径流系数</div>
+            </div>
+          </section>
+
+          <div class="vertical-arrow">
+            <span class="arrow-label">节点与地表挂接 + cell 八邻域筛选</span>
+          </div>
+
+          <section class="anchor-zone" aria-label="冒溢节点锚点">
+            <div class="center-node">
+              <div>
+                <div class="manhole-symbol" aria-hidden="true"></div>
+                <small>诊断锚点 Anchor</small>
+                <b>冒溢节点</b>
+                <span>地下管网压力向地表释放的桥接位置</span>
+              </div>
+            </div>
+            <div class="criteria-box">
+              <div class="criterion">
+                <b>筛选条件 1：冒溢时间</b>
+                <span>节点发生冒溢的持续时间，用于判断是否为短时响应或持续性风险。</span>
+              </div>
+              <div class="criterion">
+                <b>筛选条件 2：冒溢次数</b>
+                <span>节点反复冒溢次数，用于识别水位反复超过地面或系统震荡响应。</span>
+              </div>
+              <div class="criterion">
+                <b>补充证据：溢流量</b>
+                <span>累计溢流量和最大溢流流量，用于衡量冒溢贡献强度。</span>
+              </div>
+            </div>
+          </section>
+
+          <div class="vertical-arrow">
+            <span class="arrow-label">节点连接管段 + 上下游拓扑追溯</span>
+          </div>
+
+          <section class="pipe-zone" aria-label="管网流态追溯">
+            <div class="zone-title">
+              <b>管道流态与上下游追溯</b>
+              <span>以该节点为上下游端点，追溯最近汇流点、起点、排口或泵站</span>
+            </div>
+            <div class="pipe-trace">
+              <div class="pipe-card boundary">
+                <div class="boundary-symbol" aria-hidden="true"></div>
+                <b>最近上游边界</b>
+                <span>上一个汇流点或起始节点，判断是否存在集中来水输入。</span>
+              </div>
+              <div class="pipe-arrow">-&gt;</div>
+              <div class="pipe-card anchor-pipe">
+                <div class="pipe-symbol" aria-hidden="true"></div>
+                <b>与冒溢节点直接相连管段</b>
+                <span>区分以该节点为下游端点的上游管段，以及以该节点为上游端点的下游管段。</span>
+              </div>
+              <div class="pipe-arrow">-&gt;</div>
+              <div class="pipe-card boundary">
+                <div class="boundary-symbol" aria-hidden="true"></div>
+                <b>最近下游边界</b>
+                <span>下一个汇流点、排口或泵站，判断排放受限、顶托或调度影响。</span>
+              </div>
+            </div>
+            <div class="metrics-band">
+              <div class="metric-chip velocity"><span class="metric-icon velocity" aria-hidden="true"></span>流速变化</div>
+              <div class="metric-chip flow"><span class="metric-icon flow" aria-hidden="true"></span>流量变化</div>
+              <div class="metric-chip fullness"><span class="metric-icon fullness" aria-hidden="true"></span>充满度变化</div>
+              <div class="metric-chip direction"><span class="metric-icon direction" aria-hidden="true"><i></i></span>流向变化</div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="package-layout">
+        <article class="panel">
+          <h2>证据包字段说明</h2>
+          <p>证据包不是最终结论，而是把一个冒溢节点周边的对象、关系和证据重组为局部诊断场景。</p>
+          <div class="package-list">
+            <div class="package-item"><b>anchor</b><span>冒溢节点 ID、触发原因、节点证据 ID。</span></div>
+            <div class="package-item"><b>rainfall_context</b><span>累计雨量、历时、峰值强度、峰值时刻、强度等级。</span></div>
+            <div class="package-item"><b>node_evidence</b><span>总溢流量、最大溢流流量、冒溢持续时间、反复冒溢次数。</span></div>
+            <div class="package-item"><b>surface_context</b><span>附近积水 cell、距离、最大水深、积水时长、邻域淹没 cluster。</span></div>
+            <div class="package-item"><b>network_context</b><span>相连管段、上下游追溯、充满度、流量、流向变化。</span></div>
+            <div class="package-item"><b>relation_paths</b><span>node-cell-link 的对象链、关系链和 evidence_id，用于核查。</span></div>
+            <div class="package-item"><b>diagnosis_ready_signals</b><span>将关键条件整理成布尔信号，供 DiagnosisAgent 稳定读取。</span></div>
+          </div>
+        </article>
+
+        <article class="panel json-panel">
+          <h2>JSON 示例</h2>
+          <p>示例只表达结构，具体数值后续由程序从模拟结果和关系表中生成。</p>
+<pre><code>{
+  "package_id": "pkg_node_C29YSG65184",
+  "anchor": {
+    "type": "JunctionNode",
+    "id": "C29YSG65184",
+    "reason": "overflow_node",
+    "evidence_ids": ["E_node_C29YSG65184_flooding"]
+  },
+  "rainfall_context": {
+    "rainfall_event_id": "rain4",
+    "total_rainfall_mm": 72.4,
+    "rainfall_duration_min": 60,
+    "max_intensity_mm_per_h": 96.0,
+    "rainfall_peak_time": "00:20:00",
+    "intensity_class": "heavy_rain",
+    "short_duration_heavy_rainfall": true
+  },
+  "node_evidence": {
+    "total_flooding_volume_m3": 9801.6,
+    "max_flooding_flow_m3s": 1.24,
+    "flooding_duration_min": 42.0,
+    "overflow_event_count": 3
+  },
+  "surface_context": {
+    "nearby_cells": [
+      {
+        "cell_id": "115176",
+        "distance_m": 18.4,
+        "max_depth_m": 0.52,
+        "ponding_duration_min": 60.0,
+        "evidence_ids": ["E_cell_115176_depth"]
+      }
+    ],
+    "ponding_cluster": {
+      "neighbor_mode": "8-neighbor",
+      "cell_count": 27,
+      "cluster_max_depth_m": 0.52
+    }
+  },
+  "network_context": {
+    "connected_links": [
+      {
+        "link_id": "102369",
+        "position": "downstream",
+        "max_fullness": 1.0,
+        "flow_direction_changes": 1,
+        "evidence_ids": ["E_link_102369_fullness"]
+      }
+    ],
+    "upstream_trace": {
+      "stop_reason": "previous_confluence_node",
+      "path": ["link:102101", "node:C29YSG65184"]
+    },
+    "downstream_trace": {
+      "stop_reason": "next_outfall_or_confluence",
+      "path": ["node:C29YSG65184", "link:102369", "node:C30YSG66012"]
+    }
+  },
+  "relation_paths": [
+    {
+      "path_id": "rp_surface_001",
+      "path_type": "surface_response",
+      "objects": ["node:C29YSG65184", "cell:115176"],
+      "relations": ["node_near_cell"],
+      "evidence_ids": [
+        "E_node_C29YSG65184_flooding",
+        "E_cell_115176_depth"
+      ]
+    }
+  ],
+  "diagnosis_ready_signals": {
+    "has_surface_ponding_nearby": true,
+    "has_downstream_high_fullness": true,
+    "has_upstream_high_load": false,
+    "has_flow_direction_instability": false,
+    "rainfall_exceeds_warning_level": true
+  }
+}</code></pre>
+        </article>
+      </section>
+
+      <section class="panel" style="margin-top:18px">
+        <h2>筛查机制与诊断证据链的融合</h2>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>环节</th>
+              <th>做什么</th>
+              <th>输出</th>
+              <th>边界</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>异常筛查</td>
+              <td>从海量模拟结果中筛出异常对象。</td>
+              <td>高积水 cell、冒溢 node、高负荷 link。</td>
+              <td>只回答哪里异常。</td>
+            </tr>
+            <tr>
+              <td>关系建网</td>
+              <td>建立 node-cell-link 的空间邻近和拓扑关系。</td>
+              <td><code>evidence_relation_table.csv</code></td>
+              <td>只描述对象如何相连。</td>
+            </tr>
+            <tr>
+              <td>证据打包</td>
+              <td>围绕冒溢节点重组降雨、地表、节点和管段证据。</td>
+              <td><code>overflow_node_evidence_packages.json</code></td>
+              <td>提供诊断输入，不提前给最终成因。</td>
+            </tr>
+            <tr>
+              <td>Agent 诊断</td>
+              <td>沿关系路径判断地表响应、上游来水、下游受限和雨情语境。</td>
+              <td>关系型 diagnosis claims。</td>
+              <td>结论必须指向 evidence_id 和 relation_path。</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pill-row">
+          <span class="pill">筛查发现异常点</span>
+          <span class="pill">建网解释异常点</span>
+          <span class="pill">证据包降低 token 消耗</span>
+          <span class="pill">核查机制约束无依据结论</span>
+        </div>
+      </section>
+
+      <section class="panel quote" style="margin-top:18px">
+        <h2>汇报表达</h2>
+        <p>关系证据网的第一版以冒溢节点为诊断锚点，不让大模型直接面对全量模拟结果，而是先筛出异常对象，再围绕节点组织附近地表积水、邻域淹没斑块、上下游管段流态和降雨强度背景，形成可追溯的诊断证据包。这样 DiagnosisAgent 的结论不是凭空解释，而是在结构化证据和关系路径约束下完成工程师式成因追溯。</p>
+      </section>
+    </main>
+
+    <nav class="footer-nav">
+      <a href="04-relation-graph.html"><- 返回关系证据网页</a>
+      <a href="index.html">返回总览 -></a>
+    </nav>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

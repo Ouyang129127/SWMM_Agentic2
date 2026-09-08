@@ -37,6 +37,7 @@ def verify_diagnosis_claims(model_name: str, run_id: str) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
     counts = {"supported": 0, "partially_supported": 0, "unsupported": 0, "uncertain": 0}
     required_by_type = rules["required_metrics_by_claim_type"]
+    require_all_by_type = rules.get("require_all_metrics_by_claim_type", {})
 
     for claim in claims_payload.get("claims", []):
         issues: list[str] = []
@@ -53,7 +54,12 @@ def verify_diagnosis_claims(model_name: str, run_id: str) -> dict[str, Any]:
 
         claim_type = claim.get("claim_type", "")
         required_metrics = required_by_type.get(claim_type, [])
-        if required_metrics and not any(str(row["metric_name"]) in required_metrics for row in matched_evidence):
+        matched_metrics = {str(row["metric_name"]) for row in matched_evidence}
+        if required_metrics and require_all_by_type.get(claim_type):
+            missing_metrics = [metric for metric in required_metrics if metric not in matched_metrics]
+            if missing_metrics:
+                issues.append(f"required metric missing for {claim_type}: {missing_metrics}")
+        elif required_metrics and not any(metric in required_metrics for metric in matched_metrics):
             issues.append(f"required metric missing for {claim_type}: {required_metrics}")
 
         claim_object_id = str(claim.get("object_id", ""))

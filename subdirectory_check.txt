@@ -1,0 +1,21 @@
+模型检查报告: suanliguanw_swmm_2d
+运行ID: rain4_event__baseline__20260907_211530
+检查时间: The current date is: 鍛ㄤ竴 2026/09/07 
+Enter the new date: (yy-mm-dd)
+============================================================
+
+SWMM 子目录检查:
+路径: models\suanliguanw_swmm_2d\runs\rain4_event__baseline__20260907_211530\swmm
+状态: ✓ 目录存在
+文件列表:
+  文件: links.tsv (3365 bytes)
+  文件: model.out (7303 bytes)
+  文件: model.rpt (15425 bytes)
+  文件: model_with_event.inp (22594 bytes)
+  文件: node_flooding.tsv (2728 bytes)
+  文件: nodes.tsv (3496 bytes)
+
+CA2D 子目录检查:
+路径: models\suanliguanw_swmm_2d\runs\rain4_event__baseline__20260907_211530\ca2d
+状态: ✓ 目录存在
+文件列表: 空目录

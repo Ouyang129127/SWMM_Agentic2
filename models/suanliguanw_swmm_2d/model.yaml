@@ -1,0 +1,30 @@
+name: suanliguanw_swmm_2d
+type: swmm_2d
+description: Synthetic CA2D companion model for EPA SWMM Site Drainage Model sample.
+
+paths:
+  raw: raw
+  static: static
+  swmm: swmm
+  mapping: mapping
+  events: events
+  runs: runs
+
+default_scenario: baseline
+scenarios:
+  baseline:
+    swmm_inp: swmm/scenarios/baseline/model.inp
+  two_year_design:
+    swmm_inp: swmm/scenarios/two_year_design/model.inp
+
+ca2d:
+  static_model: static
+  node_to_cell_mapping: static/node_to_cell_mapping.csv
+  source_config: static/config.json
+  default_dt_seconds: 10.0
+  default_boundary_interval_minutes: 5.0
+  default_save_interval_minutes: 30.0
+
+notes:
+  - The CA2D surface is synthetic and inferred from SWMM node elevations and the sample backdrop.
+  - Coordinates and elevations from the SWMM sample are converted from feet to metres for CA2D.
