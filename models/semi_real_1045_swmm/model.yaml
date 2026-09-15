@@ -1,0 +1,13 @@
+schema_name: swmm_ca2d_model_project
+schema_version: 1
+model_name: semi_real_1045_swmm
+display_name: Semi_Real_1045_H&H_Elements
+source_repository: https://github.com/SWMMEnablement/1729-SWMM5-Models
+source_ref: main
+source_commit: 3725238554579ec6cd85e732096156e66d78918d
+source_path: Semi_Real_Models/1045_H&H_Elements.inp
+license_status: repository_license_requires_confirmation
+case_class: public_swmm_benchmark
+ca2d_status: missing
+spatial_status: swmm_coordinates_only
+notes: Imported as a SWMM benchmark. No defensible DEM, land-use, flow-direction raster, CA2D static grid, or node-to-cell mapping was included in this import.

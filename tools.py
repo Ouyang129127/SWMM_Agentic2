@@ -2,6 +2,7 @@ import json
 import os
 import re
 import shutil
+import hashlib
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
@@ -62,6 +63,46 @@ def _resolve_model_input(model_root: Path, path: str) -> Path:
     if project_candidate.exists():
         return project_candidate
     return WORKSPACE_DIR / candidate
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _validate_model_event(model_root: Path, rainfall_path: Path, entries: List[Tuple[datetime, float]]) -> Dict[str, object]:
+    """Validate that an event belongs to its selected model and is safe to run."""
+    events_root = (model_root / "events").resolve()
+    candidate = rainfall_path.resolve()
+    try:
+        relative_event = candidate.relative_to(events_root)
+    except ValueError:
+        return {"ok": False, "code": "EVENT_OUTSIDE_MODEL", "message": "Rainfall event must be located under this model's events/ directory."}
+
+    values = [value for _, value in entries]
+    duration_hours = (entries[-1][0] - entries[0][0]).total_seconds() / 3600.0
+    max_intensity = max(values)
+    max_allowed_intensity = 500.0
+    if max_intensity > max_allowed_intensity:
+        return {
+            "ok": False,
+            "code": "RAINFALL_INTENSITY_REJECTED",
+            "message": f"Maximum rainfall intensity {max_intensity:g} mm/h exceeds the safety limit {max_allowed_intensity:g} mm/h.",
+            "relative_event": str(relative_event).replace("\\", "/"),
+            "max_intensity_mm_h": max_intensity,
+            "duration_hours": duration_hours,
+        }
+    return {
+        "ok": True,
+        "relative_event": str(relative_event).replace("\\", "/"),
+        "event_sha256": _sha256(candidate),
+        "max_intensity_mm_h": max_intensity,
+        "duration_hours": duration_hours,
+        "record_count": len(entries),
+    }
 
 
 def _safe_id(value: str) -> str:
@@ -694,6 +735,10 @@ def run_swmm_2d_project_from_rainfall(
         float,
         "Interval in minutes for writing CA2D tabular surface-depth records.",
     ] = 30.0,
+    expected_event_sha256: Annotated[
+        str,
+        "Optional hash from scenario_request.json. A mismatch rejects a modified event file.",
+    ] = "",
 ) -> str:
     model_root = _resolve_model_root(model_name)
     selection_error = _model_selection_error(model_root)
@@ -718,6 +763,23 @@ def run_swmm_2d_project_from_rainfall(
     if not rainfall_path.exists():
         return f"Rainfall event file not found: {rainfall_file}"
 
+    rainfall_entries = _parse_datetime_value_file(rainfall_path)
+    input_validation = _validate_model_event(model_root, rainfall_path, rainfall_entries)
+    if input_validation.get("ok") and expected_event_sha256 and input_validation.get("event_sha256") != expected_event_sha256:
+        input_validation = {
+            "ok": False,
+            "code": "EVENT_HASH_MISMATCH",
+            "message": "Rainfall event changed after scenario confirmation; prepare a new scenario request before running.",
+            "expected_event_sha256": expected_event_sha256,
+            "actual_event_sha256": input_validation.get("event_sha256"),
+        }
+    if not input_validation["ok"]:
+        return "SWMM-2D project run rejected:\n" + json.dumps(
+            {"status": "INPUT_REJECTED", "model_name": model_name, "rainfall_file": str(rainfall_path), "input_validation": input_validation},
+            ensure_ascii=False,
+            indent=2,
+        )
+
     if not run_id:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         run_id = f"{_safe_id(event_name)}__{_safe_id(scenario_name)}__{timestamp}"
@@ -733,7 +795,6 @@ def run_swmm_2d_project_from_rainfall(
     event_copy = run_root / "rainfall_event.txt"
     shutil.copy2(rainfall_path, event_copy)
     modified_inp = swmm_output_dir / "model_with_event.inp"
-    rainfall_entries = _parse_datetime_value_file(rainfall_path)
     rainfall_summary = _replace_swmm_event_inputs(
         source_inp=scenario_inp,
         target_inp=modified_inp,
@@ -778,6 +839,7 @@ def run_swmm_2d_project_from_rainfall(
         "ca2d_output_dir": str(ca2d_output_dir),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "rainfall": rainfall_summary,
+        "input_validation": input_validation,
         "swmm": swmm_result,
         "ca2d": ca2d_result,
     }

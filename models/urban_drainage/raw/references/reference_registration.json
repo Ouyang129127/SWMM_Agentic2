@@ -1,0 +1,67 @@
+{
+  "method": "robust affine fit between SWMM polygon centroids and screenshot grey markers",
+  "domain": {
+    "name": "domain",
+    "image": "raw\\references\\model_domain_reference.png",
+    "image_width_px": 901,
+    "image_height_px": 889,
+    "detected_markers": 218,
+    "swmm_polygon_centroids": 218,
+    "world_to_pixel_affine": [
+      [
+        1.586670805011618,
+        -0.002889266459430697,
+        -692843.1479903696
+      ],
+      [
+        -0.00019820370291735983,
+        -1.592871754924817,
+        11463244.928559752
+      ]
+    ],
+    "matched_pairs": 218,
+    "matches_within_10px": 214,
+    "residual_median_px": 2.0910356383678597,
+    "residual_95p_px": 6.122603038318447,
+    "residual_max_px": 15.13262940140586
+  },
+  "roads": {
+    "name": "roads",
+    "image": "raw\\references\\road_distribution_reference.png",
+    "image_width_px": 1198,
+    "image_height_px": 1392,
+    "detected_markers": 206,
+    "swmm_polygon_centroids": 218,
+    "domain_to_road_affine": [
+      [
+        1.9959092583996778,
+        0.0009305414330556942,
+        -54.246789752079835
+      ],
+      [
+        0.0005279981817152799,
+        2.0006591304871986,
+        -51.31403542932794
+      ]
+    ],
+    "world_to_pixel_affine": [
+      [
+        3.1668507653184004,
+        -0.007248946841863064,
+        -1372239.2761192182
+      ],
+      [
+        0.00044122125208886557,
+        -3.18679494571294,
+        22933628.497376356
+      ]
+    ],
+    "sift_matches": 55,
+    "sift_inliers": 31,
+    "matched_pairs": 206,
+    "matches_within_10px": 181,
+    "residual_median_px": 4.5268002958760745,
+    "residual_95p_px": 12.254360709783157,
+    "residual_max_px": 29.327069915877342
+  }
+}

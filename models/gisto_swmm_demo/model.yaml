@@ -1,0 +1,16 @@
+schema_name: swmm_ca2d_model_project
+schema_version: 1
+model_name: gisto_swmm_demo
+display_name: GisToSWMM5 demo catchment
+source_repository: https://github.com/AaltoUrbanWater/GisToSWMM5
+source_ref: master
+source_commit: b3435006e084a14f6f0f325c0962a4c2a5213559
+source_path: demo_catchment
+license_status: MIT
+case_class: gis_to_swmm_reference
+ca2d_status: reference_only
+spatial_status: gis_inputs_available
+notes: >-
+  The project includes DEM, flow-direction, land-use, network shapefiles,
+  generated SWMM input, and source rainfall data. These inputs have not yet
+  been converted into the SWMM-Agentic2 CA2D static schema or node-to-cell map.

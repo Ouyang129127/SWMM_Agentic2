@@ -1,0 +1,23 @@
+schema_name: swmm_ca2d_model_project
+schema_version: 1
+model_name: urban_drainage
+display_name: UrbanDrainage scenario family
+source_repository: https://github.com/marmargarida/UrbanDrainage
+source_ref: main
+source_commit: 79c658c67a06e904fdaf808ad0269d747ac5e7e5
+source_path: repository root
+license_status: repository_license_requires_confirmation
+case_class: public_swmm_scenario_family
+ca2d_status: synthetic_complete
+spatial_status: synthetic_from_swmm_elevations
+network_structure: shared_network_with_multiple_scenarios
+scenario_count: 11
+baseline_scenario: cenario_01
+notes: >-
+  The repository was imported as one model project. cenario_01 through cenario_11
+  are represented as scenarios under the same project because they share the
+  drainage-system identity and differ in simulation inputs or scenario data.
+  The synthetic CA2D surface uses SWMM junction cover elevations, the union of
+  the user's registered orange modelling boundary as its active domain,
+  cross-checked against 218 SWMM subcatchment polygons. Roads are 8 m wide, continuous across polygon gaps, and lowered by 0.10 m;
+  varied synthetic building footprints are raised by 15 m.

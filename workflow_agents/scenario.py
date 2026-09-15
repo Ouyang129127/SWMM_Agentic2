@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import hashlib
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -43,6 +44,14 @@ def _resolve_model_file(model_root: Path, value: str) -> Path:
     return model_root.parent.parent / candidate
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def prepare_scenario_request(
     model_name: str = "",
     rainfall_file: str = "",
@@ -66,6 +75,11 @@ def prepare_scenario_request(
     rainfall_path = _resolve_model_file(model_root, rainfall_file)
     if not rainfall_path.exists():
         raise FileNotFoundError(f"Rainfall event file not found: {rainfall_file}")
+    events_root = (model_root / "events").resolve()
+    try:
+        event_relative = rainfall_path.resolve().relative_to(events_root)
+    except ValueError as exc:
+        raise ValueError("rainfall_file must be located under the selected model's events/ directory.") from exc
 
     event_name = event_name or rainfall_path.stem
     if not run_id:
@@ -84,9 +98,8 @@ def prepare_scenario_request(
         "event_name": event_name,
         "scenario_name": scenario_name,
         "run_id": run_id,
-        "rainfall_file": str(rainfall_path.relative_to(model_root)).replace("\\", "/")
-        if rainfall_path.is_relative_to(model_root)
-        else str(rainfall_path),
+        "rainfall_file": "events/" + str(event_relative).replace("\\", "/"),
+        "event_sha256": _sha256(rainfall_path),
         "scenario_inp": str(scenario_inp.relative_to(model_root)).replace("\\", "/"),
         "requested_outputs": requested_outputs or ["summary", "swmm", "ca2d"],
         "created_at": datetime.now().isoformat(timespec="seconds"),

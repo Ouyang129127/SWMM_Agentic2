@@ -151,7 +151,9 @@ def interpolate_inflow_by_time(inflow_by_time: pd.DataFrame, interval_minutes: f
                     "weighted_flow_m3s": float(flow),
                 }
             )
-    return pd.DataFrame(rows), report_times, boundary_times
+    # Preserve the schema when SWMM has no positive overflow; callers can then
+    # return a domain result instead of leaking KeyError('DateTime').
+    return pd.DataFrame(rows, columns=["DateTime", "cell_row", "cell_col", "weighted_flow_m3s"]), report_times, boundary_times
 
 
 def add_inflow(depth, rows, cols, flows_m3s, dt, cell_size):
@@ -328,6 +330,9 @@ def run_ca2d_simulation(
         inflow_by_time,
         boundary_interval_minutes,
     )
+    # Zero overflow is a valid hydraulic result.  Continue with an all-zero
+    # surface boundary so the normal CA2D outputs document zero inundation.
+    surface_inflow_status = "NO_SURFACE_INFLOW" if boundary_inflow_by_time.empty else "POSITIVE_SURFACE_INFLOW"
     save_time_set = set(pd.date_range(start=report_times[0], end=report_times[-1], freq=f"{save_interval_minutes}min"))
     save_time_set.update(report_times)
 
@@ -374,6 +379,8 @@ def run_ca2d_simulation(
     tif_written = write_tif(max_depth, config, max_depth_tif)
 
     summary = {
+        "status": "COMPLETED",
+        "surface_inflow_status": surface_inflow_status,
         "model_dir": str(model_dir),
         "flooding_file": str(flooding_file),
         "output_dir": str(output_dir),

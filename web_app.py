@@ -26,7 +26,7 @@ from tools import (
     run_swmm_2d_project_from_rainfall,
 )
 from workflow_agents import load_scenario_request, prepare_scenario_request
-from workflow_agents.schemas import DIAGNOSIS_READY, EVIDENCE_READY, RUN_READY, SCENARIO_READY, VERIFIED_READY
+from workflow_agents.schemas import DIAGNOSIS_READY, EVIDENCE_READY, NO_SURFACE_INFLOW, RUN_READY, SCENARIO_READY, VERIFIED_READY
 from workflow_agents.state import build_state, load_or_initialize_state, save_state
 
 
@@ -168,6 +168,10 @@ async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
 
         simulation_result = simulation_agent_evidence(latest, transcript)
         if simulation_result is not None:
+            if "SWMM-2D project run rejected:" in simulation_result:
+                return "本轮模拟未启动：输入校验未通过。\n\n" + simulation_result
+            if "NO_SURFACE_INFLOW" in simulation_result:
+                return simulation_result
             explanation = await explain_simulation_evidence(latest, simulation_result)
             return (
                 "本轮已由 SWMM-Agentic2 的 `SimulationAgent` 处理标准化模拟请求，"
@@ -207,12 +211,15 @@ def continue_workflow_from_state(message: str, transcript: list[dict[str, str]])
     model_name = extract_model_name(context) or "songhua_swmm_2d"
 
     try:
-        _run_root, state = load_or_initialize_state(model_name, run_id)
+        run_root, state = load_or_initialize_state(model_name, run_id)
     except Exception as exc:
         return (
             "我识别到你想继续工作流，但读取当前 workflow state 失败。\n\n"
             f"```text\n{exc}\n```"
         )
+    # The directory location is authoritative.  A prior user turn can mention
+    # another model, while this run ID may uniquely belong to a different one.
+    model_name = run_root.parents[1].name
 
     current_state = state.get("state")
     if current_state == SCENARIO_READY:
@@ -354,12 +361,13 @@ def report_agent_reply(message: str, transcript: list[dict[str, str]]) -> str | 
     model_name = extract_model_name(combined) or "songhua_swmm_2d"
 
     try:
-        _run_root, state = load_or_initialize_state(model_name, run_id)
+        run_root, state = load_or_initialize_state(model_name, run_id)
     except Exception as exc:
         return (
             "我识别到你想生成报告或解释，但没有成功读取对应 run 的工作流状态。\n\n"
             f"```text\n{exc}\n```"
         )
+    model_name = run_root.parents[1].name
 
     if state.get("state") != VERIFIED_READY:
         return (
@@ -447,6 +455,13 @@ def simulation_agent_evidence(message: str, transcript: list[dict[str, str]]) ->
     """Route rainfall-driven coupled runs to the workflow SimulationAgent."""
     request = build_simulation_request(message, transcript)
     if request is None:
+        # A rainfall file plus an execution request is not enough authority to
+        # guess a model.  Keep this deterministic instead of falling back to LLM.
+        if extract_rainfall_file(message) and contains_any(message, ["执行模拟", "运行模拟", "模拟计算", "开始模拟", "执行计算", "运行模型", "完整模拟", "耦合模拟"]):
+            return (
+                "INPUT_REJECTED: 未执行模拟。请使用完整、精确的 model_name，并选择该模型 events/ 目录中的降雨文件；"
+                "系统不会根据相近名称或历史对话猜测模型。"
+            )
         return None
     prepared = prepare_scenario_request(**request)
     scenario_request = prepared["scenario_request"]
@@ -461,6 +476,7 @@ def run_simulation_from_scenario_request(scenario_request: dict[str, Any], rerun
         event_name=scenario_request["event_name"],
         scenario_name=scenario_request["scenario_name"],
         run_id=scenario_request["run_id"],
+        expected_event_sha256=scenario_request.get("event_sha256", ""),
     )
     parsed = None
     try:
@@ -469,7 +485,9 @@ def run_simulation_from_scenario_request(scenario_request: dict[str, Any], rerun
         parsed = None
     if isinstance(parsed, dict) and parsed.get("run_root"):
         run_root = Path(parsed["run_root"])
-        state = build_state(parsed["model_name"], parsed["run_id"], run_root, state=RUN_READY)
+        ca2d_status = parsed.get("ca2d", {}).get("status")
+        target_state = NO_SURFACE_INFLOW if ca2d_status == NO_SURFACE_INFLOW else RUN_READY
+        state = build_state(parsed["model_name"], parsed["run_id"], run_root, state=target_state)
         existing_history = []
         state_path = run_root / "workflow_state.json"
         if state_path.exists():
@@ -481,12 +499,18 @@ def run_simulation_from_scenario_request(scenario_request: dict[str, Any], rerun
         state["history"].append(
             {
                 "stage": "simulation",
-                "target_state": RUN_READY,
+                "target_state": target_state,
                 "completed_at": parsed.get("created_at", ""),
                 "rerun": bool(rerun),
             }
         )
         save_state(run_root, state)
+        if parsed.get("ca2d", {}).get("surface_inflow_status") == NO_SURFACE_INFLOW:
+            return (
+                "SWMM 与 CA2D 均已完成。本次未检测到正节点溢流，"
+                "因此二维边界入流为零；已生成地表水深为零的 CA2D 结果。\n\n"
+                + result
+            )
     return result
 
 
@@ -502,7 +526,9 @@ def deterministic_simulation_evidence(message: str, transcript: list[dict[str, s
 
 def build_simulation_request(message: str, transcript: list[dict[str, str]]) -> dict[str, Any] | None:
     """Infer a fixed-tool simulation request from the latest message and recent plan."""
-    recent_context = "\n".join(item["content"] for item in transcript[-8:])
+    # Assistant replies contain inventories and old paths. They are evidence, not
+    # authority to select a model/event. Only user-authored turns may supply input.
+    recent_context = "\n".join(item["content"] for item in transcript[-8:] if item["role"] == "user")
     wants_run = contains_any(
         message,
         [
@@ -539,7 +565,18 @@ def build_simulation_request(message: str, transcript: list[dict[str, str]]) -> 
     if not rainfall_file:
         return None
 
-    model_name = extract_model_name(message) or extract_model_name(recent_context)
+    model_name = extract_model_name(message)
+    if not model_name:
+        # Preserve the latest explicit user model selection; do not let an older
+        # model mentioned in an inventory win because paths are alphabetically sorted.
+        for item in reversed(transcript[:-1]):
+            if item["role"] != "user":
+                continue
+            model_name = extract_model_name(item["content"])
+            if model_name:
+                break
+    if not model_name:
+        return None
     scenario_name = extract_scenario_name(message) or extract_scenario_name(recent_context) or "baseline"
     run_id = extract_run_id(message) or extract_run_id(recent_context)
     event_name = Path(rainfall_file.replace("\\", "/")).stem or "manual_event"
@@ -651,13 +688,17 @@ def contains_any(text: str, markers: list[str]) -> bool:
 def extract_model_name(text: str) -> str:
     normalized = text.replace("\\", "/")
     path_match = re_search_model_path(normalized)
-    if path_match:
+    if path_match and (MODELS_DIR / path_match).is_dir():
         return path_match
     model_roots = sorted(path for path in MODELS_DIR.iterdir() if path.is_dir()) if MODELS_DIR.exists() else []
-    for model_root in model_roots:
-        if model_root.name.lower() in text.lower():
-            return model_root.name
-    return ""
+    # Only an exact identifier token is accepted. For example,
+    # "suanliguanw_swmm_2d" must never match "Gsuanliguanw_swmm_2d".
+    matches = [
+        model_root.name
+        for model_root in model_roots
+        if re.search(rf"(?<![A-Za-z0-9_.-]){re.escape(model_root.name)}(?![A-Za-z0-9_.-])", text, flags=re.IGNORECASE)
+    ]
+    return matches[0] if len(matches) == 1 else ""
 
 
 def re_search_model_path(text: str) -> str:

@@ -1,0 +1,32 @@
+{
+  "cell_size": 3.0,
+  "bounds": [
+    449811.0,
+    7196004.0,
+    450159.0,
+    7196499.0
+  ],
+  "crs": "unknown; source coordinates retained",
+  "grid_shape": [
+    165,
+    116
+  ],
+  "n_cells": 19140,
+  "n_valid_cells": 12413,
+  "n_flow_cells": 11620,
+  "n_building_cells": 793,
+  "n_buildings": 34,
+  "n_road_cells": 2660,
+  "n_road_cut_components": 12,
+  "n_subcatchment_polygons": 218,
+  "n_nodes": 100,
+  "n_mapped_nodes": 100,
+  "node_mapping_distance_median": 1.2330841361447775,
+  "node_mapping_distance_95p": 3.673174350098817,
+  "node_mapping_distance_max": 17.902253042248034,
+  "terrain_method": "IDW from SWMM cover elevations: junction invert + max depth; outfall invert",
+  "domain_method": "interior of the registered orange modelling-region boundary, cross-checked against 218 SWMM [POLYGONS] subcatchments",
+  "road_method": "registered orange road reference expanded to 8 m width and lowered by 0.10 m",
+  "building_method": "1-6 varied 9-21 m by 9-18 m footprints per suitable road-cut component, raised by 15 m",
+  "assumption_status": "synthetic_surface_from_SWMM_elevations_and_user_reference_maps"
+}

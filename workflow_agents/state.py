@@ -12,6 +12,7 @@ from .schemas import (
     EVIDENCE_READY,
     DIAGNOSIS_READY,
     FAILED,
+    NO_SURFACE_INFLOW,
     NEXT_STAGE_BY_STATE,
     RUN_READY,
     SCENARIO_READY,
@@ -39,9 +40,28 @@ def resolve_run_root(model_name: str, run_id: str) -> Path:
     if not run_id:
         raise ValueError("run_id is required.")
     run_root = MODELS_DIR / model_name / "runs" / run_id
-    if not run_root.exists():
-        raise FileNotFoundError(f"Run directory not found: {run_root}")
-    return run_root
+    if run_root.is_dir():
+        return run_root
+
+    # A run ID is the durable hand-off between workflow stages.  The web chat
+    # can retain an older model mention in its transcript, so do not turn that
+    # stale mention into a different, non-existent run path.  Recover only
+    # when the ID identifies exactly one run across the project; duplicated
+    # IDs remain an explicit user choice instead of silently selecting one.
+    candidates = [
+        path
+        for path in MODELS_DIR.glob(f"*/runs/{run_id}")
+        if path.is_dir()
+    ] if MODELS_DIR.exists() else []
+    if len(candidates) == 1:
+        return candidates[0]
+    if len(candidates) > 1:
+        locations = [str(path) for path in candidates]
+        raise ValueError(
+            f"Run ID is ambiguous across model projects; specify model_name. "
+            f"Requested model: {model_name}. Matches: {locations}"
+        )
+    raise FileNotFoundError(f"Run directory not found: {run_root}")
 
 
 def _rel(run_root: Path, path: Path) -> str:
@@ -61,6 +81,13 @@ def infer_state_from_artifacts(run_root: Path) -> str:
         return EVIDENCE_READY
     if artifacts.run_summary.exists() and artifacts.swmm_node_flooding.exists() and artifacts.ca2d_surface_depth.exists():
         return RUN_READY
+    if artifacts.run_summary.exists() and artifacts.swmm_node_flooding.exists():
+        try:
+            summary = json.loads(artifacts.run_summary.read_text(encoding="utf-8"))
+            if summary.get("ca2d", {}).get("status") == NO_SURFACE_INFLOW:
+                return NO_SURFACE_INFLOW
+        except (OSError, json.JSONDecodeError):
+            pass
     if artifacts.scenario_request.exists():
         return SCENARIO_READY
     return FAILED
