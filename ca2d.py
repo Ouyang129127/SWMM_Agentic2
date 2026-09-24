@@ -11,6 +11,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import numpy as np
 import pandas as pd
 from PIL import Image
+from simulation_timing import load_timing
 
 
 FLOOD_CMAP = LinearSegmentedColormap.from_list(
@@ -109,7 +110,9 @@ def prepare_inflow_by_time(flooding_df: pd.DataFrame, node_mapping: pd.DataFrame
     return grouped, int(merged["node_id"].nunique())
 
 
-def interpolate_inflow_by_time(inflow_by_time: pd.DataFrame, interval_minutes: float):
+def interpolate_inflow_by_time(inflow_by_time: pd.DataFrame, interval_minutes: float, method="point"):
+    if not np.isfinite(interval_minutes) or interval_minutes <= 0:
+        raise ValueError("Boundary interval must be positive and finite")
     report_times = sorted(pd.Timestamp(value) for value in inflow_by_time["DateTime"].unique())
     if len(report_times) < 2:
         raise ValueError("Flooding time series needs at least two timestamps.")
@@ -131,13 +134,29 @@ def interpolate_inflow_by_time(inflow_by_time: pd.DataFrame, interval_minutes: f
         .sort_index()
     )
     full_index = pd.DatetimeIndex(sorted(set(pivot.index).union(boundary_times)))
-    interpolated = (
+    expanded = (
         pivot.reindex(full_index)
         .interpolate(method="time")
         .ffill()
         .bfill()
-        .reindex(pd.DatetimeIndex(boundary_times))
     )
+    if method == "interval_mean":
+        # Integrate the source hydrograph BEFORE reducing its temporal density.
+        # The last timestamp is an endpoint, never a further input interval.
+        values = expanded.to_numpy(dtype=float)
+        seconds = (full_index[1:] - full_index[:-1]).total_seconds().to_numpy()
+        cumulative = np.vstack([np.zeros(values.shape[1]),
+                                np.cumsum((values[:-1] + values[1:]) * 0.5 * seconds[:, None], axis=0)])
+        positions = full_index.get_indexer(pd.DatetimeIndex(boundary_times))
+        volumes = np.diff(cumulative[positions], axis=0)
+        boundary_index = pd.DatetimeIndex(boundary_times)
+        durations = (boundary_index[1:] - boundary_index[:-1]).total_seconds().to_numpy()
+        interpolated = pd.DataFrame(volumes / durations[:, None],
+                                    index=boundary_times[:-1], columns=pivot.columns)
+    elif method == "point":
+        interpolated = expanded.reindex(pd.DatetimeIndex(boundary_times))
+    else:
+        raise ValueError(f"Unknown boundary method: {method}")
 
     rows = []
     for dt_value, row in interpolated.iterrows():
@@ -323,18 +342,29 @@ def run_ca2d_simulation(
     model = load_model(model_dir)
     config = model["config"]
     cell_size = float(config["cell_size"])
+    timing = load_timing(Path(model_dir).parent)
+    if timing:
+        boundary_interval_minutes = float(timing["boundary_interval_minutes"])
+        save_interval_minutes = float(timing["ca2d_save_interval_minutes"])
+    method = timing.get("boundary_method", "point")
+    if not np.isfinite(dt_seconds) or dt_seconds <= 0:
+        raise ValueError("CA2D internal time step must be positive and finite")
 
     flooding_df = read_node_outflow_data(flooding_file)
     inflow_by_time, matched_nodes = prepare_inflow_by_time(flooding_df, model["node_mapping"])
     boundary_inflow_by_time, report_times, boundary_times = interpolate_inflow_by_time(
         inflow_by_time,
         boundary_interval_minutes,
+        method=method,
     )
     # Zero overflow is a valid hydraulic result.  Continue with an all-zero
     # surface boundary so the normal CA2D outputs document zero inundation.
     surface_inflow_status = "NO_SURFACE_INFLOW" if boundary_inflow_by_time.empty else "POSITIVE_SURFACE_INFLOW"
     save_time_set = set(pd.date_range(start=report_times[0], end=report_times[-1], freq=f"{save_interval_minutes}min"))
-    save_time_set.update(report_times)
+    if timing:
+        save_time_set.add(report_times[-1])
+    else:
+        save_time_set.update(report_times)
 
     elevation = model["elevation"]
     depth = np.zeros_like(elevation, dtype=np.float32)
@@ -343,7 +373,41 @@ def run_ca2d_simulation(
     gif_frames = []
     input_volume = 0.0
 
-    for time_index, current_time in enumerate(boundary_times):
+    if timing:
+        # Save states at their actual time, starting with the initial condition.
+        # Union of output and boundary clocks supports independent save intervals.
+        evolution_times = sorted(set(boundary_times).union(save_time_set))
+        records.append(frame_to_records(depth, model["smid_grid"], evolution_times[0]))
+        gif_frames.append((evolution_times[0], depth.copy()))
+        boundary_lookup = {t: rows for t, rows in boundary_inflow_by_time.groupby("DateTime")}
+        empty = boundary_inflow_by_time.iloc[:0]
+        boundary_index = 0
+        for current_time, next_time in zip(evolution_times[:-1], evolution_times[1:]):
+            while boundary_index + 1 < len(boundary_times) and boundary_times[boundary_index + 1] <= current_time:
+                boundary_index += 1
+            current_rows = boundary_lookup.get(boundary_times[boundary_index], empty)
+            duration_seconds = (next_time - current_time).total_seconds()
+            n_steps = max(1, int(np.ceil(duration_seconds / dt_seconds)))
+            local_dt = duration_seconds / n_steps
+            rows = current_rows["cell_row"].to_numpy(dtype=np.int32)
+            cols = current_rows["cell_col"].to_numpy(dtype=np.int32)
+            flows = current_rows["weighted_flow_m3s"].to_numpy(dtype=np.float64)
+            for _ in range(n_steps):
+                input_volume += add_inflow(depth, rows, cols, flows, local_dt, cell_size)
+                diffuse_one_step(depth, elevation, model["resistance"], model["flow_mask"], local_dt, cell_size)
+                np.maximum(max_depth, depth, out=max_depth)
+            if next_time in save_time_set:
+                records.append(frame_to_records(depth, model["smid_grid"], next_time))
+                gif_frames.append((next_time, depth.copy()))
+        boundary_export = boundary_inflow_by_time.copy()
+        ends = dict(zip(boundary_times[:-1], boundary_times[1:]))
+        boundary_export["interval_end"] = boundary_export["DateTime"].map(ends)
+        boundary_export["volume_m3"] = [
+            (ends[t] - t).total_seconds() * q
+            for t, q in zip(boundary_export["DateTime"], boundary_export["weighted_flow_m3s"])]
+        boundary_export.to_csv(output_dir / "boundary_inflow_5min.tsv", sep="\t", index=False)
+
+    for time_index, current_time in enumerate([] if timing else boundary_times):
         current_time = pd.Timestamp(current_time)
         current_rows = boundary_inflow_by_time.loc[boundary_inflow_by_time["DateTime"] == current_time]
         next_time = boundary_times[time_index + 1] if time_index + 1 < len(boundary_times) else current_time
@@ -396,6 +460,12 @@ def run_ca2d_simulation(
         "boundary_interval_minutes": float(boundary_interval_minutes),
         "save_interval_minutes": float(save_interval_minutes),
         "dt_seconds": float(dt_seconds),
+        "boundary_method": method,
+        "simulation_start": report_times[0].isoformat(sep=" "),
+        "simulation_end": report_times[-1].isoformat(sep=" "),
+        "saved_times": len(records),
+        "source_volume_m3": float(boundary_export["volume_m3"].sum()) if timing else None,
+        "coupling_volume_error_m3": float(input_volume - boundary_export["volume_m3"].sum()) if timing else None,
         "input_volume_m3": float(input_volume),
         "max_depth_m": float(np.nanmax(max_depth)),
         "final_volume_m3": float(np.nansum(depth) * cell_size * cell_size),

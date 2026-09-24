@@ -1,0 +1,235 @@
+{
+  "schema_name": "swmm_ca2d_diagnosis_claims",
+  "schema_version": "0.1",
+  "run_id": "chicago_single__baseline__20260920_143817",
+  "model_name": "urban_drainage",
+  "claim_count": 13,
+  "claims": [
+    {
+      "claim_id": "C001",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G7",
+      "severity": "critical",
+      "claim_text": "Link G7 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000873",
+        "E_L_000874",
+        "E_L_000875",
+        "E_L_000876"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C002",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G6",
+      "severity": "critical",
+      "claim_text": "Link G6 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000796",
+        "E_L_000797",
+        "E_L_000798",
+        "E_L_000799"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C003",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G8",
+      "severity": "critical",
+      "claim_text": "Link G8 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000950",
+        "E_L_000951",
+        "E_L_000952",
+        "E_L_000953"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C004",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G5",
+      "severity": "critical",
+      "claim_text": "Link G5 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000726",
+        "E_L_000727",
+        "E_L_000728",
+        "E_L_000729"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C005",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G9",
+      "severity": "critical",
+      "claim_text": "Link G9 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_001027",
+        "E_L_001028",
+        "E_L_001029",
+        "E_L_001030"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C006",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G4",
+      "severity": "critical",
+      "claim_text": "Link G4 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000649",
+        "E_L_000650",
+        "E_L_000651",
+        "E_L_000652"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C007",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G3",
+      "severity": "critical",
+      "claim_text": "Link G3 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000572",
+        "E_L_000573",
+        "E_L_000574",
+        "E_L_000575"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C008",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G2",
+      "severity": "critical",
+      "claim_text": "Link G2 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000495",
+        "E_L_000496",
+        "E_L_000497",
+        "E_L_000498"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C009",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G47",
+      "severity": "critical",
+      "claim_text": "Link G47 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000705",
+        "E_L_000706",
+        "E_L_000707",
+        "E_L_000708"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C010",
+      "claim_type": "high_load_link",
+      "object_type": "link",
+      "object_id": "G1",
+      "severity": "critical",
+      "claim_text": "Link G1 has critical hydraulic loading based on fullness magnitude and duration evidence.",
+      "possible_cause": "possible_network_bottleneck",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000404",
+        "E_L_000405",
+        "E_L_000406",
+        "E_L_000407"
+      ],
+      "status": "pending_verification",
+      "rule_id": "high_load_link"
+    },
+    {
+      "claim_id": "C011",
+      "claim_type": "unstable_flow_direction_link",
+      "object_type": "link",
+      "object_id": "G77",
+      "severity": "critical",
+      "claim_text": "Link G77 has unstable flow direction with 12 flow direction changes.",
+      "possible_cause": "possible_backwater_or_hydraulic_oscillation",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000928"
+      ],
+      "status": "pending_verification",
+      "rule_id": "unstable_flow_direction_link"
+    },
+    {
+      "claim_id": "C012",
+      "claim_type": "unstable_flow_direction_link",
+      "object_type": "link",
+      "object_id": "G85",
+      "severity": "critical",
+      "claim_text": "Link G85 has unstable flow direction with 11 flow direction changes.",
+      "possible_cause": "possible_backwater_or_hydraulic_oscillation",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000991"
+      ],
+      "status": "pending_verification",
+      "rule_id": "unstable_flow_direction_link"
+    },
+    {
+      "claim_id": "C013",
+      "claim_type": "unstable_flow_direction_link",
+      "object_type": "link",
+      "object_id": "G62",
+      "severity": "high",
+      "claim_text": "Link G62 has unstable flow direction with 3 flow direction changes.",
+      "possible_cause": "possible_backwater_or_hydraulic_oscillation",
+      "confidence": "medium",
+      "evidence_ids": [
+        "E_L_000816"
+      ],
+      "status": "pending_verification",
+      "rule_id": "unstable_flow_direction_link"
+    }
+  ],
+  "rules_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\rules\\diagnosis_rules.json"
+}

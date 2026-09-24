@@ -23,6 +23,20 @@ FLOW_DIRECTION_EPS_LS = 1e-6
 REPEATED_OVERFLOW_EVENT_THRESHOLD = 2
 
 
+def _interval_volume(group: pd.DataFrame) -> float:
+    group = group.sort_values("DateTime")
+    seconds = group["DateTime"].diff().dt.total_seconds().fillna(0.0)
+    mean_flow = (group["flow_Ls"] + group["flow_Ls"].shift(1)) * 0.5
+    return float((mean_flow.fillna(0.0) * seconds).sum() / 1000.0)
+
+
+def _interval_duration(times: pd.Series, selected: pd.Series) -> float:
+    """Left-interval duration; a terminal state has no extra time weight."""
+    frame = pd.DataFrame({"time": times, "selected": selected}).sort_values("time")
+    minutes = (frame["time"].shift(-1) - frame["time"]).dt.total_seconds().fillna(0.0) / 60.0
+    return float(minutes[frame["selected"]].sum())
+
+
 def _load_summary(run_root: Path) -> dict[str, Any]:
     path = run_root / "summary.json"
     if not path.exists():
@@ -31,7 +45,7 @@ def _load_summary(run_root: Path) -> dict[str, Any]:
 
 
 def _resolve_rainfall_file(summary: dict[str, Any], run_root: Path) -> Path:
-    for key in ["rainfall_event_copy", "rainfall_file"]:
+    for key in ["simulation_rainfall_file", "rainfall_event_copy", "rainfall_file"]:
         value = summary.get(key)
         if value:
             path = Path(str(value))
@@ -158,6 +172,7 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
     """Build evidence_table.csv and evidence_summary.json for one completed run."""
     run_root = resolve_run_root(model_name, run_id)
     summary = _load_summary(run_root)
+    interval_timing = bool(summary.get("simulation_timing"))
     artifacts = artifacts_for_run(run_root)
     evidence_dir = run_root / "evidence"
     evidence_dir.mkdir(parents=True, exist_ok=True)
@@ -184,6 +199,9 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         total_volume_m3 = float(group["flow_Ls"].sum() / 1000.0 * step_seconds) if step_seconds else 0.0
         max_flow = float(group["flow_Ls"].max())
         duration = float(len(positive) * step_minutes)
+        if interval_timing:
+            total_volume_m3 = _interval_volume(group)
+            duration = _interval_duration(group["DateTime"], group["flow_Ls"] > POSITIVE_FLOW_LS)
         overflow_event_count = _positive_event_count(group["flow_Ls"], POSITIVE_FLOW_LS)
         first_time = positive["DateTime"].min() if not positive.empty else group["DateTime"].min()
         last_time = positive["DateTime"].max() if not positive.empty else group["DateTime"].max()
@@ -308,6 +326,9 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
             ]:
                 exceedance = group[fullness >= threshold] if metric != "surcharge_duration" else group[fullness > threshold]
                 duration = float(len(exceedance) * link_step_minutes)
+                if interval_timing:
+                    selected = fullness >= threshold if metric != "surcharge_duration" else fullness > threshold
+                    duration = _interval_duration(group["DateTime"], selected)
                 first_time = exceedance["DateTime"].min() if not exceedance.empty else group["DateTime"].min()
                 last_time = exceedance["DateTime"].max() if not exceedance.empty else group["DateTime"].max()
                 duration_row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, metric)
@@ -335,6 +356,8 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         idx = group["Depth"].idxmax()
         max_depth = float(group.loc[idx, "Depth"])
         duration = float(len(positive) * surface_step)
+        if interval_timing:
+            duration = _interval_duration(group["DateTime"], group["Depth"] > POSITIVE_DEPTH_M)
         first_time = positive["DateTime"].min() if not positive.empty else group["DateTime"].min()
         last_time = positive["DateTime"].max() if not positive.empty else group["DateTime"].max()
         for metric, value, unit, threshold in [

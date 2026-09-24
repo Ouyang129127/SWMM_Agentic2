@@ -1,0 +1,110 @@
+================================================================================
+SWMM运行目录分析报告: chicago_single__baseline__20260920_143817
+================================================================================
+
+目录结构:
+----------------------------------------
+chicago_single__baseline__20260920_143817/
+  rainfall_event.txt
+  Report.txt
+  run.yaml
+  scenario_request.json
+  summary.json
+  workflow_state.json
+  ca2d/
+    boundary_inflow_5min.tsv
+    ca2d_animation.gif
+    ca2d_final_depth.png
+    ca2d_max_depth.png
+    ca2d_run_summary.md
+    surface_depth.tsv
+  diagnosis/
+    diagnosis_claims.json
+    risk_ranking.csv
+  evidence/
+    evidence_summary.json
+    evidence_table.csv
+    rainfall_context.json
+  swmm/
+    links.tsv
+    model.out
+    model.rpt
+    model_with_event.inp
+    nodes.tsv
+    node_flooding.tsv
+    rainfall_for_simulation.txt
+  verification/
+    unsupported_rate.txt
+    verification_report.json
+
+诊断文件分析:
+----------------------------------------
+✓ 诊断文件存在: models\urban_drainage\runs\chicago_single__baseline__20260920_143817\diagnosis\diagnosis_claims.json
+诊断声明数量: 13
+  声明 1: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 2: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 3: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 4: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 5: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 6: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 7: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 8: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 9: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 10: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 11: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 12: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+  声明 13: 未知类型
+    描述: 无描述
+    状态: pending_verification
+
+
+验证文件分析:
+----------------------------------------
+✓ 验证文件存在: models\urban_drainage\runs\chicago_single__baseline__20260920_143817\verification\verification_report.json
+验证报告标题: 无标题
+验证时间: 未知时间
+总体状态: 未知状态
+验证结果数量: 0
+
+其他重要文件检查:
+----------------------------------------
+✗ swmm_output.out: 不存在
+✗ swmm_report.rpt: 不存在
+✗ input_parameters.json: 不存在
+✗ run_log.txt: 不存在

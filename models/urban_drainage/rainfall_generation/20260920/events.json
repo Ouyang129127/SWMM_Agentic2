@@ -1,0 +1,116 @@
+{
+  "method": "normalized Chicago-shaped synthetic rainfall",
+  "local_idf_calibration": false,
+  "return_period_years": null,
+  "shape_parameters": {
+    "b_minutes": 12.0,
+    "n": 0.75,
+    "r": 0.4
+  },
+  "start": "2024-01-01 00:00:00",
+  "duration_minutes": 240,
+  "interval_minutes": 5,
+  "total_rainfall_mm": 80.0,
+  "intensity_unit": "mm/h",
+  "timestamp_convention": "interval_start",
+  "rainfall_end": "2024-01-01 04:00:00",
+  "expected_simulation_end": "2024-01-01 07:00:00",
+  "events": [
+    {
+      "name": "single",
+      "file": "models/urban_drainage/events/chicago_like_single_4h_80mm_5min.txt",
+      "peak_count": 1,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 240,
+      "total_rainfall_mm": 80.0,
+      "max_intensity_mm_h": 146.732,
+      "peak_intervals_minutes": [
+        [
+          95,
+          100
+        ]
+      ],
+      "pulses": [
+        {
+          "start_min": 0,
+          "duration_min": 240,
+          "depth_mm": 80
+        }
+      ]
+    },
+    {
+      "name": "double",
+      "file": "models/urban_drainage/events/chicago_like_double_4h_80mm_5min.txt",
+      "peak_count": 2,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 220,
+      "total_rainfall_mm": 79.99999999999999,
+      "max_intensity_mm_h": 94.173,
+      "peak_intervals_minutes": [
+        [
+          40,
+          45
+        ],
+        [
+          170,
+          175
+        ]
+      ],
+      "pulses": [
+        {
+          "start_min": 0,
+          "duration_min": 110,
+          "depth_mm": 36
+        },
+        {
+          "start_min": 130,
+          "duration_min": 110,
+          "depth_mm": 44
+        }
+      ]
+    },
+    {
+      "name": "triple",
+      "file": "models/urban_drainage/events/chicago_like_triple_4h_80mm_5min.txt",
+      "peak_count": 3,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 210,
+      "total_rainfall_mm": 80.0,
+      "max_intensity_mm_h": 97.773,
+      "peak_intervals_minutes": [
+        [
+          25,
+          30
+        ],
+        [
+          110,
+          115
+        ],
+        [
+          195,
+          200
+        ]
+      ],
+      "pulses": [
+        {
+          "start_min": 0,
+          "duration_min": 70,
+          "depth_mm": 20
+        },
+        {
+          "start_min": 85,
+          "duration_min": 70,
+          "depth_mm": 36
+        },
+        {
+          "start_min": 170,
+          "duration_min": 70,
+          "depth_mm": 24
+        }
+      ]
+    }
+  ]
+}

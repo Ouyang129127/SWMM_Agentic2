@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from ca2d import check_static_model, create_demo_static_model, run_ca2d_simulation
+from simulation_timing import load_timing, export_native_reports
 from workflow_agents import (
     build_evidence_for_run as _build_evidence_for_run,
     build_evidence_graph_for_run as _build_evidence_graph_for_run,
@@ -259,11 +260,29 @@ def _replace_swmm_event_inputs(
     rainfall_entries: List[Tuple[datetime, float]],
     rain_gage_name: str = "rain1",
     timeseries_name: Optional[str] = None,
+    timing: Optional[dict] = None,
 ) -> Dict[str, object]:
     lines = _read_lines(source_inp)
     start_dt = rainfall_entries[0][0]
     end_dt = rainfall_entries[-1][0]
     interval = _infer_rainfall_interval(rainfall_entries)
+    event_entries = list(rainfall_entries)
+    rain_end = end_dt
+    if timing:
+        # INTENSITY records describe an interval beginning at their timestamp.
+        hours, minutes = map(int, interval.split(":"))
+        rain_delta = timedelta(hours=hours, minutes=minutes)
+        wet = [i for i, (_, value) in enumerate(rainfall_entries) if value > 0]
+        if wet:
+            last_wet = wet[-1]
+            rain_end = rainfall_entries[last_wet][0] + rain_delta
+            if last_wet + 1 < len(rainfall_entries):
+                rain_end = min(rain_end, rainfall_entries[last_wet + 1][0])
+        else:
+            rain_end = end_dt
+        end_dt = rain_end + timedelta(hours=float(timing["post_rainfall_hours"]))
+        event_entries = [(t, v) for t, v in event_entries if t < rain_end]
+        event_entries.append((rain_end, 0.0))
     timeseries_name = timeseries_name or _find_raingage_timeseries(lines, rain_gage_name) or "rain01"
 
     option_values = {
@@ -275,18 +294,31 @@ def _replace_swmm_event_inputs(
         "END_DATE": end_dt.strftime("%m/%d/%Y"),
         "END_TIME": end_dt.strftime("%H:%M:%S"),
     }
+    if timing:
+        seconds = int(float(timing["swmm_save_interval_minutes"]) * 60)
+        option_values["REPORT_STEP"] = f"{seconds // 3600:02d}:{seconds // 60 % 60:02d}:{seconds % 60:02d}"
 
     bounds = _find_section_bounds(lines, "OPTIONS")
     if bounds:
         start, end = bounds
+        seen = set()
         for idx in range(start + 1, end):
             parts = lines[idx].strip().split()
             if len(parts) >= 2 and parts[0].upper() in option_values:
                 key = parts[0].upper()
+                seen.add(key)
                 lines[idx] = f"{key.ljust(22)}{option_values[key]}\n"
+        if timing:
+            lines[end:end] = [f"{key.ljust(22)}{value}\n" for key, value in option_values.items() if key not in seen]
+
+    if timing:
+        bounds = _find_section_bounds(lines, "REPORT")
+        contents = lines[bounds[0] + 1:bounds[1]] if bounds else []
+        contents = [line for line in contents if not line.strip().split() or line.strip().split()[0].upper() not in {"NODES", "LINKS"}]
+        lines = _insert_or_replace_section(lines, "REPORT", contents + ["NODES ALL\n", "LINKS ALL\n"])
 
     ts_lines = [";;Name           Date       Time       Value\n", ";;-------------- ---------- ---------- ----------\n"]
-    for dt_value, value in rainfall_entries:
+    for dt_value, value in event_entries:
         ts_lines.append(
             f"{timeseries_name.ljust(16)} {dt_value.strftime('%m/%d/%Y')} "
             f"{dt_value.strftime('%H:%M').ljust(8)} {value:.3f}\n"
@@ -316,13 +348,23 @@ def _replace_swmm_event_inputs(
     lines = _insert_or_replace_section(lines, "RAINGAGES", raingage_lines)
 
     _write_lines(target_inp, lines)
+    effective_rainfall = None
+    if timing:
+        effective_rainfall = target_inp.parent / "rainfall_for_simulation.txt"
+        effective_rainfall.write_text(
+            "timestamp,value\n" + "".join(f"{t:%Y-%m-%d %H:%M:%S},{v:.3f}\n" for t, v in event_entries),
+            encoding="utf-8",
+        )
     return {
         "rain_gage_name": rain_gage_name,
         "timeseries_name": timeseries_name,
         "rainfall_points": len(rainfall_entries),
         "rainfall_start": start_dt.isoformat(sep=" "),
-        "rainfall_end": end_dt.isoformat(sep=" "),
+        "rainfall_end": rain_end.isoformat(sep=" "),
         "rainfall_interval": interval,
+        "simulation_end": end_dt.isoformat(sep=" "),
+        "post_rainfall_hours": float(timing["post_rainfall_hours"]) if timing else 0.0,
+        "simulation_rainfall_file": str(effective_rainfall) if effective_rainfall else None,
     }
 
 
@@ -343,7 +385,10 @@ def _run_swmm_and_export_flooding(
     swmm_output_dir: Path,
     node_mapping_path: Path,
     save_interval_minutes: float,
+    native_reports: bool = False,
 ) -> Dict[str, object]:
+    if native_reports:
+        return export_native_reports(inp_path, swmm_output_dir, _load_mapped_node_ids(node_mapping_path), save_interval_minutes)
     from pyswmm import Links, Nodes, Simulation
 
     swmm_output_dir.mkdir(parents=True, exist_ok=True)
@@ -795,12 +840,18 @@ def run_swmm_2d_project_from_rainfall(
     event_copy = run_root / "rainfall_event.txt"
     shutil.copy2(rainfall_path, event_copy)
     modified_inp = swmm_output_dir / "model_with_event.inp"
+    timing = load_timing(model_root)
+    if timing:
+        swmm_save_interval_minutes = float(timing["swmm_save_interval_minutes"])
+        boundary_interval_minutes = float(timing["boundary_interval_minutes"])
+        ca2d_save_interval_minutes = float(timing["ca2d_save_interval_minutes"])
     rainfall_summary = _replace_swmm_event_inputs(
         source_inp=scenario_inp,
         target_inp=modified_inp,
         rainfall_entries=rainfall_entries,
         rain_gage_name=rain_gage_name,
         timeseries_name=timeseries_name or None,
+        timing=timing,
     )
 
     node_mapping = static_model / "node_to_cell_mapping.csv"
@@ -809,6 +860,7 @@ def run_swmm_2d_project_from_rainfall(
         swmm_output_dir=swmm_output_dir,
         node_mapping_path=node_mapping,
         save_interval_minutes=swmm_save_interval_minutes,
+        native_reports=bool(timing),
     )
 
     ca2d_result = run_ca2d_simulation(
@@ -839,6 +891,8 @@ def run_swmm_2d_project_from_rainfall(
         "ca2d_output_dir": str(ca2d_output_dir),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "rainfall": rainfall_summary,
+        "simulation_timing": timing,
+        "simulation_rainfall_file": rainfall_summary.get("simulation_rainfall_file"),
         "input_validation": input_validation,
         "swmm": swmm_result,
         "ca2d": ca2d_result,
@@ -853,6 +907,11 @@ def run_swmm_2d_project_from_rainfall(
                 f"scenario_name: {scenario_name}",
                 f"source_scenario_inp: {scenario_inp}",
                 f"rainfall_file: {rainfall_path}",
+                f"simulation_end: {rainfall_summary['simulation_end']}",
+                f"rainfall_end: {rainfall_summary['rainfall_end']}",
+                f"swmm_save_interval_minutes: {swmm_save_interval_minutes}",
+                f"boundary_interval_minutes: {boundary_interval_minutes}",
+                f"ca2d_save_interval_minutes: {ca2d_save_interval_minutes}",
                 f"static_model: {static_model}",
                 f"swmm_output_dir: {swmm_output_dir}",
                 f"ca2d_output_dir: {ca2d_output_dir}",
@@ -1083,6 +1142,7 @@ def run_swmm_2d_project_from_flooding(
     metadata = {
         "execution_policy": "tool-first",
         "pipeline_tool": "run_swmm_2d_project_from_flooding",
+        "simulation_timing": load_timing(model_root),
         "schema_name": PROJECT_SCHEMA_NAME,
         "schema_version": PROJECT_SCHEMA_VERSION,
         "run_id": run_id,

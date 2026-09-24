@@ -1,0 +1,26 @@
+[
+  {
+    "file": "chicago_like_double_4h_80mm_5min.txt",
+    "records": 49,
+    "total_mm": 80.0,
+    "input_validation": "PASS",
+    "rainfall_end": "2024-01-01 04:00:00",
+    "simulation_end": "2024-01-01 07:00:00"
+  },
+  {
+    "file": "chicago_like_single_4h_80mm_5min.txt",
+    "records": 49,
+    "total_mm": 80.0,
+    "input_validation": "PASS",
+    "rainfall_end": "2024-01-01 04:00:00",
+    "simulation_end": "2024-01-01 07:00:00"
+  },
+  {
+    "file": "chicago_like_triple_4h_80mm_5min.txt",
+    "records": 49,
+    "total_mm": 80.0,
+    "input_validation": "PASS",
+    "rainfall_end": "2024-01-01 04:00:00",
+    "simulation_end": "2024-01-01 07:00:00"
+  }
+]

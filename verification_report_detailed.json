@@ -1,0 +1,151 @@
+{
+  "schema_name": "swmm_ca2d_verification_report",
+  "schema_version": "0.1",
+  "run_id": "chicago_single__baseline__20260920_143817",
+  "model_name": "urban_drainage",
+  "summary": {
+    "total_claims": 13,
+    "supported": 13,
+    "partially_supported": 0,
+    "unsupported": 0,
+    "uncertain": 0,
+    "unsupported_rate": 0.0
+  },
+  "claim_checks": [
+    {
+      "claim_id": "C001",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000873",
+        "E_L_000874",
+        "E_L_000875",
+        "E_L_000876"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C002",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000796",
+        "E_L_000797",
+        "E_L_000798",
+        "E_L_000799"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C003",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000950",
+        "E_L_000951",
+        "E_L_000952",
+        "E_L_000953"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C004",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000726",
+        "E_L_000727",
+        "E_L_000728",
+        "E_L_000729"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C005",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_001027",
+        "E_L_001028",
+        "E_L_001029",
+        "E_L_001030"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C006",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000649",
+        "E_L_000650",
+        "E_L_000651",
+        "E_L_000652"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C007",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000572",
+        "E_L_000573",
+        "E_L_000574",
+        "E_L_000575"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C008",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000495",
+        "E_L_000496",
+        "E_L_000497",
+        "E_L_000498"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C009",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000705",
+        "E_L_000706",
+        "E_L_000707",
+        "E_L_000708"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C010",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000404",
+        "E_L_000405",
+        "E_L_000406",
+        "E_L_000407"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C011",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000928"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C012",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000991"
+      ],
+      "issues": []
+    },
+    {
+      "claim_id": "C013",
+      "verification_status": "supported",
+      "checked_evidence_ids": [
+        "E_L_000816"
+      ],
+      "issues": []
+    }
+  ],
+  "rules_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\rules\\verification_rules.json"
+}
