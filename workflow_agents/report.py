@@ -288,7 +288,7 @@ def _infer_point_causes(claim: dict[str, Any], evidence: pd.DataFrame) -> list[s
     return causes
 
 
-def generate_run_report(model_name: str, run_id: str, report_type: str = "summary_report") -> dict[str, Any]:
+def _legacy_generate_run_report(model_name: str, run_id: str, report_type: str = "summary_report") -> dict[str, Any]:
     """Generate a user-facing Markdown report from verified workflow artifacts."""
     run_root, _state, summary, rainfall_context, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
     claims = _supported_claims(diagnosis, verification)
@@ -441,7 +441,7 @@ def generate_run_report(model_name: str, run_id: str, report_type: str = "summar
     }
 
 
-def explain_one_flood_point(model_name: str, run_id: str) -> dict[str, Any]:
+def _legacy_explain_one_flood_point(model_name: str, run_id: str) -> dict[str, Any]:
     """Explain one representative verified flood point in plain language."""
     run_root, _state, _summary, _rainfall_context, evidence, diagnosis, risk_ranking, verification = _load_report_inputs(model_name, run_id)
     claims = _supported_claims(diagnosis, verification)
@@ -490,8 +490,16 @@ def explain_one_flood_point(model_name: str, run_id: str) -> dict[str, Any]:
 
 def generate_report_for_request(model_name: str, run_id: str, message: str = "") -> dict[str, Any]:
     """Select a ReportAgent output mode from a user-facing request."""
-    lowered = message.lower()
-    wants_point = any(marker in message for marker in ["一处", "一个", "某个", "内涝点", "原因", "为什么"]) or "point" in lowered
-    if wants_point and not any(marker in message for marker in ["报告", "总报告", "完整报告"]):
-        return explain_one_flood_point(model_name, run_id)
-    return generate_run_report(model_name, run_id)
+    from .scoped_report import build_scoped_report
+    return build_scoped_report(model_name, run_id, message)
+
+
+def generate_run_report(model_name: str, run_id: str, report_type: str = 'summary_report') -> dict[str, Any]:
+    return generate_report_for_request(model_name, run_id)
+
+
+def explain_one_flood_point(model_name: str, run_id: str, node_id: str = '') -> dict[str, Any]:
+    from .scoped_report import build_scoped_report
+    if not node_id:
+        raise ValueError('Specify node_id; ReportAgent no longer selects an unrelated representative point')
+    return build_scoped_report(model_name, run_id, f'分析节点 {node_id}', node_id=node_id)

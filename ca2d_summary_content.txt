@@ -1,0 +1,22 @@
+# SWMM-2D CA2D Run Summary
+
+- Model directory: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\static`
+- Flooding file: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\swmm\node_flooding.tsv`
+- Output directory: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\ca2d`
+- Flooding nodes: 100
+- Matched nodes: 100
+- Report timestamps: 421
+- Boundary timestamps: 85
+- CA2D time step: 10.0 s
+- Input volume: 34.527 m3
+- Maximum depth: 0.2162 m
+- Final volume: 28.018 m3
+- Result records: 1626900
+
+## Outputs
+
+- Depth table: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\ca2d\surface_depth.tsv`
+- Max-depth PNG: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\ca2d\ca2d_max_depth.png`
+- Final-depth PNG: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\ca2d\ca2d_final_depth.png`
+- Animation GIF: `E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\ca2d\ca2d_animation.gif`
+- GeoTIFF written: False

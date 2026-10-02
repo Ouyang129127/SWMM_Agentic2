@@ -19,7 +19,7 @@ def _load_rules() -> dict[str, Any]:
     return json.loads(RULE_PATH.read_text(encoding="utf-8"))
 
 
-def verify_diagnosis_claims(model_name: str, run_id: str) -> dict[str, Any]:
+def _legacy_verify_diagnosis_claims(model_name: str, run_id: str) -> dict[str, Any]:
     """Verify diagnosis claims against evidence_table.csv and calculate unsupported rate."""
     run_root = resolve_run_root(model_name, run_id)
     artifacts = artifacts_for_run(run_root)
@@ -109,4 +109,24 @@ def verify_diagnosis_claims(model_name: str, run_id: str) -> dict[str, Any]:
     verification_dir.mkdir(parents=True, exist_ok=True)
     artifacts.verification_report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     artifacts.unsupported_rate.write_text(f"{unsupported_rate:.6f}\n", encoding="utf-8")
+    return payload
+
+
+def verify_diagnosis_claims(model_name: str, run_id: str) -> dict[str, Any]:
+    """Check current-run references; does not validate hydraulic reasoning."""
+    import csv
+    from .reference_checks import check_references, sha256_file
+    root = resolve_run_root(model_name, run_id)
+    artifacts = artifacts_for_run(root)
+    claims = json.loads(artifacts.diagnosis_claims.read_text(encoding='utf-8'))
+    with artifacts.evidence_table.open(encoding='utf-8-sig', newline='') as stream:
+        evidence = list(csv.DictReader(stream))
+    payload = check_references(claims, evidence, root.parents[1].name, root.name)
+    payload['input_hashes'] = {'evidence_table': sha256_file(artifacts.evidence_table),
+                               'diagnosis_claims': sha256_file(artifacts.diagnosis_claims)}
+    artifacts.verification_report.parent.mkdir(parents=True, exist_ok=True)
+    artifacts.verification_report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
+    # Legacy path retained for state detection; metric now means reference failure.
+    rate = payload['summary']['reference_failure_rate']
+    artifacts.unsupported_rate.write_text('N/A\n' if rate is None else f'{rate:.6f}\n', encoding='utf-8')
     return payload

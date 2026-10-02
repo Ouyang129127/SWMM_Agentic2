@@ -1,0 +1,27 @@
+urban_drainage 模型运行目录结构
+运行ID: chicago_single_event__baseline__20260927_192515
+路径: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515
+============================================================
+└── chicago_single_event__baseline__20260927_192515
+    ├── ca2d
+    │   ├── boundary_inflow_5min.tsv
+    │   ├── ca2d_animation.gif
+    │   ├── ca2d_final_depth.png
+    │   ├── ca2d_max_depth.png
+    │   ├── ca2d_run_summary.md
+    │   └── surface_depth.tsv
+    ├── rainfall_event.txt
+    ├── run.yaml
+    ├── scenario_request.json
+    ├── summary.json
+    ├── swmm
+    │   ├── links.tsv
+    │   ├── model.out
+    │   ├── model.rpt
+    │   ├── model_with_event.inp
+    │   ├── node_flooding.tsv
+    │   ├── nodes.tsv
+    │   └── rainfall_for_simulation.txt
+    └── workflow_state.json
+============================================================
+总文件/文件夹数: 21

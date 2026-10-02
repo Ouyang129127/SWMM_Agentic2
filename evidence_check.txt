@@ -1,0 +1,10 @@
+Directory: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515
+Evidence folder exists: True
+Evidence table file exists: False
+Evidence folder path: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\evidence
+Evidence folder contents (5 items):
+  - evidence_summary.json
+  - evidence_table.csv
+  - first_pass_evidence.json
+  - overflow_events.json
+  - rainfall_context.json

@@ -22,15 +22,12 @@ def load_dotenv(path=".env"):
 
 load_dotenv()
 
-deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("OPENAI_API_KEY")
-qwen_api_key = os.environ.get("QWEN_API_KEY") or os.environ.get("DASHSCOPE_API_KEY")
-
-deepseek_base_url = os.environ.get("DEEPSEEK_BASE_URL", "https://api.siliconflow.cn/v1")
-deepseek_chat_model = os.environ.get("DEEPSEEK_CHAT_MODEL", "deepseek-ai/DeepSeek-V3.2")
-deepseek_reasoner_model = os.environ.get("DEEPSEEK_REASONER_MODEL", "deepseek-ai/DeepSeek-V3.1-Terminus")
-qwen_base_url = os.environ.get("QWEN_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
-qwen_model = os.environ.get("QWEN_MODEL", "qwen-vl-max")
-request_timeout_seconds = float(os.environ.get("OPENAI_REQUEST_TIMEOUT_SECONDS", "120"))
+deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY")
+deepseek_base_url = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+# DeepSeek-V4.1-Flash is exposed by the official API as deepseek-flash.
+# Legacy per-role model settings intentionally do not override this single model.
+deepseek_model = os.environ.get("DEEPSEEK_MODEL", "deepseek-flash")
+request_timeout_seconds = float(os.environ.get("OPENAI_REQUEST_TIMEOUT_SECONDS", "300"))
 
 
 def require_api_key(value, names):
@@ -42,10 +39,26 @@ def require_api_key(value, names):
     )
 
 
-deepseekV3 = OpenAIChatCompletionClient(
-    model=deepseek_chat_model,
+class DeepSeekFlashClient(OpenAIChatCompletionClient):
+    """Compatibility with the project's pinned AutoGen 0.6.1 client.
+
+    AutoGen drops reasoning_content on tool-call responses and replay. Use
+    non-thinking mode for requests with tools to avoid a subsequent HTTP 400;
+    text, JSON diagnosis, coding and image requests keep high reasoning effort.
+    This hook is shared by create() and create_stream().
+    """
+
+    def _process_create_args(self, *args, **kwargs):
+        params = super()._process_create_args(*args, **kwargs)
+        if params.tools:
+            params.create_args["reasoning_effort"] = "none"
+        return params
+
+
+deepseek_flash = DeepSeekFlashClient(
+    model=deepseek_model,
     base_url=deepseek_base_url,
-    api_key=require_api_key(deepseek_api_key, ["DEEPSEEK_API_KEY", "OPENAI_API_KEY"]),
+    api_key=require_api_key(deepseek_api_key, ["DEEPSEEK_API_KEY"]),
     model_info={
         "vision": True,
         "function_calling": True,
@@ -54,47 +67,12 @@ deepseekV3 = OpenAIChatCompletionClient(
         "structured_output": False,
         "multiple_system_messages": True,
     },
-    seed=42,
     temperature=0,
-    timeout=request_timeout_seconds,
-)
-
-
-deepseekR1 = OpenAIChatCompletionClient(
-    model=deepseek_reasoner_model,
-    base_url=deepseek_base_url,
-    api_key=require_api_key(deepseek_api_key, ["DEEPSEEK_API_KEY", "OPENAI_API_KEY"]),
-    model_info={
-        "vision": True,
-        "function_calling": True,
-        "json_output": True,
-        "family": "unknown",
-        "structured_output": False,
-        "multiple_system_messages": True,
-    },
-    seed=42,
-    temperature=0,
+    reasoning_effort="high",
     max_tokens=12000,
     timeout=request_timeout_seconds,
 )
 
-
-qwen = None
-if qwen_api_key:
-    qwen = OpenAIChatCompletionClient(
-        model=qwen_model,
-        base_url=qwen_base_url,
-        api_key=qwen_api_key,
-        model_info={
-            "vision": True,
-            "function_calling": True,
-            "json_output": True,
-            "family": "unknown",
-            "structured_output": False,
-            "multiple_system_messages": True,
-        },
-        seed=42,
-        temperature=0,
-        max_tokens=6000,
-        timeout=request_timeout_seconds,
-    )
+# Compatibility aliases for external scripts; these all reference one client.
+deepseekV3 = deepseekR1 = qwen = deepseek_flash
+deepseek_chat_model = deepseek_reasoner_model = qwen_model = deepseek_model

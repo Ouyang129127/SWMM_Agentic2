@@ -547,12 +547,22 @@ def diagnose_run_from_evidence(model_name: str, run_id: str) -> dict[str, Any]:
 
     _append_relation_claims(claims, ranking_rows, artifacts, rules)
 
+    # Episode facts are distinct from run-level hydraulic hypotheses.
+    for _, source in evidence[evidence['metric_name'] == 'event_estimated_volume'].iterrows():
+        event_id = str(source.get('event_id', ''))
+        refs = evidence[evidence.get('event_id', pd.Series('', index=evidence.index)) == event_id]
+        add_claim(source, 'sampled_overflow_event', 'unclassified', '',
+                  confidence='not_assessed', evidence_ids=refs['evidence_id'].astype(str).tolist())
+        claims[-1].update(event_id=event_id, claim_kind='observed_event',
+                         claim_text=f"节点 {source['object_id']} 的记录 {event_id}：保存时序识别窗口为 {source['time_start']} 至 {source['time_end']}，左端采样积分估计冒溢量 {float(source['value']):.4g} m3。")
+
     payload = {
         "schema_name": DIAGNOSIS_SCHEMA_NAME,
         "schema_version": WORKFLOW_SCHEMA_VERSION,
         "run_id": run_id,
         "model_name": run_root.parents[1].name,
         "claim_count": len(claims),
+        "diagnosis_mode": "rule_screening_and_event_facts",
         "claims": claims,
         "rules_file": str(RULE_PATH),
     }

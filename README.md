@@ -1,5 +1,154 @@
 # SWMM-Agentic2
 
+## Unified LLM configuration (2026-10-01)
+
+All LLM entry points now share `llm.deepseek_flash`, using DeepSeek-V4.1-Flash
+through the official `https://api.deepseek.com` endpoint. Its API model ID is
+`deepseek-flash`, as documented in the [official release notice](https://api-docs.deepseek.com/zh-cn/news/news260910/).
+
+Before this migration, the local configuration enabled DeepSeek-V3.2 for
+orchestration/diagnosis/explanation and DeepSeek-V3.1-Terminus for coding, both
+through SiliconFlow. Qwen-VL-Max was an optional third model for DataAnalyzer;
+it had no API key in the local `.env` and was therefore inactive.
+
+| LLM entry point | Current model |
+| --- | --- |
+| Web and CLI StatefulOrchestrator; LegacyTaskExecutor | DeepSeek-V4.1-Flash |
+| Task-scoped DiagnosisAgent investigation | DeepSeek-V4.1-Flash |
+| EvidenceExplainer; SimulationEvidenceExplainer | DeepSeek-V4.1-Flash |
+| CodeRunner's coder | DeepSeek-V4.1-Flash |
+| DataAnalyzer (including images) | DeepSeek-V4.1-Flash |
+
+Deterministic scenario, simulation, evidence building, reference verification
+and report generation do not independently call an LLM.
+
+Copy `.env.example` to `.env` for a fresh setup and set `DEEPSEEK_API_KEY` there.
+Only `DEEPSEEK_MODEL` selects the model; retired per-role model and Qwen settings
+are no longer used. `.env` is ignored by Git. Shell environment variables take
+precedence; restart running Web/CLI processes after changing configuration.
+
+Text, JSON diagnosis, coding and vision requests default to `reasoning_effort=high`.
+Requests carrying tools use `reasoning_effort=none`: pinned AutoGen 0.6.1 drops
+DeepSeek's required `reasoning_content` on tool-call response/replay, causing
+HTTP 400 in thinking mode. This compatibility adjustment applies to both ordinary
+and streaming requests. It changes the reasoning mode, not the model. See the
+[DeepSeek thinking-mode requirements](https://api-docs.deepseek.com/guides/thinking_mode/).
+Request timeout defaults to 300 seconds and output limit to 12,000 tokens.
+
+Use `.venv/Scripts/python scripts/smoke_llm.py --live` for synthetic text/JSON,
+vision and multi-turn tool checks. It sends no project evidence and does not
+simulate or modify diagnosis tasks. These connectivity checks do not establish
+hydraulic diagnosis quality.
+
+## Evidence selection update (2026-10-01)
+
+New investigation tasks no longer select the first 60 rows or any top-N fraction.
+They select complete event packages for the requested node/event scope, with
+available adjacent node/link background. Global tasks retain all event packages
+and receive deterministic scalar summaries across node, link and surface data;
+raw grid rows remain in the frozen local snapshot. Summaries separate metrics,
+units, calculation methods and thresholds, preserve per-source-window statistics,
+and have independent evidence IDs and source selectors/hashes. They do not imply
+causality, simultaneity or that every underlying object has been investigated.
+
+Process series use lossless field-path tables when smaller: no samples, signs,
+nulls or precision are dropped. Identical event scalar duplicates can be omitted
+only when the event package already contains the same value, unit, time window
+and calculation method. Missing package categories remain explicit.
+
+Evidence lookup now returns all matching rows for an explicit object, event,
+metric or evidence ID. Positional offsets are rejected. The complete serialized
+request (system plus user text) is checked against a 120,000-character transport
+budget; overflow is an explicit failure before any model call, never truncation.
+Very large tasks still require explicit division by event/investigation question.
+This is a character guard, not a provider-specific token guarantee.
+
+Prepared legacy tasks migrate from their frozen snapshot on the next diagnosis
+attempt and retain pre-migration copies. Legacy tasks with diagnosis revisions
+must start a new task to use the new selection; historical results are preserved.
+Restart the Web service to load the changed Python code. This update does not
+repair the separate outer-orchestrator false-completion/state-integration issue.
+
+## Diagnostic contract update (2026-09-27)
+
+### Task-scoped LLM investigation (initial implementation)
+
+EvidenceBuilder now prebuilds `evidence/first_pass_evidence.json` for every
+sampled overflow episode, using all saved nodes rather than only surface-mapped
+nodes. It contains event context, direct connectivity/settings, aligned local
+head/flow series, directional inflow composition, facility/storage availability,
+and explicit surface-association availability. Head, total inflow and lateral
+inflow are read from the existing native `model.out`, not resimulated.
+Initial implementation requires SI/LPS for the derived flow metrics. Missing
+inputs remain null/unavailable. Process windows include one saved sample before
+and after the event; they are initial context, not a universal causal window.
+
+Investigation preparation imports this prebuilt package before legacy scalar
+rows, checks its source hashes, and freezes the resulting snapshot. Thus the
+DiagnosisAgent consumes EvidenceBuilder products, not raw simulation files.
+Pump/control action series, storage volume series, and surface source attribution
+remain explicitly unbuilt. Existing runs must rebuild evidence to receive the new
+package; this change does not automatically mutate their stored artifacts.
+
+`DiagnosisAgent(message=<original question>)` prepares a run-bound evidence
+snapshot and returns `task_id`; it does not call the model during preparation.
+After confirmation, `DiagnosisAgent(task_id=...)` runs one LLM investigation or
+revision step. The model must address four questions and six mechanism statuses,
+return structured claims and justified evidence requests, and cite visible IDs.
+
+Follow the returned task state, one confirmed action at a time:
+
+- `ready_for_diagnosis` / `revision_requested`: DiagnosisAgent.
+- `awaiting_evidence_confirmation`: EvidenceBuilderAgent(task_id=...).
+- `ready_for_verification`: VerificationAgent(task_id=...).
+- `ready_for_report`: ReportAgent(task_id=...).
+- `needs_user_decision`: stop and ask; do not automatically retry.
+
+The investigation evidence tool retrieves prebuilt evidence by explicit filters
+(the 2026-10-01 update replaces the original positional pagination).
+Any additional, unbuilt evidence is recorded as unavailable, not computed or
+invented by Diagnosis. This is not yet full six-mechanism engineering coverage.
+Artifacts and revisions live under `runs/<run_id>/diagnosis_tasks/<task_id>/`.
+Run-level deterministic screening remains available separately; it is not the
+LLM investigation mode. Web requests involving diagnosis/tasks are sent through
+the LLM orchestrator instead of the deterministic diagnosis shortcut.
+
+CLI equivalent (replace placeholders with actual model/run/task IDs):
+
+```powershell
+python run_workflow.py --model <model> --run-id <run> --investigation-action prepare --question "全局洪涝诊断"
+python run_workflow.py --model <model> --run-id <run> --investigation-action diagnose --task-id <task>
+```
+
+Subsequent `--investigation-action` values are `evidence`, `diagnose`, `verify`,
+and `report`, as allowed by task state. Only `diagnose` calls the configured
+external model using the selected evidence; review the task before invoking it.
+Offline tests use a fake model client, not a live diagnostic-quality evaluation.
+
+The initial diagnostic workflow now adds saved-sample overflow episodes in
+`evidence/overflow_events.json` and event-specific evidence/claims. Consecutive
+positive samples form one episode; a non-positive sample separates episodes.
+Duration uses left-sample intervals (the terminal sample adds no duration).
+Episode volume is explicitly a left-rectangle estimate, separate from existing
+run-level volume metrics; no sub-step onset interpolation or gap merging is done.
+
+Verification now checks current-model/run EvidenceID traceability only. Its
+statuses are `references_verified`, `references_missing`, and `no_references`;
+these do **not** establish hydraulic or causal validity. The legacy
+`unsupported_rate.txt` path stores reference failure rate (N/A for zero claims).
+Old verification artifacts must be regenerated before using the new reporter.
+
+Reports default to a global view, retain explicitly selected node/event IDs,
+and never add new causes. Unresolved follow-up references request an explicit
+object. New mechanism questions request Diagnosis review; automatic dispatch
+of a new report question still requires a newly confirmed investigation task.
+`--until` now executes only the next stage and returns remaining stages for
+human confirmation; it no longer runs through all stages in one call.
+
+Run regression tests: `.venv/Scripts/python -m unittest discover -s tests -v`.
+Historical architecture descriptions below include legacy behavior; this
+section defines the updated reference-check and report semantics.
+
 SWMM-Agentic2 is a workflow-stage-oriented SWMM-CA2D Agentic prototype. It keeps
 the proven tool-first execution layer from SWMM-Agentic, then adds deterministic
 stage agents for evidence construction, flood diagnosis, and evidence
@@ -164,8 +313,9 @@ python run_workflow.py --model songhua_swmm_2d --run-id rain1__baseline__2026072
 
 ## API And Web Test Setup
 
-The `.env` file is copied from the original SWMM-Agentic project, so the same
-OpenAI-compatible API URLs and keys are used by SWMM-Agentic2.
+The local `.env` configures the official DeepSeek API and one model for all LLM
+agents. For a fresh checkout, copy `.env.example` to `.env` and supply your
+DeepSeek API key before starting the service.
 
 Create and install the local environment:
 

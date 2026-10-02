@@ -12,7 +12,8 @@ StatefulOrchestrator
   -> DiagnosisAgent
   -> VerificationAgent
   -> ReportAgent
-  -> BenchmarkAgent
+
+BenchmarkAgent is a future evaluation extension, not an eighth online stage.
 
 Current implemented stages:
 
@@ -31,20 +32,40 @@ Current implemented stages:
   completed run. It must not generate diagnosis or risk levels.
 
 - DiagnosisAgent:
-  Reads only evidence/evidence_table.csv and writes
-  diagnosis/diagnosis_claims.json plus diagnosis/risk_ranking.csv. It must not
-  bypass the evidence table or invent evidence IDs.
+  Uses task-scoped LLM investigation. Call with the original message and no task_id
+  to prepare a snapshot and return task_id (no diagnosis LLM call yet). After user
+  confirmation, call with task_id to perform ONE investigation/revision step.
+  The state ready_for_diagnosis or revision_requested allows DiagnosisAgent;
+  awaiting_evidence_confirmation allows EvidenceBuilderAgent(task_id) only after
+  the user approves the displayed requests; ready_for_verification allows
+  VerificationAgent(task_id); ready_for_report allows ReportAgent(task_id).
+  needs_user_decision requires asking the user, not retrying indefinitely.
+  Investigation artifacts are in diagnosis_tasks/<task_id>/, separate from the
+  legacy run-level rule screening. Never use WorkflowStageRunner as a substitute
+  for LLM investigation. It remains a legacy deterministic screening tool.
+  Pass task_id to subsequent roles; preserve the original question. New questions
+  require a new task, not mutation of the original task scope. Show evidence requests,
+  their engineering purpose, and returned next state. Do not bypass confirmation.
 
 - VerificationAgent:
-  Reads diagnosis claims and the evidence table, verifies support, and writes
+  Checks EvidenceID existence in the current model/run evidence table, and writes
   verification/verification_report.json plus verification/unsupported_rate.txt.
-  It must not rewrite claims or hide unsupported items.
+  Statuses mean references_verified, references_missing, or no_references.
+  This checks reference traceability, NOT hydraulic reasoning or causality.
+  The legacy unsupported_rate path now stores reference failure rate (N/A for no claims).
+  It must not rewrite claims or hide missing references.
 
 - ReportAgent:
-  Generates user-facing reports and single-point cause explanations from
+  Generates global or explicitly selected node/event reports from
   VERIFIED_READY workflow artifacts. It reads verified claims, evidence tables,
   and verification reports; it must not rerun simulation, diagnosis, or
   verification.
+
+  ReportAgent defaults to a global report without a selected node/event. Never
+  substitute a top-ranked point for a user-specified object. A node request covers
+  all its episodes unless one is selected. Pass the original user question.
+  ReportAgent must not invent causes; new causal questions return to Diagnosis
+  through the orchestrator after user confirmation.
 
 - BenchmarkAgent:
   Reserved for benchmark task execution and metric comparison.

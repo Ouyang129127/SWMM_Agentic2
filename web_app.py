@@ -154,6 +154,12 @@ async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
     latest = transcript[-1]["content"]
     planning_only = is_planning_only_request(latest)
     if not planning_only:
+        # Investigation tasks must not fall through to run-level deterministic
+        # shortcuts. The LLM orchestrator selects one role/action after approval.
+        recent = '\n'.join(item['content'] for item in transcript[-10:])
+        if ('"task_id"' in recent or 'EVIDENCE_READY' in recent or
+                any(marker in latest for marker in ('诊断', '主因', 'diagnosis'))):
+            return await run_web_orchestrator_agent_turn(build_task_prompt(transcript), planning_only=False)
         continue_result = continue_workflow_from_state(latest, transcript)
         if continue_result is not None:
             return continue_result

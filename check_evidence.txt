@@ -1,0 +1,41 @@
+Directory Contents for Chicago Single Event Baseline Run
+============================================================
+
+Run Directory: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515
+
+FILES AND DIRECTORIES FOUND:
+------------------------------
+DIR: ca2d/
+
+DIR: evidence/
+
+FILE: rainfall_event.txt
+  Size: 1366 bytes
+  Modified: 1789885282.8800235
+
+FILE: run.yaml
+  Size: 897 bytes
+  Modified: 1790508350.435267
+
+FILE: scenario_request.json
+  Size: 609 bytes
+  Modified: 1790508315.5262518
+
+FILE: summary.json
+  Size: 5736 bytes
+  Modified: 1790508350.4342666
+
+DIR: swmm/
+
+FILE: workflow_state.json
+  Size: 1772 bytes
+  Modified: 1790510113.7363622
+
+
+SEARCHING FOR EVIDENCE FILES:
+------------------------------
+FOUND: summary.json
+  Path: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\summary.json
+  Size: 5736 bytes
+  Content preview: {'execution_policy': 'tool-first', 'pipeline_tool': 'run_swmm_2d_project_from_rainfall', 'schema_name': 'SWMM-2D project layout', 'schema_version': 'models-readme-2026-07-18', 'run_id': 'chicago_singl...
+

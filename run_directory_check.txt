@@ -1,9 +1,31 @@
-Directory exists: models\suanliguanw_swmm_2d\runs\rain4_event__baseline__20260907_211530
+SWMM运行目录检查报告
+检查时间: tmp_code_95735a6148f62b073236ebcdcedc3cf50997811cfbf7c653a5c8dc2f92fa8025.py
+目录路径: E:\SWMM_Agentic\SWMM-Agentic2\models\urban_drainage\runs\chicago_triple_event__baseline__20260927_203812
+============================================================
 
-Contents:
---------------------------------------------------
-DIR:  ca2d/
-FILE: rainfall_event.txt
-FILE: scenario_request.json
-DIR:  swmm/
-FILE: workflow_state.json
+1. 目录结构检查:
+运行目录存在: True
+diagnosis目录存在: False
+
+2. diagnosis目录不存在
+
+3. 关键文件检查:
+diagnosis_report.json: False
+risk_ranking.csv: False
+
+4. 其他常见文件检查:
+swmm_output.out: False
+swmm_report.rpt: False
+model.inp: False
+run_log.txt: False
+simulation_summary.json: False
+
+5. 运行目录完整内容:
+  📁 目录: ca2d
+  📁 目录: evidence
+  📄 文件: rainfall_event.txt (1373 字节)
+  📄 文件: run.yaml (897 字节)
+  📄 文件: scenario_request.json (609 字节)
+  📄 文件: summary.json (5642 字节)
+  📁 目录: swmm
+  📄 文件: workflow_state.json (1772 字节)

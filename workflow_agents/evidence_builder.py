@@ -11,6 +11,8 @@ import pandas as pd
 from .rainfall_context import build_rainfall_context, write_rainfall_context
 from .schemas import EVIDENCE_SCHEMA_NAME, WORKFLOW_SCHEMA_VERSION, artifacts_for_run
 from .state import resolve_run_root
+from .sampled_events import identify_events
+from .first_pass_evidence import build_first_pass
 
 
 POSITIVE_FLOW_LS = 1e-9
@@ -241,6 +243,9 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
 
     nodes = _read_tsv(artifacts.swmm_nodes, {"node_id", "depth_m", "flooding_Ls", "date", "time"})
     nodes["DateTime"] = _time_columns(nodes)
+    # node_flooding.tsv may contain only surface-mapped nodes; the event catalog
+    # must use every saved node, not only the CA2D injection subset.
+    event_catalog = identify_events(nodes.rename(columns={'flooding_Ls': 'flow_Ls'}).to_dict('records'), run_root.name, run_root.parents[1].name)
     nodes["depth_m"] = pd.to_numeric(nodes["depth_m"], errors="coerce").fillna(0.0)
     for node_id, group in nodes.groupby("node_id"):
         idx = group["depth_m"].idxmax()
@@ -380,6 +385,18 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
             rows.append(row)
 
     rows.extend(overflow_event_rows)
+    for event in event_catalog['events']:
+        for metric, value, unit in [
+            ('event_peak_flooding', event['peak_flooding_Ls'], 'L/s'),
+            ('event_duration', event['duration_minutes'], 'min'),
+            ('event_estimated_volume', event['estimated_volume_m3'], 'm3'),
+        ]:
+            row = _base_row(summary, run_root, artifacts.swmm_node_flooding, 'node', event['node_id'], metric)
+            row.update(event_id=event['event_id'], value=value, unit=unit,
+                       time_start=event['start'], time_end=event['end'],
+                       duration_minutes=event['duration_minutes'], rank='', threshold='',
+                       exceedance_flag='', calculation_method=event['integration_method'])
+            rows.append(row)
 
     for metric in [
         "total_flooding_volume",
@@ -411,6 +428,8 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         "evidence_id",
         "run_id",
         "event_name",
+        "event_id",
+        "calculation_method",
         "scenario_name",
         "source_model",
         "source_file",
@@ -438,10 +457,16 @@ def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
         "scenario_name": summary.get("scenario_name", ""),
         "evidence_table": str(artifacts.evidence_table),
         "evidence_count": int(len(evidence_df)),
+        "overflow_events_file": "evidence/overflow_events.json",
+        "overflow_event_count": len(event_catalog['events']),
+        "first_pass_evidence_file": "evidence/first_pass_evidence.json",
         "metrics": evidence_df.groupby("metric_name").size().to_dict(),
         "source_files": sorted(evidence_df["source_file"].unique().tolist()),
         "rainfall_context": rainfall_context,
         "rainfall_context_file": str(artifacts.rainfall_context),
     }
+    first_pass = build_first_pass(run_root, event_catalog)
+    (evidence_dir / 'first_pass_evidence.json').write_text(json.dumps(first_pass, ensure_ascii=False, indent=2, allow_nan=False), encoding='utf-8')
     artifacts.evidence_summary.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    (evidence_dir / 'overflow_events.json').write_text(json.dumps(event_catalog, ensure_ascii=False, indent=2), encoding='utf-8')
     return summary_payload

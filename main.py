@@ -273,7 +273,7 @@ async def CodeRunner(
     ],
 ) -> str:
     """Legacy auxiliary coding channel for non-standard analysis only."""
-    from llm import deepseekR1
+    from llm import deepseek_flash
 
     coder_user = CodeExecutorAgent(
         "coder_user",
@@ -283,7 +283,7 @@ async def CodeRunner(
     coder = AssistantAgent(
         name="coder",
         system_message=coder_prompt,
-        model_client=deepseekR1,
+        model_client=deepseek_flash,
     )
 
     text_termination = TextMentionTermination(text="===TASK DONE===", sources=["coder_user"])
@@ -315,17 +315,11 @@ async def DataAnalyzer(
     ],
 ) -> str:
     """Legacy auxiliary interpretation channel for saved outputs only."""
-    from llm import qwen
-
-    if qwen is None:
-        return (
-            "Qwen multimodal model is not configured. Set QWEN_API_KEY or "
-            "DASHSCOPE_API_KEY in .env before using DataAnalyzer."
-        )
+    from llm import deepseek_flash
 
     multi_model_agent = AssistantAgent(
         name="multi_model_agent",
-        model_client=qwen,
+        model_client=deepseek_flash,
         system_message=data_analyzer_prompt,
     )
 
@@ -488,8 +482,11 @@ async def EvidenceBuilderAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
     run_id: Annotated[str, "Run ID under models/<model_name>/runs/."],
     rerun: Annotated[bool, "Allow rerunning this stage."] = False,
+    task_id: Annotated[str, "Existing investigation task whose displayed evidence requests the user approved."] = "",
 ) -> str:
     """Workflow-stage EvidenceBuilderAgent."""
+    if task_id:
+        return await _investigation_action(model_name, run_id, 'evidence', task_id)
     return run_workflow_stage(
         model_name=model_name,
         run_id=run_id,
@@ -502,22 +499,22 @@ async def DiagnosisAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
     run_id: Annotated[str, "Run ID under models/<model_name>/runs/."],
     rerun: Annotated[bool, "Allow rerunning this stage."] = False,
+    message: Annotated[str, "Original user question, required when preparing an investigation."] = "",
+    task_id: Annotated[str, "Empty prepares a task without LLM execution; existing task runs one confirmed diagnosis step."] = "",
 ) -> str:
     """Workflow-stage DiagnosisAgent."""
-    return run_workflow_stage(
-        model_name=model_name,
-        run_id=run_id,
-        target_stage="diagnosis",
-        rerun=rerun,
-    )
+    return await _investigation_action(model_name, run_id, 'diagnose' if task_id else 'prepare', task_id, message)
 
 
 async def VerificationAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
     run_id: Annotated[str, "Run ID under models/<model_name>/runs/."],
     rerun: Annotated[bool, "Allow rerunning this stage."] = False,
+    task_id: Annotated[str, "Optional investigation task to reference-check."] = "",
 ) -> str:
     """Workflow-stage VerificationAgent."""
+    if task_id:
+        return await _investigation_action(model_name, run_id, 'verify', task_id)
     return run_workflow_stage(
         model_name=model_name,
         run_id=run_id,
@@ -548,14 +545,23 @@ async def ReportAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
     run_id: Annotated[str, "Run ID under models/<model_name>/runs/. The run must be VERIFIED_READY."],
     message: Annotated[str, "User-facing report or explanation request."] = "",
+    task_id: Annotated[str, "Optional investigation task; report only its original question, no new diagnosis."] = "",
 ) -> str:
     """Final user-facing ReportAgent: turn verified claims and evidence into plain language."""
+    if task_id:
+        return await _investigation_action(model_name, run_id, 'report', task_id, message)
     return generate_run_report(model_name=model_name, run_id=run_id, message=message)
+
+
+async def _investigation_action(model_name, run_id, action, task_id='', question=''):
+    from workflow_agents.investigation import advance_investigation
+    result = await advance_investigation(model_name, run_id, action, task_id, question)
+    return json.dumps(result, ensure_ascii=False, indent=2)
 
 
 async def explain_validation_evidence(user_message: str, evidence: str) -> str:
     """Explain fixed-validator evidence without deciding project status in the web layer."""
-    from llm import deepseekV3
+    from llm import deepseek_flash
 
     evidence_block, fence_type = _normalize_evidence_block(evidence)
     task = (
@@ -574,7 +580,7 @@ async def explain_validation_evidence(user_message: str, evidence: str) -> str:
         explainer = AssistantAgent(
             name="EvidenceExplainer",
             system_message=validation_evidence_explainer_prompt,
-            model_client=deepseekV3,
+            model_client=deepseek_flash,
         )
         team = RoundRobinGroupChat(participants=[explainer], max_turns=1)
         result = await team.run(task=task)
@@ -593,7 +599,7 @@ async def explain_validation_evidence(user_message: str, evidence: str) -> str:
 
 async def explain_simulation_evidence(user_message: str, evidence: str) -> str:
     """Explain fixed simulation-pipeline evidence without rerunning or altering facts."""
-    from llm import deepseekV3
+    from llm import deepseek_flash
 
     evidence_block, fence_type = _normalize_evidence_block(evidence)
     task = (
@@ -612,7 +618,7 @@ async def explain_simulation_evidence(user_message: str, evidence: str) -> str:
         explainer = AssistantAgent(
             name="SimulationEvidenceExplainer",
             system_message=simulation_evidence_explainer_prompt,
-            model_client=deepseekV3,
+            model_client=deepseek_flash,
         )
         team = RoundRobinGroupChat(participants=[explainer], max_turns=1)
         result = await team.run(task=task)
@@ -631,7 +637,7 @@ async def explain_simulation_evidence(user_message: str, evidence: str) -> str:
 
 async def run_web_orchestrator_agent_turn(task_prompt: str, planning_only: bool = False) -> str:
     """Run the web-chat StatefulOrchestrator while keeping construction out of web_app.py."""
-    from llm import deepseekV3
+    from llm import deepseek_flash
 
     tool_list = [] if planning_only else [
         ScenarioAgent,
@@ -653,7 +659,7 @@ async def run_web_orchestrator_agent_turn(task_prompt: str, planning_only: bool 
     orchestrator = AssistantAgent(
         name="StatefulOrchestrator",
         system_message=orchestrator_prompt + web_interactive_prompt + mode_prompt,
-        model_client=deepseekV3,
+        model_client=deepseek_flash,
         tools=tool_list,
     )
     termination = MaxMessageTermination(8) | TextMentionTermination("TERMINATE")
@@ -696,11 +702,11 @@ async def LegacyTaskExecutor(
     if fast_result is not None:
         return fast_result
 
-    from llm import deepseekV3
+    from llm import deepseek_flash
 
     task_executor = AssistantAgent(
         name="LegacyTaskExecutor",
-        model_client=deepseekV3,
+        model_client=deepseek_flash,
         system_message=legacy_tool_executor_prompt,
         tools=[
             add_controls,
@@ -732,13 +738,13 @@ async def LegacyTaskExecutor(
 
 
 async def main(task_description):
-    from llm import deepseekV3
+    from llm import deepseek_flash
 
     user = UserProxyAgent("user", input_func=input)
     orchestrator = AssistantAgent(
         name="StatefulOrchestrator",
         system_message=orchestrator_prompt,
-        model_client=deepseekV3,
+        model_client=deepseek_flash,
         tools=[
             ScenarioAgent,
             SimulationAgent,

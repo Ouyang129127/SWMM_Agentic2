@@ -1,0 +1,14 @@
+证据文件列表:
+==================================================
+ 1. Directory: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515
+ 2. Evidence folder exists: True
+ 3. Evidence table file exists: False
+ 4. Evidence folder path: models\urban_drainage\runs\chicago_single_event__baseline__20260927_192515\evidence
+ 5. Evidence folder contents (5 items):
+ 6. - evidence_summary.json
+ 7. - evidence_table.csv
+ 8. - first_pass_evidence.json
+ 9. - overflow_events.json
+10. - rainfall_context.json
+
+总计: 10 个文件

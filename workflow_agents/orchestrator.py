@@ -53,9 +53,8 @@ def run_workflow_stage(
 ) -> dict[str, Any]:
     """Advance a run through one or more legal workflow stages.
 
-    target_stage executes exactly one stage. until_stage executes sequentially
-    until that stage has completed. With neither argument, the next legal stage
-    is executed.
+    Execute one stage per confirmation. until_stage is the requested target,
+    not permission to skip intervening human-review checkpoints.
     """
     run_root, state = load_or_initialize_state(model_name, run_id)
     model_name = state["model_name"]
@@ -105,6 +104,8 @@ def run_workflow_stage(
     else:
         stages_to_run = [current_stage]
 
+    remaining_stages = stages_to_run[1:]
+    stages_to_run = stages_to_run[:1]
     stage_results = []
     errors: list[str] = []
     try:
@@ -135,9 +136,18 @@ def run_workflow_stage(
             "stage_results": stage_results,
         }
 
+    verification_result = next((item['result'] for item in stage_results if item['stage'] == 'verification'), None)
+    revision_required = bool(verification_result and any(
+        check.get('verification_status') != 'references_verified'
+        for check in verification_result.get('claim_checks', [])))
     return {
         "ok": True,
         "message": f"Workflow advanced through: {[item['stage'] for item in stage_results]}",
+        "diagnosis_revision_required": revision_required,
+        "next_action": 'confirm_diagnosis_revision' if revision_required else 'confirm_next_stage_or_report',
+        "awaiting_user_confirmation": bool(state.get('next_allowed_stage')),
+        "remaining_requested_stages": remaining_stages,
+        "verification_scope": "reference_traceability_only",
         "state": state,
         "stage_results": stage_results,
     }

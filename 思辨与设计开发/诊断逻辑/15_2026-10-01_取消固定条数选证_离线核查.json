@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-01",
+  "policy": "task_evidence_v2",
+  "mode": "read_only_offline_prompt_build",
+  "original_run_state_and_evidence_unchanged": true,
+  "results": [
+    {
+      "run": "chicago_single_event__baseline__20260927_192515",
+      "scope": "global",
+      "node": null,
+      "event": null,
+      "raw_snapshot_rows": 39522,
+      "provided_rows": 56,
+      "summary_rows": 14,
+      "covered_events": 7,
+      "missing_groups": [],
+      "full_prompt_characters": 112431,
+      "preserved_process_samples": 40,
+      "all_supplied_evidence_lossless": true,
+      "model_called": false
+    },
+    {
+      "run": "chicago_single_event__baseline__20260927_192515",
+      "scope": "node",
+      "node": "P6",
+      "event": null,
+      "raw_snapshot_rows": 39522,
+      "provided_rows": 47,
+      "summary_rows": 0,
+      "covered_events": 1,
+      "missing_groups": [],
+      "full_prompt_characters": 32650,
+      "preserved_process_samples": 8,
+      "all_supplied_evidence_lossless": true,
+      "model_called": false
+    },
+    {
+      "run": "chicago_single_event__baseline__20260927_192515",
+      "scope": "event",
+      "node": "P6",
+      "event": "P6:E001",
+      "raw_snapshot_rows": 39522,
+      "provided_rows": 47,
+      "summary_rows": 0,
+      "covered_events": 1,
+      "missing_groups": [],
+      "full_prompt_characters": 32662,
+      "preserved_process_samples": 8,
+      "all_supplied_evidence_lossless": true,
+      "model_called": false
+    },
+    {
+      "run": "chicago_triple_event__baseline__20260927_203812",
+      "scope": "global",
+      "node": null,
+      "event": null,
+      "raw_snapshot_rows": 39459,
+      "provided_rows": 14,
+      "summary_rows": 14,
+      "covered_events": 0,
+      "missing_groups": [],
+      "full_prompt_characters": 26021,
+      "preserved_process_samples": 0,
+      "all_supplied_evidence_lossless": true,
+      "model_called": false
+    },
+    {
+      "run": "chicago_triple_event__baseline__20260927_203812",
+      "scope": "node",
+      "node": "P6",
+      "event": null,
+      "raw_snapshot_rows": 39459,
+      "provided_rows": 5,
+      "summary_rows": 0,
+      "covered_events": 0,
+      "missing_groups": [],
+      "full_prompt_characters": 6049,
+      "preserved_process_samples": 0,
+      "all_supplied_evidence_lossless": true,
+      "model_called": false
+    }
+  ]
+}

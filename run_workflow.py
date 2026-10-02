@@ -21,10 +21,21 @@ def main() -> None:
         "--until",
         default="",
         choices=["", "evidence_building", "diagnosis", "verification"],
-        help="Run legal stages sequentially until this stage is complete.",
+        help="Requested final stage; execute one stage then wait for user confirmation.",
     )
     parser.add_argument("--rerun", action="store_true", help="Allow rerunning a stage.")
+    parser.add_argument('--investigation-action', choices=['prepare', 'diagnose', 'evidence', 'verify', 'report'])
+    parser.add_argument('--task-id', default='')
+    parser.add_argument('--question', default='')
     args = parser.parse_args()
+
+    if args.investigation_action:
+        import asyncio
+        from workflow_agents.investigation import advance_investigation
+        result = asyncio.run(advance_investigation(args.model, args.run_id, args.investigation_action,
+                                                  args.task_id, args.question))
+        print(workflow_result_to_text(result))
+        return
 
     result = run_workflow_stage(
         model_name=args.model,

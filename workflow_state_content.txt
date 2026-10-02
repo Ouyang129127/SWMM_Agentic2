@@ -1,0 +1,46 @@
+{
+  "schema_name": "swmm_ca2d_workflow_state",
+  "schema_version": "0.1",
+  "model_name": "urban_drainage",
+  "run_id": "chicago_single_event__baseline__20260927_192515",
+  "state": "RUN_READY",
+  "completed_stages": [
+    "scenario",
+    "simulation"
+  ],
+  "next_allowed_stage": "evidence_building",
+  "artifacts": {
+    "scenario_request": "scenario_request.json",
+    "run_summary": "summary.json",
+    "run_metadata": "run.yaml",
+    "swmm_node_flooding": "swmm/node_flooding.tsv",
+    "swmm_nodes": "swmm/nodes.tsv",
+    "swmm_links": "swmm/links.tsv",
+    "ca2d_surface_depth": "ca2d/surface_depth.tsv",
+    "evidence_table": "evidence/evidence_table.csv",
+    "evidence_summary": "evidence/evidence_summary.json",
+    "rainfall_context": "evidence/rainfall_context.json",
+    "evidence_relation_table": "evidence/evidence_relation_table.csv",
+    "overflow_node_evidence_packages": "evidence/overflow_node_evidence_packages.json",
+    "diagnosis_claims": "diagnosis/diagnosis_claims.json",
+    "risk_ranking": "diagnosis/risk_ranking.csv",
+    "verification_report": "verification/verification_report.json",
+    "unsupported_rate": "verification/unsupported_rate.txt"
+  },
+  "errors": [],
+  "updated_at": "2026-09-27T19:25:50",
+  "history": [
+    {
+      "stage": "scenario",
+      "target_state": "SCENARIO_READY",
+      "completed_at": "2026-09-27T19:25:15",
+      "rerun": false
+    },
+    {
+      "stage": "simulation",
+      "target_state": "RUN_READY",
+      "completed_at": "2026-09-27T19:25:50",
+      "rerun": true
+    }
+  ]
+}

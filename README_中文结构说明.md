@@ -7,7 +7,7 @@
 ```text
 E:\SWMM_Agentic\SWMM-Agentic
   main.py              多智能体入口
-  llm.py               DeepSeek / Qwen 模型客户端配置
+  llm.py               统一 DeepSeek-V4.1-Flash 模型客户端配置
   prompts.py           智能体预设提示词
   tools.py             SWMM 工具函数
   requirements.txt     Python 依赖
@@ -47,12 +47,19 @@ E:\SWMM_Agentic\SWMM-Agentic
 
 代码生成和执行入口。内部包含：
 
-- `coder`：用 DeepSeek Reasoner 写 Python 代码
+- `coder`：用 DeepSeek-V4.1-Flash 写 Python 代码
 - `coder_user`：执行代码
 
 ### DataAnalyzer
 
-结果分析智能体。用 Qwen-VL 分析图片、表格和文本结果。
+结果分析智能体。用 DeepSeek-V4.1-Flash 分析图片、表格和文本结果。
+
+所有调用大语言模型的智能体统一使用官方接口 `https://api.deepseek.com`，
+API 模型名为 `deepseek-flash`。密钥仅保存在本地、Git 忽略的 `.env` 中。
+配置项为 `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL`、`DEEPSEEK_API_KEY`。
+现有 AutoGen 0.6.1 无法完整回传工具调用的思考内容，因此携带工具的请求
+使用非思考模式；无工具的诊断、代码生成与图片分析默认使用高强度思考。
+修改配置后需重启已运行的 Web/CLI 进程。详细迁移统计见 `README.md`。
 
 ## 当前已经实现的 SWMM 工具雏形
 
