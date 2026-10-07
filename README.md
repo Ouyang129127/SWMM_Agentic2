@@ -137,8 +137,10 @@ event coverage and source mechanism statuses are checked before rendering.
 Source hashes and the current diagnosis/evidence binding are checked before and
 after writing. These checks do not constitute independent hydraulic causal validation.
 The report distinguishes 0.01 m general ponding from 0.15 m attention areas;
-the solver is unchanged. It uses 0.15/0.27/0.40 m depth classes from the CECS draft
-as a map legend, without claiming formal warning grades from depth alone.
+the solver is unchanged. Its surface opening explains the 0.15/0.27/0.40 m depth
+classes from the CECS draft and the 0.15 m ponding/waterlogging boundary used by
+Beijing Water Authority. Maps use a yellow-to-red depth gradient and a shared
+numeric colorbar, without claiming formal warning grades from depth alone.
 Current inputs require the existing LPS/m saved-output and static-grid formats.
 
 ## CLI

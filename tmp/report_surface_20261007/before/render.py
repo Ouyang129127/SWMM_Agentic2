@@ -6,7 +6,6 @@ from pathlib import Path
 
 from .materials import SECTIONS,TITLES
 from .narrative import expand
-from .surface import BASIS as SURFACE_BASIS
 
 
 CSS='''
@@ -52,8 +51,6 @@ def render(materials,narrative,facts,media,path,generated_at):
         body=paragraphs(narrative['sections'][key]) if key!='conclusions' else '<ol class="conclusions">'+''.join(f'<li>{prose(p)}</li>' for p in narrative['sections'][key])+'</ol>'
         if key=='rain':body+=figure('rainfall')
         elif key=='surface':
-            sources='；'.join(f'<a href="{esc(row["url"])}" target="_blank" rel="noopener noreferrer">{esc(row["title"])}</a>' for row in SURFACE_BASIS['sources'])
-            body=paragraphs(narrative['sections'][key][:1])+f'<p class="meta">分级依据：{sources}</p>'+paragraphs(narrative['sections'][key][1:])
             body+=figure('surface_maps')
             wet=surface['threshold_metrics']['0.01'];attention=surface['threshold_metrics']['0.15']
             labels=[('road','道路'),('green','绿地')] if surface['classification_available'] else [('green','地表')]

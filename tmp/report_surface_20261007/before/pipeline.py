@@ -17,7 +17,7 @@ from .narrative import write_narrative
 from .plots import make_plots
 from .render import render
 
-VERSION = 'report_agent_v1.10_surface_basis_palette'
+VERSION = 'report_agent_v1.9_rain_figure'
 
 
 def producer_hashes():

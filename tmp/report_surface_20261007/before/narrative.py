@@ -8,7 +8,6 @@ import re
 from .materials import MECHANISMS, SECTIONS
 from .scene import VERSION as SCENE_VERSION, build_scene
 from .rain import VERSION as RAIN_VERSION, build_rain
-from .surface import BASIS as SURFACE_BASIS, VERSION as SURFACE_BASIS_VERSION
 
 
 PROMPT_DIRECTORY = Path(__file__).parent / 'prompts'
@@ -17,7 +16,6 @@ CAUSES_OVERVIEW_GUIDE = (PROMPT_DIRECTORY / 'causes_overview_v1.md').read_text(e
 INTRO_WRITING_GUIDE = (PROMPT_DIRECTORY / 'intro_rewrite_v1.md').read_text(encoding='utf-8')
 SCENE_WRITING_GUIDE = (PROMPT_DIRECTORY / 'scene_fixed_v1.md').read_text(encoding='utf-8')
 RAIN_WRITING_GUIDE = (PROMPT_DIRECTORY / 'rain_fixed_v1.md').read_text(encoding='utf-8')
-SURFACE_BASIS_GUIDE = (PROMPT_DIRECTORY / 'surface_basis_v1.md').read_text(encoding='utf-8')
 TEACHING_EXAMPLE = json.loads((PROMPT_DIRECTORY / 'event_example_v1.json').read_text(encoding='utf-8'))
 ADDITIONAL_TEACHING_EXAMPLES = [json.loads((PROMPT_DIRECTORY / name).read_text(encoding='utf-8'))
     for name in ('event_example_lateral_v1.json', 'event_example_outflow_v1.json', 'event_example_P7_v1.json')]
@@ -38,7 +36,7 @@ intro直接概括本次最有意义的发现，不堆砌时间和指标，不写
 scene采用fixed_sections.scene的固定两段，交代对象、方案、降雨条件、模拟时段及雨后覆盖。rain采用fixed_sections.rain的固定段落，说明雨峰形态、明确时间尺度的峰值雨强和短时雨量集中程度。
 scene只用累计雨量、历时与雨型交代降雨条件，峰值雨强和短时集中程度留在rain，避免两个章节复述相同内容。
 surface区分1厘米一般积水和15厘米关注区域、最大水深与同时面积峰值、道路绿地及建筑物周边、雨后存留。
-surface第一段使用fixed_section_openings.surface说明积水深度分级依据及15厘米界线。水深分级不能直接升级为正式预警/综合风险等级。不写降雨等级、重现期。
+水深分级15/27/40厘米只在图例中由程序处理，不要直接升级为正式预警/综合风险等级。不写降雨等级、重现期。
 overflow讲事件规模、主要节点、相对雨峰时刻、冒溢输入与地表变化。总量的scope是当前任务，不将局部任务当全场。
 causes保留综合成因推断与共同作用，不机械列六项机制。逐事件必须有发生过程、有支持的成因、候选影响三个独立字段。
 总体成因概括来水压力、输水限制与水位达到井口的关系，不把所有节点的入流减出流一律视为冒溢，不写“余量只能从节点冒出”。多数节点多路汇入，不代表仅有侧向来水的节点也是多源叠加。
@@ -66,7 +64,7 @@ scene交代一次模拟场景；rain讲降雨怎样集中；surface讲积水在�
 events覆盖expected_event_ids每项恰好一次。机制ID只放结构字段，正文不显示。
 如没有事件，events为空，写明保存结果未识别冒溢；地表以实际数据表述。
 没有逐事件诊断的事件不编造成因，其成因字段及机制ID均为空。
-''' + '\n逐节点转写的详细要求：\n' + EVENT_WRITING_GUIDE + '\n' + CAUSES_OVERVIEW_GUIDE + '\n' + INTRO_WRITING_GUIDE + '\n' + SCENE_WRITING_GUIDE + '\n' + RAIN_WRITING_GUIDE + '\n' + SURFACE_BASIS_GUIDE
+''' + '\n逐节点转写的详细要求：\n' + EVENT_WRITING_GUIDE + '\n' + CAUSES_OVERVIEW_GUIDE + '\n' + INTRO_WRITING_GUIDE + '\n' + SCENE_WRITING_GUIDE + '\n' + RAIN_WRITING_GUIDE
 
 
 DISPLAY_META_LANGUAGE = re.compile(
@@ -282,13 +280,10 @@ def make_prompt(materials):
     # Append after existing facts, including scene, to keep accepted prose IDs stable.
     fixed_sections['rain']=[facts.add(paragraph,section='rain',metric='fixed_rain')
                             for paragraph in build_rain(materials)]
-    surface_opening=facts.add(SURFACE_BASIS['opening'],section='surface',metric='depth_basis')
     return {'materials':data,'fact_text':facts.values,
             'fact_bindings':facts.bindings,'teaching_example':copy.deepcopy(TEACHING_EXAMPLE),
             'additional_teaching_examples':copy.deepcopy(ADDITIONAL_TEACHING_EXAMPLES),
             'fixed_sections':fixed_sections,
-            'fixed_section_openings':{'surface':surface_opening},
-            'fixed_opening_sources':{'surface':{'source':'program_template','version':SURFACE_BASIS_VERSION}},
             'fixed_section_sources':{'scene':{'source':'program_template','version':SCENE_VERSION},
                                     'rain':{'source':'program_template','version':RAIN_VERSION}},
             'expected_event_ids':[e['event_id'] for e in materials['events']],
@@ -448,11 +443,6 @@ def assemble_fixed_sections(response, prompt):
     result=copy.deepcopy(response)
     if isinstance(result,dict) and isinstance(result.get('sections'),dict):
         result['sections'].update(copy.deepcopy(prompt.get('fixed_sections',{})))
-        for section, opening in prompt.get('fixed_section_openings',{}).items():
-            paragraphs=result['sections'].get(section)
-            if isinstance(paragraphs,list) and all(isinstance(p,str) for p in paragraphs):
-                remaining=[p.replace(opening,'').strip(' ，；。\n') if opening in p else p for p in paragraphs]
-                result['sections'][section]=[opening]+[p for p in remaining if p]
     return result
 
 
@@ -471,7 +461,6 @@ async def write_narrative(materials, known_ids, directory, complete=None):
             else:response=await configured_completion(prompt,audit)
             response=assemble_fixed_sections(response,prompt)
             audit['fixed_section_sources']=prompt.get('fixed_section_sources',{})
-            audit['fixed_opening_sources']=prompt.get('fixed_opening_sources',{})
             validate(response,materials,facts,known_ids)
             audit['status']='passed'
             (directory/f'narrative_attempt_{attempt+1}.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2),encoding='utf-8')

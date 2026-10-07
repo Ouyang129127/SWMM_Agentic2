@@ -55,7 +55,7 @@ def run(args):
     before = hashes(protected)
     producer = producer_hashes()
     prompt, facts = make_prompt(materials)
-    prompt = dict(prompt, fixed_sections={section: prompt['fixed_sections'][section]},fixed_section_openings={})
+    prompt = dict(prompt, fixed_sections={section: prompt['fixed_sections'][section]})
     known = set()
     for event in materials['events']:
         known.add(event['node_id'])

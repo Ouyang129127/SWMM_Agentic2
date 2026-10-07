@@ -11,7 +11,7 @@ import pandas as pd
 from PIL import Image
 
 from workflow_agents.reporting.materials import SECTIONS, assert_sources_current, rainfall_metrics, saved_time_metrics
-from workflow_agents.reporting.narrative import expand, make_prompt, validate, write_narrative
+from workflow_agents.reporting.narrative import assemble_fixed_sections, expand, make_prompt, validate, write_narrative
 from workflow_agents.reporting.pipeline import attach_display_report, check_html, generate_display_report
 from workflow_agents.reporting.plots import make_plots
 from workflow_agents.reporting.render import render
@@ -324,6 +324,23 @@ class ReportTests(unittest.IsolatedAsyncioTestCase):
         audit=json.loads((self.root/'narrative_attempt_1.json').read_text(encoding='utf-8'))
         self.assertIn('9999',audit['raw_response']['sections']['rain'][0])
         self.assertEqual(audit['fixed_section_sources']['rain']['source'],'program_template')
+
+    def test_surface_basis_is_first_and_assembly_preserves_results_without_duplicates(self):
+        response=answer(self.prompt)
+        opening=self.prompt['fixed_section_openings']['surface']
+        response['sections']['surface'].append(opening)
+        previous=copy.deepcopy(response)
+        result=assemble_fixed_sections(response,self.prompt)
+        self.assertEqual(result['sections']['surface'][0],opening)
+        self.assertEqual(result['sections']['surface'][1:],previous['sections']['surface'][:-1])
+        self.assertEqual(assemble_fixed_sections(result,self.prompt),result)
+        self.assertEqual(response,previous)
+        text=expand(opening,self.facts)
+        self.assertIn('积水深度的风险',text)
+        self.assertIn('北京市水务局',text)
+        self.assertIn('15、27和40厘米',text)
+        self.assertIn('轻微积水',text)
+        self.valid(result)
 
     def test_rain_shape_evolution_and_short_uniform_window_are_not_fabricated(self):
         for values,shape in (([0,20,0,30,0],'双峰'),([0,20,0,30,0,10,0],'多峰')):
