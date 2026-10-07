@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import json
 import re
 import uuid
@@ -19,15 +19,16 @@ from tools import (
     check_all_swmm_2d_projects,
     check_ca2d_model,
     check_swmm_2d_project,
-    generate_run_report,
     list_rainfall_events,
     list_swmm_2d_models,
     run_workflow_stage,
     run_swmm_2d_project_from_rainfall,
 )
 from workflow_agents import load_scenario_request, prepare_scenario_request
-from workflow_agents.schemas import DIAGNOSIS_READY, EVIDENCE_READY, NO_SURFACE_INFLOW, RUN_READY, SCENARIO_READY, VERIFIED_READY
+from workflow_agents.schemas import EVIDENCE_READY, NO_SURFACE_INFLOW, RUN_READY, SCENARIO_READY
 from workflow_agents.state import build_state, load_or_initialize_state, save_state
+from workflow_agents.investigation import advance_investigation
+from workflow_agents.investigation_flow import load_active_task
 
 
 APP_ROOT = Path(__file__).resolve().parent
@@ -82,7 +83,13 @@ async def favicon() -> Response:
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     session_id = request.session_id or str(uuid.uuid4())
-    session = sessions.setdefault(session_id, ChatSession())
+    if session_id not in sessions:
+        restored = ChatSession()
+        path = session_log_path(session_id)
+        if path.exists():
+            restored.transcript = [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
+        sessions[session_id] = restored
+    session = sessions[session_id]
     user_message = repair_mojibake(request.message)
 
     async with session.lock:
@@ -154,20 +161,23 @@ async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
     latest = transcript[-1]["content"]
     planning_only = is_planning_only_request(latest)
     if not planning_only:
+        continue_result = await continue_workflow_from_state(latest, transcript)
+        if continue_result is not None:
+            return continue_result
+        if latest.strip(' ，。!?！？').lower() in {'下一步我该做什么', '好的，下一步我该做什么', '现在下一步是什么', '下一步是什么'}:
+            binding = investigation_binding(transcript)
+            if binding:
+                model_name, run_id, task_id = binding
+                state = load_active_task(model_name, run_id, task_id)
+                if state:
+                    state = await advance_investigation(model_name, run_id, 'status', state['task_id'])
+                    return format_investigation_result(state)
         # Investigation tasks must not fall through to run-level deterministic
         # shortcuts. The LLM orchestrator selects one role/action after approval.
         recent = '\n'.join(item['content'] for item in transcript[-10:])
         if ('"task_id"' in recent or 'EVIDENCE_READY' in recent or
-                any(marker in latest for marker in ('诊断', '主因', 'diagnosis'))):
+                any(marker in latest.lower() for marker in ('诊断', '主因', 'diagnosis', '核查', 'verification', '报告', 'report', '原因', '为什么'))):
             return await run_web_orchestrator_agent_turn(build_task_prompt(transcript), planning_only=False)
-        continue_result = continue_workflow_from_state(latest, transcript)
-        if continue_result is not None:
-            return continue_result
-
-        report_result = report_agent_reply(latest, transcript)
-        if report_result is not None:
-            return report_result
-
         deterministic_workflow = deterministic_workflow_stage_evidence(latest, transcript)
         if deterministic_workflow is not None:
             return deterministic_workflow
@@ -181,7 +191,7 @@ async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
             explanation = await explain_simulation_evidence(latest, simulation_result)
             return (
                 "本轮已由 SWMM-Agentic2 的 `SimulationAgent` 处理标准化模拟请求，"
-                "没有交给 CodeRunner 临时生成官方模拟流程。\n\n"
+                "使用固定模拟管线。\n\n"
                 + explanation
             )
 
@@ -205,18 +215,89 @@ async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
     return await run_web_orchestrator_agent_turn(task, planning_only=planning_only)
 
 
-def continue_workflow_from_state(message: str, transcript: list[dict[str, str]]) -> str | None:
-    """Continue exactly the next allowed workflow stage after a user confirmation."""
-    if not is_continue_confirmation(message):
-        return None
-
-    context = "\n".join(item["content"] for item in transcript[-10:])
-    run_id = extract_workflow_run_id(context)
+def investigation_binding(transcript: list[dict[str, str]]) -> tuple[str, str, str] | None:
+    # Work backwards by message, not by regex-pattern priority. A durable run
+    # binding remains usable even when the conversation exceeds ten turns.
+    run_id = ''
+    task_id = ''
+    for item in reversed(transcript):
+        text = item['content']
+        if not task_id:
+            ids = re.findall(r'task_id[\s`\"\'=:：()]*([0-9a-f]{32})', text, re.IGNORECASE)
+            task_id = ids[-1] if ids else ''
+        run_id = extract_workflow_run_id(text)
+        if run_id:
+            break
     if not run_id:
         return None
-    model_name = extract_model_name(context) or "songhua_swmm_2d"
+    context = '\n'.join(item['content'] for item in transcript)
+    model_name = extract_model_name(context)
+    # resolve_run_root checks uniqueness across models for stale/absent model names.
+    from workflow_agents.state import resolve_run_root
+    root = resolve_run_root(model_name or '__unspecified__', run_id)
+    return root.parents[1].name, root.name, task_id
 
+
+def format_investigation_result(state: dict[str, Any]) -> str:
+    current = state['state']
+    lines = [f"诊断任务 `{state['task_id']}`；当前状态：`{current}`。"]
+    if state.get('execution_error'):
+        lines.append('本次修正未通过，已保留原任务、失败响应和反馈：' + state['execution_error'])
+        lines.append('下一步：继续修正此任务，无需重跑模拟或重建诊断任务。')
+    elif current == 'awaiting_evidence_confirmation':
+        lines.append('初步诊断已交付。下一步：回复“继续”，按下列请求查询已有证据或从本次保存结果提取／计算，再更新诊断、核查和报告。')
+    elif current == 'preliminary_delivered':
+        lines.append('初步诊断流程已完成。')
+        if state.get('evidence_closure') == 'capability_gaps':
+            lines.append('当前请求没有新增证据；未满足的变量、时窗或方法已保留为证据缺口，不再重复运行诊断。下一步可调整请求，或针对保存数据能力以外的缺口确定其他调查方法。')
+        else:
+            lines.append('下一步可针对报告提出具体问题；再次“继续”会展示已有结果。')
+    else:
+        actions = {'ready_for_diagnosis': '诊断', 'revision_requested': '按反馈修正诊断',
+                   'ready_for_verification': '核查引用', 'ready_for_report': '交付报告'}
+        lines.append('下一步：' + actions.get(current, '检查当前任务状态') + '。')
+    if state.get('evidence_plan'):
+        labels = {'available': '可补充', 'already_visible': '已经读取', 'no_match': '请求对象／时段无匹配项', 'unavailable': '当前保存数据或提取方法不能满足'}
+        lines.append('\n补证处理结果：')
+        for item in state['evidence_plan']:
+            req = item['request']
+            lines.append(f"- {labels[item['status']]}：{req.get('reason', '')}")
+            if item.get('execution') == 'saved_result_extract':
+                resolved = item.get('resolved_request', {})
+                lines.append('  方法：本次保存结果提取／计算；' + resolved.get('scope_note', ''))
+                for scope in resolved.get('scopes', []):
+                    objects = scope['nodes'] + scope['links'] + scope['cells']
+                    lines.append(f"  {scope['event_id'] or '无事件限定'}：{', '.join(objects)}；{scope['time_start'] or '保存起点'} 至 {scope['time_end'] or '保存终点'}。")
+            if item.get('reason'):
+                lines.append('  能力边界：' + item['reason'])
+    if state.get('report_revision') == state.get('revision') and state.get('report'):
+        lines.append('\n' + state['report'])
+        lines.append(f"\n报告文件：`{state['report_file']}`")
+    display = state.get('display_report', {})
+    if display.get('status') == 'completed' and display.get('revision') == state.get('revision'):
+        from urllib.parse import quote
+        path = Path(display['html_file']).resolve()
+        try:
+            relative = path.relative_to(MODELS_DIR.resolve()).as_posix()
+            lines.append(f'\n[打开 HTML 诊断报告](/models/{quote(relative, safe="/")})')
+        except ValueError:
+            lines.append(f"\nHTML 报告文件：`{path}`")
+    elif display.get('status') == 'failed':
+        lines.append('\nHTML 报告生成失败，已保留诊断与内部报告：' + display.get('error', '请检查生成记录后重试。'))
+    return '\n\n'.join(lines)
+
+
+async def continue_workflow_from_state(message: str, transcript: list[dict[str, str]]) -> str | None:
+    """Continue exactly the next allowed workflow stage after a user confirmation."""
+    prior = transcript[-2]['content'] if len(transcript) > 1 else ''
+    approve_option = message.strip().lower() == 'a' and 'EvidenceBuilderAgent' in prior and 'awaiting_evidence_confirmation' in prior
+    if not is_continue_confirmation(message) and not approve_option:
+        return None
     try:
+        binding = investigation_binding(transcript)
+        if not binding:
+            return None
+        model_name, run_id, task_id = binding
         run_root, state = load_or_initialize_state(model_name, run_id)
     except Exception as exc:
         return (
@@ -244,30 +325,12 @@ def continue_workflow_from_state(message: str, transcript: list[dict[str, str]])
             f"```text\n{result}\n```"
         )
 
-    stage_by_state = {
-        RUN_READY: "evidence_building",
-        EVIDENCE_READY: "diagnosis",
-        DIAGNOSIS_READY: "verification",
-    }
-    if current_state in stage_by_state:
-        target_stage = stage_by_state[current_state]
-        result = run_workflow_stage(
-            model_name=model_name,
-            run_id=run_id,
-            target_stage=target_stage,
-            rerun=False,
-        )
-        return (
-            f"收到“继续”。我读取了 `workflow_state.json`，当前状态为 `{current_state}`，"
-            f"所以本轮只执行下一合法阶段：`{target_stage}`。\n\n"
-            "**结构化工作流结果**\n"
-            f"```text\n{result}\n```"
-        )
-
-    if current_state == VERIFIED_READY:
-        return (
-            "收到“继续”。当前 run 已经是 `VERIFIED_READY`，已完成当前实现的证据、诊断和核查链条。"
-        )
+    if current_state in {RUN_READY, NO_SURFACE_INFLOW}:
+        result = run_workflow_stage(model_name=model_name, run_id=run_id, target_stage='evidence_building')
+        return '本轮只执行证据构建：\n' + result
+    if current_state == EVIDENCE_READY:
+        result = await advance_investigation(model_name, run_id, 'continue', task_id)
+        return format_investigation_result(result)
 
     return None
 
@@ -306,95 +369,11 @@ def deterministic_workflow_stage_evidence(message: str, transcript: list[dict[st
 
     model_name = extract_model_name(message) or extract_model_name(combined) or "songhua_swmm_2d"
     lowered = message.lower()
-    until_stage = ""
-    target_stage = ""
-    if contains_any(lowered, ["verification", "核查", "unsupported", "verified_ready", "推进到 verification"]):
-        until_stage = "verification"
-    elif contains_any(lowered, ["diagnosis", "诊断"]):
-        until_stage = "diagnosis"
-    elif contains_any(lowered, ["evidence", "证据"]):
-        until_stage = "evidence_building"
-    else:
-        target_stage = ""
-
-    rerun = contains_any(lowered, ["rerun", "重跑", "重新", "覆盖"])
-    result = run_workflow_stage(
-        model_name=model_name,
-        run_id=run_id,
-        target_stage=target_stage,
-        until_stage=until_stage,
-        rerun=rerun,
-    )
-    return (
-        "本轮已由 SWMM-Agentic2 的 `StatefulOrchestrator` 直接处理，"
-        "没有经过旧的 LegacyTaskExecutor / CodeRunner / DataAnalyzer 主路由。\n\n"
-        "**结构化工作流结果**\n"
-        f"```text\n{result}\n```"
-    )
-
-
-def report_agent_reply(message: str, transcript: list[dict[str, str]]) -> str | None:
-    """Route VERIFIED_READY report/explanation requests to ReportAgent."""
-    wants_report = contains_any(
-        message,
-        [
-            "报告",
-            "分析报告",
-            "总结",
-            "概括",
-            "人话",
-            "解释",
-            "原因",
-            "为什么",
-            "内涝点",
-            "建议",
-            "处置",
-            "report",
-            "summary",
-            "explain",
-            "why",
-            "recommendation",
-        ],
-    )
-    if not wants_report:
-        return None
-
-    context = "\n".join(item["content"] for item in transcript[-10:])
-    combined = f"{context}\n{message}"
-    run_id = extract_workflow_run_id(combined)
-    if not run_id:
-        return None
-    model_name = extract_model_name(combined) or "songhua_swmm_2d"
-
-    try:
-        run_root, state = load_or_initialize_state(model_name, run_id)
-    except Exception as exc:
-        return (
-            "我识别到你想生成报告或解释，但没有成功读取对应 run 的工作流状态。\n\n"
-            f"```text\n{exc}\n```"
-        )
-    model_name = run_root.parents[1].name
-
-    if state.get("state") != VERIFIED_READY:
-        return (
-            "我识别到你想要自然语言报告或原因解释，但当前 run 还没有完成证据核查。\n\n"
-            f"当前状态：`{state.get('state')}`\n"
-            f"下一合法阶段：`{state.get('next_allowed_stage')}`\n\n"
-            "请先把工作流推进到 `VERIFIED_READY`。"
-        )
-
-    try:
-        report = generate_run_report(model_name=model_name, run_id=run_id, message=message)
-    except Exception as exc:
-        return (
-            "ReportAgent 读取已验证成果时失败。\n\n"
-            f"```text\n{exc}\n```"
-        )
-    return (
-        "本轮已由 SWMM-Agentic2 的 `ReportAgent` 处理。它只读取已验证的结构化成果，"
-        "不重新执行模拟、诊断或核查。\n\n"
-        + report.replace("ReportAgent completed:\n", "", 1)
-    )
+    if contains_any(lowered, ['diagnosis', '诊断', 'verification', '核查', '报告', 'report']):
+        return None  # Only task-scoped roles can handle these actions.
+    result = run_workflow_stage(model_name=model_name, run_id=run_id, target_stage='evidence_building',
+                                rerun=contains_any(lowered, ['rerun', '重建', '重新', '覆盖']))
+    return '结构化证据构建结果：\n' + result
 
 
 def scenario_agent_evidence(message: str) -> str | None:
@@ -520,16 +499,6 @@ def run_simulation_from_scenario_request(scenario_request: dict[str, Any], rerun
     return result
 
 
-def deterministic_validation_evidence(message: str) -> str | None:
-    """Backward-compatible alias for the old Web route name."""
-    return scenario_agent_evidence(message)
-
-
-def deterministic_simulation_evidence(message: str, transcript: list[dict[str, str]]) -> str | None:
-    """Backward-compatible alias for the old Web route name."""
-    return simulation_agent_evidence(message, transcript)
-
-
 def build_simulation_request(message: str, transcript: list[dict[str, str]]) -> dict[str, Any] | None:
     """Infer a fixed-tool simulation request from the latest message and recent plan."""
     # Assistant replies contain inventories and old paths. They are evidence, not
@@ -601,6 +570,9 @@ def is_continue_confirmation(message: str) -> bool:
         compact = compact.replace(token, "")
     return compact in {
         "继续",
+        "继续补证",
+        "同意补证",
+        "开始补证",
         "开始",
         "下一步",
         "执行",
@@ -657,7 +629,7 @@ def extract_workflow_run_id(text: str) -> str:
     patterns = [
         r"['\"]?run_id['\"]?\s*[:=：]\s*['\"]?([A-Za-z0-9_.-]+)",
         r"(?:运行ID|运行编号|输出编号)\s*[:=：]\s*['\"]?([A-Za-z0-9_.-]+)",
-        r"\b([A-Za-z0-9]+__[A-Za-z0-9_.-]+__\d{8}_\d{6})\b",
+        r"\b([A-Za-z0-9_]+__[A-Za-z0-9_.-]+__\d{8}_\d{6})\b",
         r"\b(agentic2_[A-Za-z0-9_.-]+)\b",
         r"\b(my_[A-Za-z0-9_.-]+)\b",
     ]
@@ -679,11 +651,6 @@ def extract_scenario_name(text: str) -> str:
     if "baseline" in text.lower():
         return "baseline"
     return ""
-
-
-def deterministic_validation_reply(message: str) -> str | None:
-    """Backward-compatible raw evidence helper for local checks."""
-    return deterministic_validation_evidence(message)
 
 
 def contains_any(text: str, markers: list[str]) -> bool:
@@ -722,18 +689,32 @@ def build_task_prompt(transcript: list[dict[str, str]]) -> str:
     )
     latest = transcript[-1]["content"]
     model_inventory = build_model_inventory_context()
+    live_context = ''
+    try:
+        binding = investigation_binding(transcript)
+        if binding:
+            model_name, run_id, task_id = binding
+            state = load_active_task(model_name, run_id, task_id)
+            if state:
+                fields = ('task_id', 'model_name', 'run_id', 'state', 'revision', 'report_revision',
+                          'report_file', 'display_report', 'display_report_file', 'pending_evidence_requests', 'evidence_plan', 'evidence_closure', 'last_attempt')
+                live_context = 'Persisted active task state:\n' + json.dumps({k: state[k] for k in fields if k in state}, ensure_ascii=False)
+    except (ValueError, FileNotFoundError) as exc:
+        live_context = 'Persisted task binding could not be resolved: ' + str(exc)
     return (
         "You are continuing a human-in-the-loop SWMM-Agentic2 workflow-stage web chat.\n"
         "The active architecture is StatefulOrchestrator plus workflow-stage agents: "
-        "ScenarioAgent, SimulationAgent, EvidenceBuilderAgent, DiagnosisAgent, and VerificationAgent.\n"
+        "ScenarioAgent, SimulationAgent, EvidenceBuilderAgent, DiagnosisAgent, VerificationAgent, and ReportAgent.\n"
         "At service startup and before handling user work, treat the project-root models/ directory as the source of truth.\n"
         "Never assume data/example.inp exists or use it as a default model.\n"
         f"{model_inventory}\n\n"
+        f"{live_context}\n\n"
         "Use the transcript to preserve the current plan and next-step state.\n"
         "If the latest user message is a confirmation, continue with exactly the next step.\n"
         "If there is no clear next step in the transcript, ask the user to confirm the next step instead of guessing.\n"
-        "Do not describe LegacyTaskExecutor, CodeRunner, or DataAnalyzer as the main architecture. "
-        "CodeRunner and DataAnalyzer are auxiliary only.\n"
+        "After evidence construction call DiagnosisAgent(model_name, run_id) without a question to deliver the default whole-run preliminary overflow diagnosis.\n"
+        "User follow-up questions prepare scoped tasks. Preserve task_id for subsequent diagnosis, evidence retrieval, verification and reports.\n"
+        "Deliver the preliminary report before retrieving pending evidence. There is no legacy run-level diagnosis fallback.\n"
         "Never say a tool or simulation succeeded unless the current turn actually observed that result.\n"
         "If it is a new request, give a concise plan and ask whether to continue.\n\n"
         f"Transcript:\n{conversation}\n\n"

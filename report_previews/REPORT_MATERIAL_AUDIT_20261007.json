@@ -1,0 +1,765 @@
+{
+  "audit_date": "2026-10-07",
+  "scope": "Saved-run report materials, traceability, selected exported numerical facts and arithmetic identities; no simulation or formal agent modifications. Completeness is distinct from causal validation.",
+  "run_id": "chicago_like_single_4h_80mm_5min__baseline__20261005_104641",
+  "task_id": "6b2fbc831220478db26b1006c694e884",
+  "revision": 2,
+  "checks": {
+    "active_task_matches": true,
+    "revisions_match": true,
+    "snapshot_hash_matches": true,
+    "diagnosis_hash_matches": true,
+    "verification_hash_matches": true,
+    "markdown_matches": true,
+    "evidence_package_hash_matches": true,
+    "package_sources_match": true,
+    "supplement_bindings_match": true,
+    "evidence_ids_unique": true,
+    "diagnosis_references_resolve": true,
+    "diagnosis_references_visible": true,
+    "nodes_unique_time_keys": true,
+    "links_unique_time_keys": true,
+    "diagnosis_event_coverage": true,
+    "raw_overflow_node_coverage": true,
+    "native_binary_available": true,
+    "all_event_process_exports_match": true,
+    "all_event_volumes_match": true,
+    "all_compositions_complete": true,
+    "all_storage_processes_complete": true,
+    "all_process_windows_cover_event": true,
+    "surface_unique_time_keys": true,
+    "surface_grid_coverage": true,
+    "surface_values_finite_nonnegative": true,
+    "boundary_volume_matches": true,
+    "mapped_event_nodes_exist": true,
+    "all_mapped_boundary_volumes_match": true,
+    "media_decode": true,
+    "outflow_sign_convention_checked": true
+  },
+  "failed_checks": [],
+  "details": {
+    "package_sources": {
+      "summary.json": true,
+      "swmm/model_with_event.inp": true,
+      "swmm/model.out": true,
+      "swmm/nodes.tsv": true,
+      "swmm/links.tsv": true,
+      "ca2d/surface_depth.tsv": true,
+      "swmm/rainfall_for_simulation.txt": true
+    },
+    "binding": {
+      "supplements": [
+        {
+          "file": "supplement_52d27700483ecd2c893e6438ae9c75325d95802721d0de3505ae98b55bac335a.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        },
+        {
+          "file": "supplement_1e1a15142b6287fad462f6acdfaaec699d4d212d70c547805eaa93ade401250a.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        },
+        {
+          "file": "supplement_34c72ce893d7e5c847577b8b01577c78c47b5133cb1fd739cef4362546396aaf.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        },
+        {
+          "file": "supplement_ecff9493f14bfed4feab39e13b2ac68395ac2d3748b5e5bd778d6db078490c30.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        },
+        {
+          "file": "supplement_ca24ecafed5297a1e1991256d19bb28d2b43581ed455dc3f90e7e46e8fbd5872.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        },
+        {
+          "file": "supplement_80bd9efc96cd5a92acdd715ea7fd63ce0ae6075f58aca6f2f6ddad4d3d0464ad.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        },
+        {
+          "file": "supplement_3517c9a5a26d1950fa6988b78eaf7c91260bfd3e0e294506db0df07f5ef10b93.json",
+          "hash_matches": true,
+          "sources_match": true,
+          "rows": 1
+        }
+      ],
+      "missing_references": [],
+      "snapshot_rows": 39517,
+      "merged_rows": 39524,
+      "verification_summary": {
+        "total_claims": 67,
+        "references_verified": 67,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0.0
+      },
+      "causal_validity_checked": false
+    }
+  },
+  "events": [
+    {
+      "node_id": "P6",
+      "event_id": "P6:E001",
+      "start": "2024-01-01 01:37:00",
+      "end": "2024-01-01 01:42:00",
+      "duration_minutes": 5.0,
+      "volume_m3": 16.282015116,
+      "raw_volume_m3": 16.282015116,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:40:00",
+      "peak_flooding_Ls": 79.3601532,
+      "peak_node": {
+        "head_m": 1047.011962890625,
+        "total_inflow_Ls": 294.9515380859375,
+        "lateral_inflow_Ls": 47.30423355102539,
+        "depth_m": 1.0,
+        "flooding_Ls": 79.3601532,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G6",
+          "downstream_node": "P7",
+          "outflow_Ls": 215.579971,
+          "signed_model_flow_Ls": 215.579971
+        }
+      ],
+      "process_start": "2024-01-01 01:36:00",
+      "process_end": "2024-01-01 01:43:00",
+      "process_count": 8,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "G4",
+          "event_inflow_percent": 63.65767026717379
+        },
+        {
+          "source": "G5",
+          "event_inflow_percent": 20.14756494370065
+        },
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 16.194764789125554
+        }
+      ],
+      "source_share_sum": 1.0,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P6:E001由多源来水汇入、G6满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": 0.011413885937500368
+    },
+    {
+      "node_id": "P7",
+      "event_id": "P7:E001",
+      "start": "2024-01-01 01:37:00",
+      "end": "2024-01-01 01:42:00",
+      "duration_minutes": 5.0,
+      "volume_m3": 7.7143589412,
+      "raw_volume_m3": 7.7143589412,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:40:00",
+      "peak_flooding_Ls": 33.3941078,
+      "peak_node": {
+        "head_m": 1046.7869873046875,
+        "total_inflow_Ls": 262.02484130859375,
+        "lateral_inflow_Ls": 46.44487762451172,
+        "depth_m": 1.0,
+        "flooding_Ls": 33.3941078,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G7",
+          "downstream_node": "P9",
+          "outflow_Ls": 228.625412,
+          "signed_model_flow_Ls": 228.625412
+        }
+      ],
+      "process_start": "2024-01-01 01:36:00",
+      "process_end": "2024-01-01 01:43:00",
+      "process_count": 8,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "G6",
+          "event_inflow_percent": 83.39212804513316
+        },
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 16.607871954866845
+        }
+      ],
+      "source_share_sum": 1.0,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P7:E001由G6上游来水与侧向入流叠加、G7满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": 0.0053215085937381446
+    },
+    {
+      "node_id": "P43",
+      "event_id": "P43:E001",
+      "start": "2024-01-01 01:38:00",
+      "end": "2024-01-01 01:39:00",
+      "duration_minutes": 1.0,
+      "volume_m3": 1.686153258,
+      "raw_volume_m3": 1.686153258,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:38:00",
+      "peak_flooding_Ls": 28.1025543,
+      "peak_node": {
+        "head_m": 1047.9119873046875,
+        "total_inflow_Ls": 33.997615814208984,
+        "lateral_inflow_Ls": 33.997615814208984,
+        "depth_m": 1.0,
+        "flooding_Ls": 28.1025543,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G42",
+          "downstream_node": "P44",
+          "outflow_Ls": 11.8038111,
+          "signed_model_flow_Ls": 11.8038111
+        }
+      ],
+      "process_start": "2024-01-01 01:37:00",
+      "process_end": "2024-01-01 01:40:00",
+      "process_count": 4,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 100.0
+        }
+      ],
+      "source_share_sum": 1.0,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P43:E001由局地侧向入流集中、G42满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": -5.908749585791018
+    },
+    {
+      "node_id": "P44",
+      "event_id": "P44:E001",
+      "start": "2024-01-01 01:38:00",
+      "end": "2024-01-01 01:39:00",
+      "duration_minutes": 1.0,
+      "volume_m3": 1.12876179,
+      "raw_volume_m3": 1.12876179,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:38:00",
+      "peak_flooding_Ls": 18.8126965,
+      "peak_node": {
+        "head_m": 1047.7440185546875,
+        "total_inflow_Ls": 216.76577758789062,
+        "lateral_inflow_Ls": 33.997615814208984,
+        "depth_m": 1.0,
+        "flooding_Ls": 18.8126965,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G43",
+          "downstream_node": "P46",
+          "outflow_Ls": 194.73851,
+          "signed_model_flow_Ls": 194.73851
+        }
+      ],
+      "process_start": "2024-01-01 01:37:00",
+      "process_end": "2024-01-01 01:40:00",
+      "process_count": 4,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "G41",
+          "event_inflow_percent": 78.8705456600451
+        },
+        {
+          "source": "G42",
+          "event_inflow_percent": 5.4454217800260025
+        },
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 15.684032559928887
+        }
+      ],
+      "source_share_sum": 0.9999999999999999,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P44:E001由P42与P43汇流及侧向入流叠加、G43满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": 3.214571087890633
+    },
+    {
+      "node_id": "P46",
+      "event_id": "P46:E001",
+      "start": "2024-01-01 01:38:00",
+      "end": "2024-01-01 01:41:00",
+      "duration_minutes": 3.0,
+      "volume_m3": 3.9384647664,
+      "raw_volume_m3": 3.9384647664,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:40:00",
+      "peak_flooding_Ls": 31.6158333,
+      "peak_node": {
+        "head_m": 1047.1209716796875,
+        "total_inflow_Ls": 326.1579895019531,
+        "lateral_inflow_Ls": 47.202598571777344,
+        "depth_m": 1.0,
+        "flooding_Ls": 31.6158333,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G45",
+          "downstream_node": "P48",
+          "outflow_Ls": 294.53833,
+          "signed_model_flow_Ls": 294.53833
+        }
+      ],
+      "process_start": "2024-01-01 01:37:00",
+      "process_end": "2024-01-01 01:42:00",
+      "process_count": 6,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "G43",
+          "event_inflow_percent": 70.13708537980918
+        },
+        {
+          "source": "G44",
+          "event_inflow_percent": 14.908363640057477
+        },
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 14.954550980133332
+        }
+      ],
+      "source_share_sum": 0.9999999999999999,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P46:E001由P44来水、P45侧支与局地侧向入流叠加、G45满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": 0.0038262019531529745
+    },
+    {
+      "node_id": "P42",
+      "event_id": "P42:E001",
+      "start": "2024-01-01 01:39:00",
+      "end": "2024-01-01 01:41:00",
+      "duration_minutes": 2.0,
+      "volume_m3": 3.008708496,
+      "raw_volume_m3": 3.008708496,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:40:00",
+      "peak_flooding_Ls": 26.2603474,
+      "peak_node": {
+        "head_m": 1047.9979248046875,
+        "total_inflow_Ls": 187.80606079101562,
+        "lateral_inflow_Ls": 58.71178436279297,
+        "depth_m": 1.07500005,
+        "flooding_Ls": 26.2603474,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G41",
+          "downstream_node": "P44",
+          "outflow_Ls": 161.536972,
+          "signed_model_flow_Ls": 161.536972
+        }
+      ],
+      "process_start": "2024-01-01 01:38:00",
+      "process_end": "2024-01-01 01:42:00",
+      "process_count": 5,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "G39",
+          "event_inflow_percent": 37.684980513027746
+        },
+        {
+          "source": "G40",
+          "event_inflow_percent": 31.040420123033147
+        },
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 31.274599363939103
+        }
+      ],
+      "source_share_sum": 1.0,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P42:E001由P40与P41来水及侧向入流叠加、G41满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": 0.008741391015632871
+    },
+    {
+      "node_id": "P48",
+      "event_id": "P48:E001",
+      "start": "2024-01-01 01:39:00",
+      "end": "2024-01-01 01:41:00",
+      "duration_minutes": 2.0,
+      "volume_m3": 0.768256788,
+      "raw_volume_m3": 0.768256788,
+      "event_volume_matches": true,
+      "peak_time": "2024-01-01 01:40:00",
+      "peak_flooding_Ls": 7.09330177,
+      "peak_node": {
+        "head_m": 1046.1610107421875,
+        "total_inflow_Ls": 411.9609680175781,
+        "lateral_inflow_Ls": 58.71178436279297,
+        "depth_m": 1.0,
+        "flooding_Ls": 7.09330177,
+        "head_method": "native_output"
+      },
+      "outlinks": [
+        {
+          "link_id": "G47",
+          "downstream_node": "P50",
+          "outflow_Ls": 404.862488,
+          "signed_model_flow_Ls": 404.862488
+        }
+      ],
+      "process_start": "2024-01-01 01:38:00",
+      "process_end": "2024-01-01 01:42:00",
+      "process_count": 5,
+      "process_missing": [],
+      "export_differences": [],
+      "link_differences": [],
+      "native_differences": [],
+      "source_composition_status": "complete",
+      "source_shares": [
+        {
+          "source": "G45",
+          "event_inflow_percent": 71.60198276270062
+        },
+        {
+          "source": "G46",
+          "event_inflow_percent": 14.19500338887573
+        },
+        {
+          "source": "aggregate_lateral",
+          "event_inflow_percent": 14.203013848423657
+        }
+      ],
+      "source_share_sum": 1.0,
+      "storage_status": "complete",
+      "storage_missing": [],
+      "mechanisms": {
+        "M1": "supported",
+        "M2": "supported",
+        "M3": "candidate",
+        "M4": "supported",
+        "M5": "not_applicable",
+        "M6": "supported"
+      },
+      "joint_conclusion": "P48:E001由P46来水、P47侧支与局地侧向入流叠加、G47满流输送受限、节点水头达到井口共同作用；可用调蓄有限。",
+      "surface_association_status": "not_built",
+      "peak_inflow_minus_outflow_minus_flooding_Ls": 0.005178247578140116
+    }
+  ],
+  "facts": {
+    "total_volume_m3": 34.5267191556,
+    "main_two_share_percent": 69.50088118438543,
+    "boundary_volume_m3": 34.5267191556,
+    "solver_input_volume_m3": 34.52671915559997,
+    "surface_saved_times": 85,
+    "surface_cell_count": 19140,
+    "surface_records": 1626900,
+    "surface_stats": {
+      "0.01": {
+        "max_simultaneous_area_m2": 1062.0,
+        "peak_time": "2024-01-01 02:20:00",
+        "first_saved_positive": "2024-01-01 01:40:00",
+        "last_saved_positive": "2024-01-01 07:00:00",
+        "final_area_m2": 819.0,
+        "at_rain_end_m2": 828.0,
+        "road_at_peak_m2": 801.0,
+        "green_at_peak_m2": 261.0
+      },
+      "0.15": {
+        "max_simultaneous_area_m2": 9.0,
+        "peak_time": "2024-01-01 01:40:00",
+        "first_saved_positive": "2024-01-01 01:40:00",
+        "last_saved_positive": "2024-01-01 01:40:00",
+        "final_area_m2": 0.0,
+        "at_rain_end_m2": 0.0,
+        "road_at_peak_m2": 9.0,
+        "green_at_peak_m2": 0.0
+      }
+    },
+    "node_surface": [
+      {
+        "node_id": "P42",
+        "smid": 10384,
+        "land_type": "road",
+        "mapped_max_depth_m": 0.037,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": "2024-01-01 01:40:00",
+        "saved_ge_15cm_times": [],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 3.008708496,
+        "event_volume_m3": 3.008708496,
+        "boundary_matches_event": true
+      },
+      {
+        "node_id": "P43",
+        "smid": 8525,
+        "land_type": "green",
+        "mapped_max_depth_m": 0.028,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": "2024-01-01 01:40:00",
+        "saved_ge_15cm_times": [],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 1.686153258,
+        "event_volume_m3": 1.686153258,
+        "boundary_matches_event": true
+      },
+      {
+        "node_id": "P44",
+        "smid": 8639,
+        "land_type": "road",
+        "mapped_max_depth_m": 0.019,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": "2024-01-01 01:40:00",
+        "saved_ge_15cm_times": [],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 1.12876179,
+        "event_volume_m3": 1.12876179,
+        "boundary_matches_event": true
+      },
+      {
+        "node_id": "P46",
+        "smid": 6894,
+        "land_type": "road",
+        "mapped_max_depth_m": 0.05,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": "2024-01-01 01:40:00",
+        "saved_ge_15cm_times": [],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 3.9384647664,
+        "event_volume_m3": 3.9384647664,
+        "boundary_matches_event": true
+      },
+      {
+        "node_id": "P48",
+        "smid": 5033,
+        "land_type": "road",
+        "mapped_max_depth_m": 0.009,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": null,
+        "saved_ge_15cm_times": [],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 0.7682567880000001,
+        "event_volume_m3": 0.768256788,
+        "boundary_matches_event": true
+      },
+      {
+        "node_id": "P6",
+        "smid": 11627,
+        "land_type": "road",
+        "mapped_max_depth_m": 0.216,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": "2024-01-01 01:40:00",
+        "saved_ge_15cm_times": [
+          "2024-01-01 01:40:00"
+        ],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 16.282015116,
+        "event_volume_m3": 16.282015116,
+        "boundary_matches_event": true
+      },
+      {
+        "node_id": "P7",
+        "smid": 10812,
+        "land_type": "road",
+        "mapped_max_depth_m": 0.104,
+        "mapped_max_depth_time": "2024-01-01 01:40:00",
+        "first_saved_ge_1cm": "2024-01-01 01:40:00",
+        "saved_ge_15cm_times": [],
+        "final_mapped_depth_m": 0.0,
+        "mapped_boundary_volume_m3": 7.7143589411999995,
+        "event_volume_m3": 7.7143589412,
+        "boundary_matches_event": true
+      }
+    ],
+    "media": [
+      {
+        "name": "ca2d_animation.gif",
+        "size": [
+          770,
+          550
+        ],
+        "frames": 85,
+        "format": "GIF"
+      },
+      {
+        "name": "ca2d_max_depth.png",
+        "size": [
+          1350,
+          1050
+        ],
+        "frames": 1,
+        "format": "PNG"
+      },
+      {
+        "name": "ca2d_final_depth.png",
+        "size": [
+          1350,
+          1050
+        ],
+        "frames": 1,
+        "format": "PNG"
+      }
+    ],
+    "node_surface_definition": "Depth at the node injection mapping cell only, not a maximum over its neighbourhood and not a cell-by-source attribution.",
+    "spatial_warning": "P43 injection cell is classified green by the existing static land mask. Do not mechanically label every overflow node as road. Regional residual ponding does not imply ponding remaining at the original injection cells."
+  },
+  "issues": [
+    {
+      "kind": "derivation_needed",
+      "item": "7 event surface_association rows are not_built; report-side spatial associations and surface time series must be prepared from mapping, boundary and depth files."
+    },
+    {
+      "kind": "derivation_needed",
+      "item": "Existing evidence ponding_duration uses >0.005 m; recompute report 0.01 m and 0.15 m durations with threshold and sampling semantics."
+    },
+    {
+      "kind": "derivation_needed",
+      "item": "Existing PNG/GIF use continuous scales and 0.005 m display masks; classified report maps and new-run process charts still need rendering."
+    },
+    {
+      "kind": "unavailable_attribution",
+      "item": "No cell-by-source tracing or surface velocity output. Do not assign a downstream inundated patch to a particular node by nearest-node mapping or infer flow direction from node order."
+    },
+    {
+      "kind": "limited_causal_claim",
+      "item": "Downstream influence remains candidate, storage contribution is not quantified, and verification covers reference traceability only."
+    },
+    {
+      "kind": "version_binding_to_add",
+      "item": "Source evidence package hashes input/result files but does not bind static cells/config/mapping versions for this run. Capture their provenance for the report; immutable run static snapshot is a future integration concern."
+    },
+    {
+      "kind": "numeric_interpretation_review",
+      "item": "P43 and P44 peak input minus outgoing flow does not equal recorded flooding (residuals -5.90875 and +3.21457 L/s). Raw process values were rechecked against TSV/native binary. The r2 claim engineering reasons state closure; that interpretation needs review. Do not invent a balancing term or infer simulator failure. Report observed values separately and avoid exact residual-equals-flooding prose."
+    }
+  ],
+  "current_static_hashes": {
+    "cells.csv": "06d1b0067bbeb9bc519d71a6a333a74165c949a900fd7de704341176d99090fe",
+    "config.json": "004c5592bc03a55e4de0d449db1827d304c9ba7e497e15ffeddefc38ffe8b13e",
+    "node_to_cell_mapping.csv": "3724dfa94c69052d236e957a8557fb5d962474b9809acb4c745b67bd9d6813b8",
+    "elevation.npy": "72bcaeb339b14e440991163d070a85d9f573b4d63842a88bae1cf4cb2671ddc5",
+    "flow_mask.npy": "8cd77e8005aa6fec2032822260a501daea5b4ebf19ff1314e8318d7455faf8b6",
+    "building_mask.npy": "f9c5a855d52237d37cd4d2a66a8af68eb464a957aa82fcd41c8a0f19f2a76b38"
+  },
+  "arithmetic_review": {
+    "purpose": "Check whether the report may state a simple same-sample inflow-outflow=flooding identity; not a solver mass-conservation test.",
+    "comparison_tolerance_Ls": 0.05,
+    "comparison_tolerance_basis": "Inspection tolerance for approximate textual equality; not a prescribed hydraulic validation tolerance.",
+    "all_events_approximately_match": false,
+    "events_needing_review": [
+      {
+        "node_id": "P43",
+        "peak_time": "2024-01-01 01:38:00",
+        "inflow_Ls": 33.997615814208984,
+        "outflow_Ls": 11.8038111,
+        "flooding_Ls": 28.1025543,
+        "residual_Ls": -5.908749585791018
+      },
+      {
+        "node_id": "P44",
+        "peak_time": "2024-01-01 01:38:00",
+        "inflow_Ls": 216.76577758789062,
+        "outflow_Ls": 194.73851,
+        "flooding_Ls": 18.8126965,
+        "residual_Ls": 3.214571087890633
+      }
+    ]
+  }
+}

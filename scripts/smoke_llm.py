@@ -18,12 +18,11 @@ async def run():
     from llm import deepseek_flash, deepseek_model, deepseek_base_url
 
     results = {"model": deepseek_model, "endpoint": deepseek_base_url}
-    # Bounded synthetic checks; ordinary application requests keep 12,000 tokens.
-    bounds = {"max_tokens": 2048, "timeout": 90}
+    request_options = {"timeout": 90}
     try:
         response = await deepseek_flash.create(
             [UserMessage(content='Return JSON with exactly {"ok": true}.', source="user")],
-            json_output=True, extra_create_args=bounds,
+            json_output=True, extra_create_args=request_options,
         )
         assert response.finish_reason == "stop" and json.loads(response.content) == {"ok": True}
         results["text_json"] = "passed"
@@ -32,7 +31,7 @@ async def run():
         image = Image(PILImage.new("RGB", (128, 128), color="red"))
         response = await deepseek_flash.create(
             [UserMessage(content=['Return JSON with the dominant color in English as "color".', image], source="user")],
-            json_output=True, extra_create_args=bounds,
+            json_output=True, extra_create_args=request_options,
         )
         assert response.finish_reason == "stop" and json.loads(response.content)["color"].lower() == "red"
         results["vision"] = "passed"
@@ -43,7 +42,7 @@ async def run():
         messages = [SystemMessage(content="Call get_probe_value once, then return its value as JSON with key value."),
                     UserMessage(content="Get the synthetic value using the tool.", source="user")]
         response = await deepseek_flash.create(
-            messages, tools=[tool], extra_create_args={**bounds, "tool_choice": "required"},
+            messages, tools=[tool], extra_create_args={**request_options, "tool_choice": "required"},
         )
         assert isinstance(response.content, list) and len(response.content) == 1
         call = response.content[0]
@@ -53,7 +52,7 @@ async def run():
                          content='{"value": 314159}', name=call.name, call_id=call.id)])]
         response = await deepseek_flash.create(
             messages, tools=[tool], json_output=True,
-            extra_create_args={**bounds, "tool_choice": "none"},
+            extra_create_args={**request_options, "tool_choice": "none"},
         )
         assert response.finish_reason == "stop" and json.loads(response.content)["value"] == 314159
         results["tool_round_trip"] = "passed"
@@ -61,7 +60,7 @@ async def run():
         chunks = []
         async for chunk in deepseek_flash.create_stream(
             [UserMessage(content="Reply exactly STREAM_OK.", source="user")],
-            tools=[tool], extra_create_args={**bounds, "tool_choice": "none"},
+            tools=[tool], extra_create_args={**request_options, "tool_choice": "none"},
         ):
             if isinstance(chunk, str):
                 chunks.append(chunk)

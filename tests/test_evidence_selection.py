@@ -1,5 +1,6 @@
-import csv
 import json
+import os
+from evidence_fixtures import save_fixture
 import random
 import tempfile
 import unittest
@@ -7,8 +8,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 from workflow_agents.evidence_selection import (
-    EVENT_GROUPS, SELECTION_VERSION, decode_series, encode_series,
-    lookup_evidence, select_initial_evidence, transport_evidence,
+    EVENT_GROUPS, SELECTION_VERSION, lookup_evidence, select_initial_evidence,
 )
 from workflow_agents.investigation import advance_investigation, build_diagnosis_prompt
 from workflow_agents.reference_checks import check_references, sha256_file
@@ -105,29 +105,13 @@ class SelectionTests(unittest.TestCase):
         derived, _, _ = select_initial_evidence(rows, scope(), 'm', 'r')
         self.assertEqual(len(derived), 2)
 
-    def test_duplicate_event_scalar_requires_matching_value_window_and_method(self):
-        context = row('ctx', metric='event_context', event='N1:E001', value={'event': {
-            'duration_minutes': 5, 'start': 't1', 'end': 't2', 'integration_method': 'left'}})
-        same = row('same', metric='event_duration', event='N1:E001', value='5', unit='min',
-                   time_start='t1', time_end='t2', calculation_method='left')
-        conflict = dict(same, evidence_id='conflict', value='6')
-        other_window = dict(same, evidence_id='window', time_end='t3')
-        _, ids, manifest = select_initial_evidence([context, same, conflict, other_window], scope('N1'), 'm', 'r')
-        self.assertEqual(ids, ['conflict', 'ctx', 'window'])
-        self.assertEqual(manifest['duplicate_scalar_ids_available_on_request'], ['same'])
 
-    def test_prompt_metadata_can_be_reconstructed_without_changing_sources(self):
+    def test_prompt_keeps_original_metadata_and_source_paths(self):
         rows = [row('a', source_file='swmm/nodes.tsv'), row('b', source_file='swmm/links.tsv')]
         state = {'task_context': scope('N1'), 'visible_ids': ['a', 'b'],
-                 'first_pass_overview': {}, 'observations': []}
+                 'evidence_overview': {}, 'observations': []}
         prompt = build_diagnosis_prompt(state, rows)
-        restored = []
-        for supplied in prompt['visible_evidence']:
-            supplied = dict(supplied)
-            supplied['source_file'] = prompt['evidence_source_files'][supplied.pop('source_file_ref')]
-            supplied['source_model'] = prompt['evidence_run']['model_name']
-            supplied['run_id'] = prompt['evidence_run']['run_id']
-            restored.append(supplied)
+        restored = prompt['visible_evidence']
         self.assertEqual(restored, rows)
 
     def test_summary_is_citable_without_pretending_raw_ids_were_seen(self):
@@ -148,27 +132,85 @@ class SelectionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 lookup_evidence(rows, request)
 
-    def test_lossless_series_preserves_null_missing_signed_flow_and_all_samples(self):
+    def test_original_series_preserves_null_missing_signed_flow_and_all_samples(self):
         series = [{'time': str(i), 'nodes': {'N1': {'head': 1.0000000000001 + i,
                   'method': 'native_output', 'missing': None}}, 'flow': -i, 'empty': {}}
                   for i in range(100)]
         series[3]['nodes']['N1'].pop('missing')
         before = json.dumps(series)
-        encoded = encode_series(series)
-        self.assertIsInstance(encoded, dict)
-        self.assertEqual(decode_series(encoded), series)
+        original = row('S', metric='local_process_series', value={'series': series})
+        state = {'task_context': scope('N1'), 'visible_ids': ['S'], 'evidence_overview': {}, 'observations': []}
+        prompt = build_diagnosis_prompt(state, [original])
+        self.assertEqual(json.dumps(prompt['visible_evidence'][0]), json.dumps(original))
+        self.assertIsInstance(prompt['visible_evidence'][0]['value']['series'], list)
         self.assertEqual(json.dumps(series), before)
-        source = row('S', metric='local_process_series', value={'series': series})
-        transported = transport_evidence([source])[0]
-        self.assertEqual(transported['evidence_id'], 'S')
-        self.assertEqual(decode_series(transported['value']['series']), source['value']['series'])
+        # A consumer editing its request cannot alter the frozen evidence.
+        prompt['visible_evidence'][0]['value']['series'][0]['nodes']['N1']['head'] = 999
+        self.assertEqual(json.dumps(series), before)
 
-    def test_over_budget_is_rejected_not_truncated(self):
+    def test_expanded_scope_is_sent_as_complete_original_json(self):
+        series = [{'time': str(i), 'nodes': {f'N{j}': {'head_m': j + i / 3,
+                  'lateral_inflow_Ls': None if j == 2 else j, 'head_method': 'native_output'} for j in range(32)},
+                  'links': {f'L{j}': {'signed_model_flow_Ls': -j * i, 'depth_m': .3} for j in range(31)}}
+                  for i in range(8)]
+        series[2]['nodes']['N2'].pop('lateral_inflow_Ls')
+        records = [row('P', metric='local_process_series', value={'series': series})]
+        for i in range(3):
+            records.append(row(f'S{i}', metric='local_structure', event=f'N1:E{i}', value={
+                'nodes': {f'N{j}': {'invert_elevation': j, 'node_type': 'JUNCTIONS'} for j in range(32)},
+                'links': {f'L{j}': {'from_node': f'N{j}', 'to_node': f'N{j+1}'} for j in range(31)},
+                'topology_scope': {'target_node': 'N1', 'event_test': i}}))
+        records.extend(row(f'B{i}', obj=f'N{i}', value=i, unit='L/s', calculation_method='left',
+                           source_file='swmm/nodes.tsv', time_start='t1', time_end='t2') for i in range(100))
+        original = json.dumps(records, sort_keys=True)
+        state = {'task_context': scope('N1'), 'visible_ids': [r['evidence_id'] for r in records],
+                 'evidence_overview': {}, 'observations': []}
+        prompt = build_diagnosis_prompt(state, records)
+        self.assertEqual(json.dumps(records, sort_keys=True), original)
+        restored = prompt['visible_evidence']
+        self.assertEqual({r['evidence_id']: r for r in restored}, {r['evidence_id']: r for r in records})
+        supplied = next(r for r in prompt['visible_evidence'] if r['evidence_id'] == 'P')
+        self.assertIsInstance(supplied['value']['series'], list)
+        self.assertEqual(json.dumps(restored, sort_keys=True), original)
+        for key in ('evidence_shared_metadata', 'hydraulic_structure', 'evidence_source_files', 'transport_integrity'):
+            self.assertNotIn(key, prompt)
+
+    def test_original_structure_keeps_each_event_definition_and_empty_values(self):
+        records = [row('a', metric='local_structure', event='N1:E1', value={'nodes': {'N1': {'head': 2}}, 'links': {}}),
+                   row('b', metric='local_structure', event='N1:E2', value={'nodes': {'N1': {'head': 3}, 'N2': None}, 'links': {}})]
+        state = {'task_context': scope(), 'visible_ids': ['a', 'b'], 'evidence_overview': {}, 'observations': []}
+        restored = build_diagnosis_prompt(state, records)['visible_evidence']
+        self.assertEqual(restored, records)
+
+    def test_retired_environment_cap_cannot_reject_or_truncate_evidence(self):
         rows = [row('huge', value='x' * 130000)]
         state = {'task_context': scope('N1'), 'visible_ids': ['huge'],
-                 'first_pass_overview': {}, 'observations': []}
-        with self.assertRaisesRegex(ValueError, '未截断'):
-            build_diagnosis_prompt(state, rows)
+                 'evidence_overview': {}, 'observations': []}
+        with patch.dict(os.environ, {'DIAGNOSIS_MAX_CONTEXT_CHARACTERS': '1'}):
+            prompt = build_diagnosis_prompt(state, rows)
+        self.assertEqual(prompt['visible_evidence'], rows)
+        self.assertNotIn('context_policy', prompt)
+
+    def test_large_complete_request_has_no_local_limit_policy(self):
+        records = [row('huge', value='x' * 130000)]
+        state = {'task_context': scope('N1'), 'visible_ids': ['huge'], 'evidence_overview': {}, 'observations': []}
+        prompt = build_diagnosis_prompt(state, records)
+        self.assertNotIn('context_policy', prompt)
+        self.assertEqual(prompt['visible_evidence'], records)
+
+    def test_original_transport_still_rejects_mixed_run_bindings(self):
+        records = [row('a'), dict(row('b'), run_id='other')]
+        state = {'task_context': scope('N1'), 'visible_ids': ['a', 'b'], 'evidence_overview': {}, 'observations': []}
+        with self.assertRaisesRegex(ValueError, 'mixes model/run'):
+            build_diagnosis_prompt(state, records)
+
+    def test_invalid_retired_cap_values_are_ignored(self):
+        records = [row('huge', value='x' * 130000)]
+        state = {'task_context': scope('N1'), 'visible_ids': ['huge'],
+                 'evidence_overview': {}, 'observations': []}
+        for setting in ('-1', 'abc', '1.5'):
+            with self.subTest(setting=setting), patch.dict(os.environ, {'DIAGNOSIS_MAX_CONTEXT_CHARACTERS': setting}):
+                self.assertEqual(build_diagnosis_prompt(state, records)['visible_evidence'], records)
 
 
 class SelectionIntegrationTests(unittest.IsolatedAsyncioTestCase):
@@ -178,10 +220,7 @@ class SelectionIntegrationTests(unittest.IsolatedAsyncioTestCase):
         (self.root / 'evidence').mkdir(parents=True)
         self.rows = [row(f'E{i}', event='N1:E001') for i in range(75)]
         self.rows.append(row('other', obj='N2', value='x' * 130000))
-        with (self.root / 'evidence/evidence_table.csv').open('w', encoding='utf-8', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=list(self.rows[0]))
-            writer.writeheader()
-            writer.writerows(self.rows)
+        save_fixture(self.root, self.rows)
         self.patcher = patch('workflow_agents.investigation.resolve_run_root', return_value=self.root)
         self.patcher.start()
         self.state = await advance_investigation('m', 'r', question='分析N1')
@@ -195,40 +234,35 @@ class SelectionIntegrationTests(unittest.IsolatedAsyncioTestCase):
     def answer(self, requests=None):
         return {'question_assessments': [{'question_id': f'Q{i}', 'status': 'needs_evidence', 'reason': '缺过程'} for i in range(1, 5)],
                 'mechanism_assessments': [{'mechanism_id': f'M{i}', 'status': 'not_investigated', 'reason': '未调查'} for i in range(1, 7)],
-                'claims': [], 'evidence_requests': requests or [], 'stop_reason': '需补证'}
+                'claims': [{'object_type': 'node', 'object_id': 'N1', 'question_id': 'Q1', 'claim_kind': 'fact',
+                            'claim_text': '本场保存有N1事件', 'evidence_ids': ['E0'], 'engineering_reason': '保存记录',
+                            'alternatives': '机制待查', 'scope': '本场N1'}],
+                'evidence_requests': requests or [], 'stop_reason': '需补证'}
 
-    async def test_legacy_prepared_task_migrates_from_frozen_snapshot(self):
-        legacy = dict(self.state)
-        legacy.pop('selection_version')
-        legacy.pop('evidence_selection')
-        legacy['visible_ids'] = [f'E{i}' for i in range(60)]
-        (self.folder / 'task.json').write_text(json.dumps(legacy), encoding='utf-8')
-        complete = AsyncMock(return_value=self.answer())
-        result = await advance_investigation('m', 'r', 'diagnose', self.task, complete=complete)
-        self.assertEqual(result['selection_version'], SELECTION_VERSION)
-        self.assertEqual(len(complete.call_args.args[0]['visible_evidence']), 75)
-        self.assertEqual(json.loads((self.folder / 'task_before_selection_v2.json').read_text(encoding='utf-8')), legacy)
-        self.assertEqual(result['snapshot_hash'], sha256_file(self.folder / 'evidence_snapshot.json'))
-
-    async def test_legacy_diagnosed_task_cannot_silently_change_selection(self):
-        legacy = dict(self.state, revision=1)
-        legacy.pop('selection_version')
-        (self.folder / 'task.json').write_text(json.dumps(legacy), encoding='utf-8')
+    async def test_old_task_format_is_rejected_without_model_call(self):
+        old = dict(self.state)
+        old.pop('evidence_package_version')
+        (self.folder / 'task.json').write_text(json.dumps(old), encoding='utf-8')
         complete = AsyncMock()
-        with self.assertRaisesRegex(ValueError, '旧任务已有诊断版本'):
+        with self.assertRaisesRegex(ValueError, '旧任务格式'):
             await advance_investigation('m', 'r', 'diagnose', self.task, complete=complete)
         complete.assert_not_called()
+        self.assertEqual(json.loads((self.folder / 'task.json').read_text(encoding='utf-8')), old)
 
-    async def test_over_budget_evidence_request_does_not_change_visibility(self):
+    async def test_large_evidence_request_is_added_without_truncation(self):
         req = {'tool': 'evidence_lookup', 'object_id': 'N2', 'reason': '补查相关节点'}
-        state = await advance_investigation('m', 'r', 'diagnose', self.task,
-                                            complete=AsyncMock(return_value=self.answer([req])))
-        before = (self.folder / 'task.json').read_text(encoding='utf-8')
-        with self.assertRaisesRegex(ValueError, '未截断'):
-            await advance_investigation('m', 'r', 'evidence', self.task)
+        await advance_investigation('m', 'r', 'diagnose', self.task,
+                                    complete=AsyncMock(return_value=self.answer([req])))
+        await advance_investigation('m', 'r', 'verify', self.task)
+        await advance_investigation('m', 'r', 'report', self.task)
+        with patch.dict(os.environ, {'DIAGNOSIS_MAX_CONTEXT_CHARACTERS': '1'}):
+            state = await advance_investigation('m', 'r', 'evidence', self.task)
         saved = json.loads((self.folder / 'task.json').read_text(encoding='utf-8'))
-        self.assertEqual(saved, json.loads(before))
-        self.assertNotIn('other', saved['visible_ids'])
+        self.assertEqual(saved['state'], 'ready_for_diagnosis')
+        self.assertIn('other', saved['visible_ids'])
+        prompt = build_diagnosis_prompt(state, self.rows)
+        supplied = next(r for r in prompt['visible_evidence'] if r['evidence_id'] == 'other')
+        self.assertEqual(supplied['value'], 'x' * 130000)
 
 
 if __name__ == '__main__':

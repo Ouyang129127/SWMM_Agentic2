@@ -163,8 +163,3 @@ def build_rainfall_context(
         "rainfall_points": int(len(df)),
         "created_at": datetime.now().isoformat(timespec="seconds"),
     }
-
-
-def write_rainfall_context(output_path: Path, context: dict[str, Any]) -> None:
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(context, ensure_ascii=False, indent=2), encoding="utf-8")

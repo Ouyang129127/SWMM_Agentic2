@@ -1,110 +1,35 @@
-# SWMM-Agentic 中文结构说明
+# SWMM-Agentic2 当前结构（2026-10-03）
 
-这个项目是根据 `EPANET-Agentic` 的代码组织方式迁移出的 SWMM 版本骨架。
+当前只保留任务级诊断：模型检查与情景组织 → 正式模拟 → 确定性证据构建 → 默认全场冒溢首轮诊断 → 引用核查 → 初步报告 → 补证与修订。后续用户提问创建按问题范围绑定的任务。
 
-## 目录结构
+DiagnosisAgent(model_name, run_id)无需原问题，内部完成默认任务准备、全部事件诊断、引用核查与初步报告。系统目标是全场概览及每个冒溢节点／事件的发生过程、可能机制和证据缺口。程序核对事件索引、六组绑定及全场节点统计，生成可引用的全场事件汇总；逐事件事实直接从event_context写入报告。
 
-```text
-E:\SWMM_Agentic\SWMM-Agentic
-  main.py              多智能体入口
-  llm.py               统一 DeepSeek-V4.1-Flash 模型客户端配置
-  prompts.py           智能体预设提示词
-  tools.py             SWMM 工具函数
-  requirements.txt     Python 依赖
-  run.ps1              Windows 启动脚本
-  tasks/               示例任务
-  code_dir/            代码执行工作目录
-  code_dir/data/       SWMM .inp 文件存放处
-  conversation/        后续保存对话或结果说明
-```
+有补证请求时也先交付：ready_for_diagnosis → ready_for_verification → ready_for_report。只有能增加可见证据的请求才进入awaiting_evidence_confirmation；无请求、已读证据、无匹配项或尚无提取能力时进入preliminary_delivered，保留能力缺口。补证只查询冻结快照既有记录，没有新增证据就不再次调用诊断模型。
 
-## 和 EPANET-Agentic 的对应关系
+网页“继续”优先读取运行及真实任务状态，执行当前合法动作并展示报告；不会只返回下一步提示。diagnosis_tasks/active_task.json持久化活动任务，旧任务按快照创建顺序及当前证据包哈希恢复。服务重启后从聊天日志恢复会话。首轮入口复用已有首轮任务；解析／合约校验失败时保留响应和错误，在同一任务内尝试一次反馈修正，仍失败则明确返回错误及原task_id，不进行引用核查或报告交付。这里没有增加Token或上下文预算。
 
-| EPANET-Agentic | SWMM-Agentic |
-| --- | --- |
-| WNTR / EPANET `.inp` | PySWMM / SWMM `.inp` |
-| `is_runnable_inp` 检查水网模型 | `is_runnable_inp` 检查 SWMM 模型结构，可选 PySWMM 运行 |
-| `add_multiple_controls` 添加水网控制 | `add_controls` 插入 SWMM `[CONTROLS]` 规则 |
-| `apply_disaster_scenario` 添加灾害场景 | `apply_scenario` 添加降雨、管渠、节点、调蓄场景 |
-| `CodeRunner` 生成 WNTR 仿真代码 | `CodeRunner` 生成 PySWMM / swmmio 分析代码 |
-| `DataAnalyzer` 分析图和结果 | `DataAnalyzer` 分析 SWMM 图、CSV、TXT |
+不再限制每轮最多5个补证请求，每项仍须有有效参数和工程目的。可用review动作提交带可见EvidenceID的明确复核反馈，进入revision_requested；反馈文件保留并绑定哈希，下一轮诊断接收反馈，旧报告不覆盖。这不是自动因果核验。
 
-## 智能体分工
+合法的关联节点／管段结论可引用事件内部结构和过程；验证器按被引用证据中的对象／事件关系校验，不能任意放行。每次诊断保存diagnosis_attempt_<id>.json，含原始响应、结束原因、用量、解析结果及具体校验错误；失败不覆盖已交付版本。报告保留report_rN.json及preliminary_report_rN.md。
 
-### Orchestrator
+默认无冒溢任务在事件目录与完整节点指标一致时正常交付保存结果说明，不调用模型，也不推断绝对安全。
 
-总调度智能体。负责理解用户任务、拆步骤、决定调用哪个功能。
+EvidenceBuilder唯一输出为本次运行的 evidence/evidence_package.json。
 
-### TaskExecutor
+文件同时包含全场标量指标、全部冒溢事件的六类关联证据、事件索引、降雨背景、来源摘要与数据可用性。单次事件峰值/持续/体积仅存于event_context；索引引用其EvidenceID。全场指标保留独立统计范围。它是本地证据库，不代表全量投喂模型。
 
-工具执行智能体。负责调用 `tools.py` 中的固定函数：
+准备任务时只读取该JSON，按对象、事件及相关水力连接选证；全局任务提供全部事件与分类统计。补证返回完整匹配集合。不取前N条、不按比例筛选。
 
-- `is_runnable_inp`
-- `add_controls`
-- `apply_scenario`
+首轮范围已改为：上游至前一汇流、下游至下一分流、沿程侧支至其前一汇流；包含边界节点及其全部直接交换管段，不深入边界外支路。设施、特殊节点、终端、环路和缺失定义有明确停止记录。所有沿程侧向入流、有符号流量、水头和原事件窗口样本保留；直接来水占比仍只统计目标节点直接接入管段及目标侧向入流，避免沿程重复计水。范围记录在local_structure.topology_scope，不等于保证涵盖所有原因。
 
-### CodeRunner
+项目不设置任何token生成预算或输入字符上限，真实调用检查脚本也不覆盖输出上限；本地限制配置开关已删除。服务商自身的默认值、上下文及输出限制独立生效。已取消传输压缩及还原验证：直接发送全部选中证据的原始JSON结构，每条证据保留自己的结构、时序、单位、方法和来源。来源哈希、快照完整性、运行绑定及诊断引用核查继续保留。
 
-代码生成和执行入口。内部包含：
+运行级状态止于EVIDENCE_READY，表示证据已构建。后续状态记录在 diagnosis_tasks/<task_id>/task.json。快照、诊断版本、引用核查和报告均在该任务目录。
 
-- `coder`：用 DeepSeek-V4.1-Flash 写 Python 代码
-- `coder_user`：执行代码
+旧规则诊断、风险排行榜、运行级核查/报告、旧证据图和旧能力Agent已移除。旧文件及旧任务不再作为运行时输入；已有模拟可重新构建证据并创建新任务，无须重新模拟。历史结果不自动删除。
 
-### DataAnalyzer
+引用核查仍不认证数值及因果解释。任意时窗新计算、诊断驱动的进一步拓扑扩展、设施动作和储量过程、可靠地表归因、自动分批及外层虚构完成拦截仍未完整实现。
 
-结果分析智能体。用 DeepSeek-V4.1-Flash 分析图片、表格和文本结果。
+详细字段、命令及当前限制见 README.md；统一包现为1.1版，旧包及旧任务须用已有模拟输出重建并创建新任务，无须重新模拟。拓扑范围见17号记录，取消传输压缩的当前实现与验证见思辨与设计开发/诊断逻辑/18_2026-10-02_取消传输压缩_实施记录.md。
 
-所有调用大语言模型的智能体统一使用官方接口 `https://api.deepseek.com`，
-API 模型名为 `deepseek-flash`。密钥仅保存在本地、Git 忽略的 `.env` 中。
-配置项为 `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL`、`DEEPSEEK_API_KEY`。
-现有 AutoGen 0.6.1 无法完整回传工具调用的思考内容，因此携带工具的请求
-使用非思考模式；无工具的诊断、代码生成与图片分析默认使用高强度思考。
-修改配置后需重启已运行的 Web/CLI 进程。详细迁移统计见 `README.md`。
-
-## 当前已经实现的 SWMM 工具雏形
-
-### `is_runnable_inp`
-
-可以读取 SWMM `.inp`，解析 section，并统计：
-
-- subcatchments
-- rain gages
-- nodes
-- links
-- 常见 section 是否缺失
-
-如果传入 `run_simulation=True`，会尝试用 PySWMM 打开并推进至少一步仿真。
-
-### `add_controls`
-
-向 `[CONTROLS]` section 插入 SWMM 控制规则，并另存为新 `.inp`。
-
-### `apply_scenario`
-
-当前支持：
-
-- `rainfall_scale`：缩放 `[TIMESERIES]` 降雨数值
-- `conduit_blockage`：通过提高 conduit roughness 模拟堵塞阻力
-- `junction_surcharge`：修改 junction surcharge depth
-- `storage_initial_depth`：修改 storage initial depth
-
-## 已放入的样例
-
-已复制：
-
-```text
-E:\SwmmExample\SwmmExample\Rain.inp
-```
-
-到：
-
-```text
-E:\SWMM_Agentic\SWMM-Agentic\code_dir\data\example.inp
-```
-
-所以示例任务可以直接引用：
-
-```text
-data/example.inp
-```
-
+使用前重启Web服务，加载新代码。

@@ -1,48 +1,31 @@
 import asyncio
 import json
-import os
 import re
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
-import PIL
-from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent, UserProxyAgent
+from autogen_agentchat.agents import AssistantAgent, UserProxyAgent
 from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermination
-from autogen_agentchat.messages import MultiModalMessage, TextMessage
+from autogen_agentchat.messages import TextMessage
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.ui import Console
-from autogen_core import Image
-from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 from typing_extensions import Annotated
 
 from prompts import (
-    coder_prompt,
-    data_analyzer_prompt,
-    legacy_tool_executor_prompt,
     orchestrator_prompt,
     simulation_evidence_explainer_prompt,
     validation_evidence_explainer_prompt,
     web_interactive_prompt,
 )
 from tools import (
-    add_controls,
-    apply_scenario,
     check_all_swmm_2d_projects,
     check_ca2d_model,
     check_swmm_2d_project,
-    build_run_evidence,
-    create_demo_ca2d_model,
-    diagnose_run,
-    generate_run_report,
-    is_runnable_inp,
     list_rainfall_events,
     list_swmm_2d_models,
     parse_and_convert_to_markdown,
     run_workflow_stage,
-    run_swmm_2d_project_from_flooding,
     run_swmm_2d_project_from_rainfall,
-    run_swmm_2d_from_flooding,
-    verify_run_diagnosis,
 )
 from workflow_agents import load_scenario_request, prepare_scenario_request
 from workflow_agents.schemas import RUN_READY
@@ -156,202 +139,9 @@ def _fallback_simulation_explanation(evidence: str) -> str:
     )
 
 
-def _infer_model_name_from_path(path: str) -> str:
-    normalized = path.strip().replace("\\", "/").strip("/")
-    if normalized in {"", ".", "models"}:
-        return ""
-    candidate = Path(path.replace("\\", "/"))
-    parts = candidate.parts
-    for idx, part in enumerate(parts):
-        if part == "models" and idx + 1 < len(parts):
-            return parts[idx + 1]
-    if path and not Path(path).suffix:
-        return Path(path).name
-    return ""
-
-
 def _contains_any(text: str, markers: list[str]) -> bool:
     lowered = text.lower()
     return any(marker.lower() in lowered for marker in markers)
-
-
-def _extract_run_id(text: str) -> str:
-    patterns = [
-        r"(?:run_id|运行id|运行标识符|标识符)\s*[:：]?\s*([A-Za-z0-9_.-]+)",
-        r"\b(test[A-Za-z0-9_.-]*)\b",
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, text, flags=re.IGNORECASE)
-        if match:
-            return match.group(1)
-    return ""
-
-
-def _extract_rainfall_file(text: str) -> str:
-    match = re.search(r"([A-Za-z0-9_.\-/\\]*rain[A-Za-z0-9_.\-/\\]*\.(?:txt|csv|dat|rain|prcp|precip|ts))", text, flags=re.IGNORECASE)
-    if not match:
-        return ""
-    value = match.group(1).replace("\\", "/")
-    if "/" not in value:
-        return f"events/{value}"
-    return value
-
-
-def _task_executor_fast_path(message: str, path: str) -> str | None:
-    model_name = _infer_model_name_from_path(path)
-    normalized_path = path.strip().replace("\\", "/").strip("/")
-    wants_run = _contains_any(
-        message,
-        [
-            "执行模拟",
-            "运行模拟",
-            "开始模拟",
-            "模拟计算",
-            "运行模型",
-            "完整模拟",
-            "耦合模拟",
-            "run simulation",
-            "run model",
-            "simulate",
-        ],
-    )
-    rainfall_file = _extract_rainfall_file(message)
-    run_id = _extract_run_id(message)
-    has_run_parameters = bool(rainfall_file and (run_id or "baseline" in message.lower()))
-    if rainfall_file and (wants_run or has_run_parameters):
-        scenario_name = "baseline" if "baseline" in message.lower() else "baseline"
-        event_name = Path(rainfall_file).stem or "manual_event"
-        return run_swmm_2d_project_from_rainfall(
-            model_name=model_name,
-            rainfall_file=rainfall_file,
-            event_name=event_name,
-            scenario_name=scenario_name,
-            run_id=run_id,
-        )
-
-    wants_check = _contains_any(message, ["检查", "验证", "check", "validate", "完整性", "完整"])
-    wants_ca2d = _contains_any(message, ["ca2d", "静态模型", "static"])
-    wants_project = _contains_any(message, ["项目", "swmm-2d", "swmm_2d", "所有必要组件", "节点映射", "models"])
-    wants_list_models = _contains_any(message, ["列出", "list", "available", "model projects", "模型项目"])
-
-    if normalized_path == "models" and "models" in message.lower():
-        return check_all_swmm_2d_projects()
-
-    if wants_project and wants_list_models and wants_check and not model_name:
-        return check_all_swmm_2d_projects()
-
-    if wants_project and wants_list_models and not model_name:
-        return list_swmm_2d_models()
-
-    if wants_check and wants_project and not model_name:
-        return check_all_swmm_2d_projects()
-
-    if (wants_check and (wants_project or model_name)) or (wants_project and model_name):
-        return check_swmm_2d_project(model_name)
-
-    if wants_ca2d and (wants_check or model_name):
-        return check_ca2d_model(path)
-
-    if _contains_any(message, ["列出降雨", "降雨事件", "rainfall event", "list rainfall"]):
-        return list_rainfall_events(model_name)
-
-    return None
-
-
-async def CodeRunner(
-    message: Annotated[
-        str,
-        "A complete description of the SWMM simulation, analysis, plotting, or saving task.",
-    ],
-    SWMM_status: Annotated[
-        str,
-        "Path to a SWMM .inp file or a previously saved result file relative to the project root.",
-    ],
-    name: Annotated[
-        str,
-        "Target output file name, such as flow_plot.png, flooding_summary.csv, or report.txt.",
-    ],
-) -> str:
-    """Legacy auxiliary coding channel for non-standard analysis only."""
-    from llm import deepseek_flash
-
-    coder_user = CodeExecutorAgent(
-        "coder_user",
-        code_executor=LocalCommandLineCodeExecutor(work_dir=str(WORKSPACE_DIR), timeout=180),
-    )
-
-    coder = AssistantAgent(
-        name="coder",
-        system_message=coder_prompt,
-        model_client=deepseek_flash,
-    )
-
-    text_termination = TextMentionTermination(text="===TASK DONE===", sources=["coder_user"])
-    max_message_termination = MaxMessageTermination(20)
-    termination = text_termination | max_message_termination
-
-    agent_team = RoundRobinGroupChat(
-        participants=[coder, coder_user],
-        termination_condition=termination,
-        max_turns=20,
-    )
-
-    stream = agent_team.run_stream(
-        task=f"task: {message}\nname of file to be saved: {name}\nSWMM status: {SWMM_status}"
-    )
-    results = await Console(stream)
-
-    return _final_message_content(results.messages)
-
-
-async def DataAnalyzer(
-    message: Annotated[
-        str,
-        "The natural language request describing how to analyze SWMM plots or result documents.",
-    ],
-    paths: Annotated[
-        List[str],
-        "A list of image, TXT, CSV, or JSON files relative to the project root.",
-    ],
-) -> str:
-    """Legacy auxiliary interpretation channel for saved outputs only."""
-    from llm import deepseek_flash
-
-    multi_model_agent = AssistantAgent(
-        name="multi_model_agent",
-        model_client=deepseek_flash,
-        system_message=data_analyzer_prompt,
-    )
-
-    image_objs = []
-    text_contents = []
-
-    for path in paths:
-        ext = os.path.splitext(path)[-1].lower()
-        try:
-            if ext in [".txt", ".json", ".csv", ".md"]:
-                with open(WORKSPACE_DIR / path, "r", encoding="utf-8") as f:
-                    text_contents.append(f"--- {path} ---\n" + f.read())
-            elif ext in [".png", ".jpg", ".jpeg", ".bmp", ".gif"]:
-                image_objs.append(Image(PIL.Image.open(WORKSPACE_DIR / path)))
-        except Exception as e:
-            return f"Failed to load {path}: {e}"
-
-    full_content = [message]
-    if text_contents:
-        full_content.append("\n\n".join(text_contents))
-    full_content += image_objs
-
-    if image_objs:
-        task_message = MultiModalMessage(content=full_content, source="user")
-    else:
-        task_message = TextMessage(content="\n\n".join(full_content), source="user")
-
-    team = RoundRobinGroupChat(participants=[multi_model_agent], max_turns=1)
-    stream = team.run_stream(task=task_message)
-    result = await Console(stream)
-
-    return _final_message_content(result.messages)
 
 
 async def ScenarioAgent(
@@ -499,63 +289,48 @@ async def DiagnosisAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
     run_id: Annotated[str, "Run ID under models/<model_name>/runs/."],
     rerun: Annotated[bool, "Allow rerunning this stage."] = False,
-    message: Annotated[str, "Original user question, required when preparing an investigation."] = "",
-    task_id: Annotated[str, "Empty prepares a task without LLM execution; existing task runs one confirmed diagnosis step."] = "",
+    message: Annotated[str, "Empty starts the default whole-run preliminary overflow diagnosis. A user follow-up question prepares a scoped task."] = "",
+    task_id: Annotated[str, "Existing task runs one diagnosis/revision; without task/question the initial diagnosis, reference check and report are delivered together."] = "",
 ) -> str:
     """Workflow-stage DiagnosisAgent."""
-    return await _investigation_action(model_name, run_id, 'diagnose' if task_id else 'prepare', task_id, message)
+    action = 'diagnose' if task_id else 'prepare' if message.strip() else 'initial'
+    return await _investigation_action(model_name, run_id, action, task_id, message)
 
 
 async def VerificationAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
     run_id: Annotated[str, "Run ID under models/<model_name>/runs/."],
     rerun: Annotated[bool, "Allow rerunning this stage."] = False,
-    task_id: Annotated[str, "Optional investigation task to reference-check."] = "",
+    task_id: Annotated[str, "Required task to reference-check; no run-level fallback."] = "",
 ) -> str:
     """Workflow-stage VerificationAgent."""
     if task_id:
         return await _investigation_action(model_name, run_id, 'verify', task_id)
-    return run_workflow_stage(
-        model_name=model_name,
-        run_id=run_id,
-        target_stage="verification",
-        rerun=rerun,
-    )
-
-
-async def WorkflowStageRunner(
-    model_name: Annotated[str, "Model project name under project-root models/."],
-    run_id: Annotated[str, "Run ID under models/<model_name>/runs/."],
-    until_stage: Annotated[
-        str,
-        "Final stage to reach: evidence_building, diagnosis, or verification.",
-    ] = "verification",
-    rerun: Annotated[bool, "Allow rerunning completed stages."] = False,
-) -> str:
-    """Convenience workflow-stage runner for multi-stage user requests."""
-    return run_workflow_stage(
-        model_name=model_name,
-        run_id=run_id,
-        until_stage=until_stage,
-        rerun=rerun,
-    )
+    raise ValueError("VerificationAgent必须指定task_id；运行级核查已删除。")
 
 
 async def ReportAgent(
     model_name: Annotated[str, "Model project name under project-root models/."],
-    run_id: Annotated[str, "Run ID under models/<model_name>/runs/. The run must be VERIFIED_READY."],
+    run_id: Annotated[str, "Run ID containing saved simulation and verified diagnosis files."],
     message: Annotated[str, "User-facing report or explanation request."] = "",
-    task_id: Annotated[str, "Optional investigation task; report only its original question, no new diagnosis."] = "",
+    task_id: Annotated[str, "Verified task; omit to resolve this run's active task."] = "",
 ) -> str:
-    """Final user-facing ReportAgent: turn verified claims and evidence into plain language."""
-    if task_id:
-        return await _investigation_action(model_name, run_id, 'report', task_id, message)
-    return generate_run_report(model_name=model_name, run_id=run_id, message=message)
+    """Generate a self-contained HTML report from this task's saved results."""
+    from workflow_agents.investigation_flow import load_active_task
+    state = load_active_task(model_name, run_id, task_id)
+    if state is None:
+        raise ValueError('ReportAgent需要已完成诊断与引用核查的任务。')
+    action = 'report' if state['state'] == 'ready_for_report' else 'display_report'
+    return await _investigation_action(model_name, run_id, action, state['task_id'])
 
 
 async def _investigation_action(model_name, run_id, action, task_id='', question=''):
     from workflow_agents.investigation import advance_investigation
-    result = await advance_investigation(model_name, run_id, action, task_id, question)
+    if action == 'diagnose' and not question:
+        from workflow_agents.investigation_flow import diagnose_with_repair
+        result = await diagnose_with_repair(model_name, run_id, task_id)
+    else:
+        result = await advance_investigation(model_name, run_id, action, task_id, question)
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
@@ -645,10 +420,7 @@ async def run_web_orchestrator_agent_turn(task_prompt: str, planning_only: bool 
         EvidenceBuilderAgent,
         DiagnosisAgent,
         VerificationAgent,
-        WorkflowStageRunner,
         ReportAgent,
-        CodeRunner,
-        DataAnalyzer,
     ]
     mode_prompt = (
         "\nThis is a planning-only turn. Do not call any tools. Give a short step-by-step plan, "
@@ -691,52 +463,6 @@ def _extract_agent_reply(messages) -> str:
     )
 
 
-async def LegacyTaskExecutor(
-    message: Annotated[
-        str,
-        "A detailed SWMM task involving validation, control insertion, or scenario editing.",
-    ],
-    path: Annotated[str, "Path to the SWMM .inp file relative to the project root."],
-):
-    fast_result = _task_executor_fast_path(message, path)
-    if fast_result is not None:
-        return fast_result
-
-    from llm import deepseek_flash
-
-    task_executor = AssistantAgent(
-        name="LegacyTaskExecutor",
-        model_client=deepseek_flash,
-        system_message=legacy_tool_executor_prompt,
-        tools=[
-            add_controls,
-            apply_scenario,
-            check_all_swmm_2d_projects,
-            is_runnable_inp,
-            check_ca2d_model,
-            create_demo_ca2d_model,
-            list_rainfall_events,
-            list_swmm_2d_models,
-            check_swmm_2d_project,
-            build_run_evidence,
-            diagnose_run,
-            verify_run_diagnosis,
-            run_workflow_stage,
-            generate_run_report,
-            run_swmm_2d_from_flooding,
-            run_swmm_2d_project_from_flooding,
-            run_swmm_2d_project_from_rainfall,
-        ],
-        reflect_on_tool_use=True,
-    )
-
-    team = RoundRobinGroupChat(participants=[task_executor], max_turns=4)
-    stream = team.run_stream(task=f"task: {message}\npath of the file: {path}")
-    result = await Console(stream)
-
-    return _final_message_content(result.messages)
-
-
 async def main(task_description):
     from llm import deepseek_flash
 
@@ -751,11 +477,8 @@ async def main(task_description):
             EvidenceBuilderAgent,
             DiagnosisAgent,
             VerificationAgent,
-            WorkflowStageRunner,
-            ReportAgent,
-            CodeRunner,
-            DataAnalyzer,
-        ],
+                ReportAgent,
+                ],
     )
 
     termination = MaxMessageTermination(30) | TextMentionTermination("TERMINATE")

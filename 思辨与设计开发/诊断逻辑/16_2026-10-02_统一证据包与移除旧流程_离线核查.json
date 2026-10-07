@@ -1,0 +1,91 @@
+{
+  "external_llm_calls": 0,
+  "simulations": 0,
+  "cases": [
+    {
+      "run_id": "chicago_single_event__baseline__20260927_192515",
+      "package_rows": 39502,
+      "event_count": 7,
+      "overflow_node_count": 7,
+      "event_values_equal_to_historical_package": true,
+      "evidence_files": [
+        "evidence_package.json"
+      ],
+      "P6_scalar_facts": {
+        "total_flooding_volume": 16.282015116,
+        "max_flooding_flow": 79.3601532,
+        "flooding_duration": 5.0,
+        "overflow_event_count": 1.0,
+        "max_node_depth": 1.0
+      },
+      "prompts": [
+        {
+          "question": "全局洪涝诊断",
+          "visible_rows": 57,
+          "request_characters": 97977,
+          "event_count": 7,
+          "process_sample_count": 40,
+          "lossless": true,
+          "rainfall_visible": true
+        },
+        {
+          "question": "分析P6",
+          "visible_rows": 48,
+          "request_characters": 36368,
+          "event_count": 1,
+          "process_sample_count": 8,
+          "lossless": true,
+          "rainfall_visible": true
+        },
+        {
+          "question": "分析P6:E001",
+          "visible_rows": 48,
+          "request_characters": 36380,
+          "event_count": 1,
+          "process_sample_count": 8,
+          "lossless": true,
+          "rainfall_visible": true
+        }
+      ],
+      "original_files_unchanged": true
+    },
+    {
+      "run_id": "chicago_triple_event__baseline__20260927_203812",
+      "package_rows": 39460,
+      "event_count": 0,
+      "overflow_node_count": 0,
+      "event_values_equal_to_historical_package": true,
+      "evidence_files": [
+        "evidence_package.json"
+      ],
+      "P6_scalar_facts": {
+        "total_flooding_volume": 0.0,
+        "max_flooding_flow": 0.0,
+        "flooding_duration": 0.0,
+        "overflow_event_count": 0.0,
+        "max_node_depth": 0.63765341
+      },
+      "prompts": [
+        {
+          "question": "全局洪涝诊断",
+          "visible_rows": 15,
+          "request_characters": 26592,
+          "event_count": 0,
+          "process_sample_count": 0,
+          "lossless": true,
+          "rainfall_visible": true
+        },
+        {
+          "question": "分析P6",
+          "visible_rows": 6,
+          "request_characters": 7748,
+          "event_count": 0,
+          "process_sample_count": 0,
+          "lossless": true,
+          "rainfall_visible": true
+        }
+      ],
+      "original_files_unchanged": true
+    }
+  ]
+}

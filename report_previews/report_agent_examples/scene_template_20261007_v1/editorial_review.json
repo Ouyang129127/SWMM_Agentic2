@@ -1,0 +1,12 @@
+{
+  "review_type": "human_editorial_review",
+  "source": "program_template",
+  "matches_agreed_sentences": true,
+  "actual_simulation_values_used": true,
+  "accepted_intro_and_chapter_five_unchanged": true,
+  "other_sections_unchanged": true,
+  "protected_source_hashes_verified": true,
+  "tests_passed": 163,
+  "report_agent_tests_passed": 44,
+  "scope": "第一部分固定模板；其他章节后续单独确认，未重生成整篇HTML"
+}

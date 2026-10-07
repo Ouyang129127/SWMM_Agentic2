@@ -39,7 +39,7 @@ async def run(args):
         response = await deepseek_flash.create(
             [SystemMessage(content=SYSTEM_PROMPT),
              UserMessage(content=serialize_prompt(prompt), source='user')],
-            json_output=True, extra_create_args={'max_tokens': 6000})
+            json_output=True)
         audit['raw_response'] = response.content
         audit['finish_reason'] = response.finish_reason
         audit['usage'] = {'prompt_tokens': response.usage.prompt_tokens,

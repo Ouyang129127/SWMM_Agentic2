@@ -1,390 +1,216 @@
 # SWMM-Agentic2
 
-## Unified LLM configuration (2026-10-01)
+## Current workflow — 2026-10-03
 
-All LLM entry points now share `llm.deepseek_flash`, using DeepSeek-V4.1-Flash
-through the official `https://api.deepseek.com` endpoint. Its API model ID is
-`deepseek-flash`, as documented in the [official release notice](https://api-docs.deepseek.com/zh-cn/news/news260910/).
+The only diagnosis workflow is task-scoped LLM investigation:
+ScenarioAgent → SimulationAgent → EvidenceBuilderAgent → DiagnosisAgent → VerificationAgent → ReportAgent.
+Run-level rule diagnosis, risk rankings, run-level verification/reporting, evidence graphs,
+and generic CodeRunner/DataAnalyzer/LegacyTaskExecutor agents have been removed.
 
-Before this migration, the local configuration enabled DeepSeek-V3.2 for
-orchestration/diagnosis/explanation and DeepSeek-V3.1-Terminus for coding, both
-through SiliconFlow. Qwen-VL-Max was an optional third model for DataAnalyzer;
-it had no API key in the local `.env` and was therefore inactive.
+Run states stop at EVIDENCE_READY. That state means evidence construction completed;
+it never means a diagnosis, verification or report completed. Diagnosis progress belongs
+to a specific task_id under runs/<run_id>/diagnosis_tasks/.
 
-| LLM entry point | Current model |
-| --- | --- |
-| Web and CLI StatefulOrchestrator; LegacyTaskExecutor | DeepSeek-V4.1-Flash |
-| Task-scoped DiagnosisAgent investigation | DeepSeek-V4.1-Flash |
-| EvidenceExplainer; SimulationEvidenceExplainer | DeepSeek-V4.1-Flash |
-| CodeRunner's coder | DeepSeek-V4.1-Flash |
-| DataAnalyzer (including images) | DeepSeek-V4.1-Flash |
+## One evidence file
 
-Deterministic scenario, simulation, evidence building, reference verification
-and report generation do not independently call an LLM.
+EvidenceBuilder creates only evidence/evidence_package.json. Its contract is:
 
-Copy `.env.example` to `.env` for a fresh setup and set `DEEPSEEK_API_KEY` there.
-Only `DEEPSEEK_MODEL` selects the model; retired per-role model and Qwen settings
-are no longer used. `.env` is ignored by Git. Shell environment variables take
-precedence; restart running Web/CLI processes after changing configuration.
+- schema_name / schema_version: swmm_ca2d_evidence_package / 1.1.
+- model_name / run_id / event_name / scenario_name: run binding.
+- source_hashes / missing_sources: source integrity and explicit absence.
+- event_detection: saved-sample resolution, positive tolerance and segmentation policy.
+- overview: object/event counts, metric inventory and source availability.
+- packages: node/event indexes referencing evidence IDs.
+- evidence_rows: whole-run scalar statistics, event-local evidence and rainfall context.
 
-Text, JSON diagnosis, coding and vision requests default to `reasoning_effort=high`.
-Requests carrying tools use `reasoning_effort=none`: pinned AutoGen 0.6.1 drops
-DeepSeek's required `reasoning_content` on tool-call response/replay, causing
-HTTP 400 in thinking mode. This compatibility adjustment applies to both ordinary
-and streaming requests. It changes the reasoning mode, not the model. See the
-[DeepSeek thinking-mode requirements](https://api-docs.deepseek.com/guides/thinking_mode/).
-Request timeout defaults to 300 seconds and output limit to 12,000 tokens.
+Each event has six records: event_context, local_structure, local_process_series,
+direct_source_composition, facilities_and_storage, surface_association. The latter
+categories may contain unavailable/unbuilt data. Single-event facts are stored only
+in event_context, not duplicated as scalar event rows or a separate event catalog.
+Whole-run statistics have different scope and retain their independent meaning.
 
-Use `.venv/Scripts/python scripts/smoke_llm.py --live` for synthetic text/JSON,
-vision and multi-turn tool checks. It sends no project evidence and does not
-simulate or modify diagnosis tasks. These connectivity checks do not establish
-hydraulic diagnosis quality.
+Event scope follows input connections upstream to the previous confluence,
+downstream to the next divergence, and intermediate tributaries upstream to their
+previous confluence. Boundary nodes and all their incident links are included;
+the opposite endpoints supply head data but do not seed further traversal.
+Facilities, special nodes, terminals, cycles and missing node definitions stop a
+trace with an explicit reason. There is no fixed hop depth or object count.
+All intermediate lateral inflows and signed model flows stay in the saved event
+window. Direct-source composition still counts only target-incident links and the
+target lateral inflow, preventing repeated counting of upstream corridor flows.
+topology_scope records paths, roles and stop reasons. This is a deterministic
+initial scope, not proof that every hydraulic cause lies within it.
 
-## Evidence selection update (2026-10-01)
+Node flooding statistics use all saved nodes.tsv records, not only surface-mapped nodes.
+Sources, units and calculation methods are explicit. Invalid/non-finite numeric data
+cause a clear construction failure; they are not silently replaced with zero.
+Whole-run volumes and event volumes use left-sample integration. Whole-run durations
+use left intervals; terminal samples add no duration. Time_start/time_end describe
+source coverage; at_time identifies an extremum. Link depth/reference metrics are
+proxies, not proof of pressure, a bottleneck or capacity failure.
 
-New investigation tasks no longer select the first 60 rows or any top-N fraction.
-They select complete event packages for the requested node/event scope, with
-available adjacent node/link background. Global tasks retain all event packages
-and receive deterministic scalar summaries across node, link and surface data;
-raw grid rows remain in the frozen local snapshot. Summaries separate metrics,
-units, calculation methods and thresholds, preserve per-source-window statistics,
-and have independent evidence IDs and source selectors/hashes. They do not imply
-causality, simultaneity or that every underlying object has been investigated.
+The package is a local evidence library, not the complete model input. Task preparation
+selects complete related event evidence and connected scalar background, or all events
+plus deterministic global summaries. Rainfall context is supplied for each scope.
+Selection never uses top-N, row order, a fixed count or a percentage. Lookup returns all
+matches for explicit objects/events/metrics/IDs. Selected records are sent in their
+original JSON structure, including each record's metadata and all process samples.
+The application sets no token generation budget or input character limit, including
+in live-check scripts. There is no local limit configuration switch. The provider's
+own defaults and context/output limits still apply. Evidence is never truncated
+to satisfy a budget. Automatic multi-batch investigation is not
+implemented. Transmission encoding, shared metadata/structure tables and roundtrip
+validation have been removed. Source/snapshot integrity and evidence-reference
+verification remain part of the workflow.
 
-Process series use lossless field-path tables when smaller: no samples, signs,
-nulls or precision are dropped. Identical event scalar duplicates can be omitted
-only when the event package already contains the same value, unit, time window
-and calculation method. Missing package categories remain explicit.
+## Task states and artifacts
 
-Evidence lookup now returns all matching rows for an explicit object, event,
-metric or evidence ID. Positional offsets are rejected. The complete serialized
-request (system plus user text) is checked against a 120,000-character transport
-budget; overflow is an explicit failure before any model call, never truncation.
-Very large tasks still require explicit division by event/investigation question.
-This is a character guard, not a provider-specific token guarantee.
+DiagnosisAgent(model_name, run_id) with no question/task resumes or creates a default
+initial_overflow task, diagnoses every saved overflow event, reference-checks the
+result and delivers a preliminary report. No initial user question is required.
+Whole-run event counts, time range and integrated event volume are derived by
+the program from the validated index/event_context, with a citable SUM_EVT record.
+Each event must have its own process, six mechanism statuses and evidence gaps.
+DiagnosisAgent(message=<follow-up question>) prepares a scoped task without a diagnosis LLM call.
+DiagnosisAgent(task_id=...) executes an investigation/revision, including a corrective
+response with saved parsing/contract feedback if necessary. Persistent failures
+return execution_error and the same task_id, without verification/report delivery.
 
-Prepared legacy tasks migrate from their frozen snapshot on the next diagnosis
-attempt and retain pre-migration copies. Legacy tasks with diagnosis revisions
-must start a new task to use the new selection; historical results are preserved.
-Restart the Web service to load the changed Python code. This update does not
-repair the separate outer-orchestrator false-completion/state-integration issue.
+- ready_for_diagnosis / revision_requested → DiagnosisAgent(task_id).
+- awaiting_evidence_confirmation → EvidenceBuilderAgent(task_id), after scope approval; only requests that add new evidence remain pending.
+- ready_for_verification → VerificationAgent(task_id).
+- ready_for_report → ReportAgent(task_id).
+- preliminary_delivered → the preliminary report is available; a follow-up question creates a new scoped task.
+- needs_user_decision → stop and ask the user.
 
-## Diagnostic contract update (2026-09-27)
+Tasks freeze evidence_snapshot.json and record task.json. Diagnosis and verification
+are versioned as diagnosis_rN.json and verification_rN.json, with latest copies and
+file hashes. Every model attempt retains raw response, finish reason, usage,
+parsed response and validation failure in diagnosis_attempt_<id>.json. Task
+history records failures without replacing a valid diagnosis/report revision.
+Reports are versioned as report_rN.json and preliminary_report_rN.md, with
+report.json as the latest copy. Pending requests do not prevent preliminary
+delivery: diagnose → verify → report → awaiting_evidence_confirmation → evidence.
+Requests are classified as available, already_visible, no_match or unavailable.
+Without new evidence, delivery finishes with the capability gaps preserved instead
+of invoking another diagnosis. The active task is persisted in
+diagnosis_tasks/active_task.json; existing tasks without a pointer are recovered by
+snapshot creation order and current evidence-package binding. Web confirmations
+read persisted task state and execute the next action before any conversational
+routing. Chat logs are restored after service restart.
+Ordinary empty claims cannot pass; a complete initial overview/event assessment
+can pass reference checking independently of optional claims. A validated dry
+run delivers a deterministic diagnosis without a diagnosis-model call; HTML writing still uses Report Agent.
+Object/event validation recognizes declared nested nodes/links in the cited
+event structure/process and rejects unrelated objects, events or citations.
+Verification currently checks reference traceability only. It does not certify that
+numbers, engineering interpretations or causal explanations are correct.
+Task operations never fall back to run-level rules. Verification requires a task_id;
+ReportAgent may resolve the run's persisted active task. Changed diagnosis questions require new tasks.
 
-### Task-scoped LLM investigation (initial implementation)
+## HTML Report Agent
 
-EvidenceBuilder now prebuilds `evidence/first_pass_evidence.json` for every
-sampled overflow episode, using all saved nodes rather than only surface-mapped
-nodes. It contains event context, direct connectivity/settings, aligned local
-head/flow series, directional inflow composition, facility/storage availability,
-and explicit surface-association availability. Head, total inflow and lateral
-inflow are read from the existing native `model.out`, not resimulated.
-Initial implementation requires SI/LPS for the derived flow metrics. Missing
-inputs remain null/unavailable. Process windows include one saved sample before
-and after the event; they are initial context, not a universal causal window.
-
-Investigation preparation imports this prebuilt package before legacy scalar
-rows, checks its source hashes, and freezes the resulting snapshot. Thus the
-DiagnosisAgent consumes EvidenceBuilder products, not raw simulation files.
-Pump/control action series, storage volume series, and surface source attribution
-remain explicitly unbuilt. Existing runs must rebuild evidence to receive the new
-package; this change does not automatically mutate their stored artifacts.
-
-`DiagnosisAgent(message=<original question>)` prepares a run-bound evidence
-snapshot and returns `task_id`; it does not call the model during preparation.
-After confirmation, `DiagnosisAgent(task_id=...)` runs one LLM investigation or
-revision step. The model must address four questions and six mechanism statuses,
-return structured claims and justified evidence requests, and cite visible IDs.
-
-Follow the returned task state, one confirmed action at a time:
-
-- `ready_for_diagnosis` / `revision_requested`: DiagnosisAgent.
-- `awaiting_evidence_confirmation`: EvidenceBuilderAgent(task_id=...).
-- `ready_for_verification`: VerificationAgent(task_id=...).
-- `ready_for_report`: ReportAgent(task_id=...).
-- `needs_user_decision`: stop and ask; do not automatically retry.
-
-The investigation evidence tool retrieves prebuilt evidence by explicit filters
-(the 2026-10-01 update replaces the original positional pagination).
-Any additional, unbuilt evidence is recorded as unavailable, not computed or
-invented by Diagnosis. This is not yet full six-mechanism engineering coverage.
-Artifacts and revisions live under `runs/<run_id>/diagnosis_tasks/<task_id>/`.
-Run-level deterministic screening remains available separately; it is not the
-LLM investigation mode. Web requests involving diagnosis/tasks are sent through
-the LLM orchestrator instead of the deterministic diagnosis shortcut.
-
-CLI equivalent (replace placeholders with actual model/run/task IDs):
-
-```powershell
-python run_workflow.py --model <model> --run-id <run> --investigation-action prepare --question "全局洪涝诊断"
-python run_workflow.py --model <model> --run-id <run> --investigation-action diagnose --task-id <task>
-```
-
-Subsequent `--investigation-action` values are `evidence`, `diagnose`, `verify`,
-and `report`, as allowed by task state. Only `diagnose` calls the configured
-external model using the selected evidence; review the task before invoking it.
-Offline tests use a fake model client, not a live diagnostic-quality evaluation.
-
-The initial diagnostic workflow now adds saved-sample overflow episodes in
-`evidence/overflow_events.json` and event-specific evidence/claims. Consecutive
-positive samples form one episode; a non-positive sample separates episodes.
-Duration uses left-sample intervals (the terminal sample adds no duration).
-Episode volume is explicitly a left-rectangle estimate, separate from existing
-run-level volume metrics; no sub-step onset interpolation or gap merging is done.
-
-Verification now checks current-model/run EvidenceID traceability only. Its
-statuses are `references_verified`, `references_missing`, and `no_references`;
-these do **not** establish hydraulic or causal validity. The legacy
-`unsupported_rate.txt` path stores reference failure rate (N/A for zero claims).
-Old verification artifacts must be regenerated before using the new reporter.
-
-Reports default to a global view, retain explicitly selected node/event IDs,
-and never add new causes. Unresolved follow-up references request an explicit
-object. New mechanism questions request Diagnosis review; automatic dispatch
-of a new report question still requires a newly confirmed investigation task.
-`--until` now executes only the next stage and returns remaining stages for
-human confirmation; it no longer runs through all stages in one call.
-
-Run regression tests: `.venv/Scripts/python -m unittest discover -s tests -v`.
-Historical architecture descriptions below include legacy behavior; this
-section defines the updated reference-check and report semantics.
-
-SWMM-Agentic2 is a workflow-stage-oriented SWMM-CA2D Agentic prototype. It keeps
-the proven tool-first execution layer from SWMM-Agentic, then adds deterministic
-stage agents for evidence construction, flood diagnosis, and evidence
-verification.
-
-The purpose of this version is to reduce routing drift: simulation should use
-fixed tools, diagnosis should read evidence tables, and unsupported conclusions
-should be measurable instead of hidden in natural-language output.
-
-## Architecture
-
-```text
-User / expert request
-  -> StatefulOrchestrator
-  -> ScenarioAgent
-  -> SCENARIO_READY
-  -> SimulationAgent
-  -> RUN_READY
-  -> EvidenceBuilderAgent
-  -> EVIDENCE_READY
-  -> DiagnosisAgent
-  -> DIAGNOSIS_READY
-  -> VerificationAgent
-  -> VERIFIED_READY
-  -> ReportAgent
-```
-
-The first implementation now covers the pre-run and diagnostic stages:
-
-- `ScenarioAgent`: validates model/event/scenario inputs and writes
-  `runs/<run_id>/scenario_request.json`; the workflow state becomes
-  `SCENARIO_READY`.
-- `SimulationAgent`: reads `scenario_request.json` or equivalent parameters,
-  runs the fixed SWMM-to-CA2D pipeline, and writes `workflow_state.json` as
-  `RUN_READY` after successful simulation.
-- `EvidenceBuilderAgent`: converts standardized SWMM/CA2D run outputs into
-  `evidence/evidence_table.csv` and `evidence/evidence_summary.json`.
-- `DiagnosisAgent`: reads only the evidence table and writes
-  `diagnosis/diagnosis_claims.json` plus `diagnosis/risk_ranking.csv`.
-- `VerificationAgent`: checks every claim against cited evidence and writes
-  `verification/verification_report.json` plus `verification/unsupported_rate.txt`.
-- `ReportAgent`: reads `VERIFIED_READY` artifacts and turns verified claims,
-  evidence rows, and verification status into natural-language reports or
-  single-point cause explanations.
-
-## File Map
-
-```text
-workflow_agents/
-  __init__.py
-  schemas.py
-  state.py
-  scenario.py
-  evidence_builder.py
-  diagnosis.py
-  verification.py
-  orchestrator.py
-  rules/
-    diagnosis_rules.json
-    verification_rules.json
-
-run_workflow.py       Command-line workflow-stage runner
-tools.py              Original SWMM/CA2D tools plus workflow-stage wrappers
-main.py               AutoGen agents, now aware of workflow-stage tools
-prompts.py            Tool-first and workflow-state routing instructions
-ca2d.py               CA2D surface-flooding model
-models/               Model projects copied from SWMM-Agentic
-```
-
-## Agent Boundary
-
-SWMM-Agentic2 uses workflow-stage agents as the primary architecture:
-
-```text
-StatefulOrchestrator
-ScenarioAgent
-SimulationAgent
-EvidenceBuilderAgent
-DiagnosisAgent
-VerificationAgent
-ReportAgent
-```
-
-The legacy capability agents from SWMM-Agentic are retained only as lower-level
-or auxiliary capabilities:
-
-```text
-LegacyTaskExecutor    legacy fixed-tool compatibility layer
-CodeRunner      auxiliary custom analysis / temporary plotting only
-DataAnalyzer    auxiliary result explanation only
-```
-
-The Web and CLI orchestrator now expose the workflow-stage agents directly.
-Explicit workflow requests such as evidence construction, diagnosis,
-verification, and unsupported-rate calculation should not be routed through the
-legacy capability-agent shell.
-
-Suggested Web test prompts:
-
-```text
-请列出 models 下的模型项目，并检查是否完整。
-```
-
-Expected route: `ScenarioAgent`.
-
-```text
-请准备 scenario_request，模型 songhua_swmm_2d，使用 events/rain1.txt，scenario baseline，run_id: my_test_run_001
-```
-
-Expected route: `ScenarioAgent -> SCENARIO_READY`.
-
-```text
-继续
-```
-
-Expected route after `SCENARIO_READY`: `SimulationAgent -> RUN_READY`.
-
-```text
-对 rain1__baseline__20260721_165600 推进到 verification 阶段，使用工作流 Agent。
-```
-
-Expected route: `StatefulOrchestrator -> EvidenceBuilderAgent / DiagnosisAgent / VerificationAgent`
-depending on the current `workflow_state.json`.
-
-## Model Assets
-
-Model files are copied directly from the first SWMM-Agentic project. The primary
-project is:
-
-```text
-models/songhua_swmm_2d/
-```
-
-It contains the baseline SWMM model, reusable CA2D static model, rainfall event
-files, and completed run outputs.
-
-## Run A Workflow Stage
-
-Prepare a scenario request without running simulation:
+ReportAgent now prepares saved-result facts and plots, calls the configured report
+model for structured Chinese prose, and renders a self-contained HTML report with
+six sections, every diagnosed overflow event, node navigation and embedded images.
+It runs after each verified diagnosis delivery. An already delivered task can also
+generate HTML without repeating simulation, diagnosis or internal Markdown delivery:
 
 ```powershell
-python -c "import asyncio, main; print(asyncio.run(main.ScenarioAgent(message='prepare scenario', model_name='songhua_swmm_2d', rainfall_file='events/rain1.txt', event_name='rain1', scenario_name='baseline', run_id='rain1__baseline__manual_test')))"
+python scripts/build_display_report.py --model urban_drainage --run <run> --task <task>
 ```
 
-Advance an existing run to the next legal stage:
+Omit `--task` to use that run's active task. The public `ReportAgent(model_name,
+run_id, task_id=...)` uses the same pipeline. The workflow CLI supports
+`--investigation-action display_report --task-id <task>` for existing deliveries.
+Code lives in `workflow_agents/reporting/`; the preview scripts remain examples.
+
+Outputs live under `diagnosis_tasks/<task>/display_reports/rN/<generation>/`:
+the HTML, calculated materials, figures, structured narrative, fact-text registry,
+model attempts, generation status and quality checks. `task.json` exposes
+`display_report.status` and `display_report_file`; the web chat links the completed
+HTML. Unchanged successful generations are reused. Failed generations keep their
+records and internal diagnosis delivery and never present old HTML as current.
+
+Numbers and times in generated prose must reference program-supplied facts;
+event coverage and source mechanism statuses are checked before rendering.
+Source hashes and the current diagnosis/evidence binding are checked before and
+after writing. These checks do not constitute independent hydraulic causal validation.
+The report distinguishes 0.01 m general ponding from 0.15 m attention areas;
+the solver is unchanged. It uses 0.15/0.27/0.40 m depth classes from the CECS draft
+as a map legend, without claiming formal warning grades from depth alone.
+Current inputs require the existing LPS/m saved-output and static-grid formats.
+
+## CLI
 
 ```powershell
-python run_workflow.py --model songhua_swmm_2d --run-id rain1__baseline__20260721_165600
+python run_workflow.py --model urban_drainage --run-id <run> --stage evidence_building
+python run_workflow.py --model urban_drainage --run-id <run> --investigation-action initial
+python run_workflow.py --model urban_drainage --run-id <run> --investigation-action continue
+python run_workflow.py --model urban_drainage --run-id <run> --investigation-action prepare --question "分析P6"
+python run_workflow.py --model urban_drainage --run-id <run> --investigation-action diagnose --task-id <task>
 ```
 
-Run all implemented stages through verification:
+`continue` resumes the active task (or an explicit --task-id), retrieves evidence
+after confirmation if pending, and delivers the resulting verified report.
+Other explicit task actions: status, evidence, verify, report. Follow the returned state.
+An explicit review can request revision without evidence retrieval:
+`--investigation-action review --task-id <task> --review-feedback <json-file>`.
+The JSON contains issues with message and visible evidence_ids. Findings are
+saved and bound by hash, passed to the next diagnosis, and do not replace the
+previous report. This is a review channel, not an automatic causal verifier.
+There is no fixed count limit on evidence_requests; each request still requires
+valid parameters and a concrete engineering purpose.
+Old runs must rebuild the unified package from saved simulation outputs and create
+new tasks. Old CSV/first-pass JSON and old task formats are not runtime inputs.
+Historical outputs are retained as history; no legacy compatibility implementation is kept.
+Restart the Web service to load changed Python modules. Offline tests never
+simulate or call an external model. Real initial-diagnosis acceptance uses:
+`python scripts/accept_initial_diagnosis.py --model urban_drainage --run-id <run> --live`.
+It preserves source/package hashes, checks complete event coverage and exact
+program-rendered event facts, and stores acceptance.json in the new task.
+Reference traceability, numerical prose validation and causal validity are
+distinct; the latter two are not certified by this acceptance script.
+
+## Model and simulation conventions
+
+Models live under models/<model_name>/; discover available projects rather than
+assuming a fixed model. Assets include model.yaml, static/, mapping/, events/,
+swmm/scenarios/<scenario_name>/model.inp and runs/<run_id>/.
+ScenarioAgent organizes/checks models and rainfall. SimulationAgent uses the fixed
+SWMM-CA2D pipeline. Existing SI/LPS outputs are required for the current evidence
+extraction. Missing surface output is accepted only when the simulation explicitly
+records NO_SURFACE_INFLOW; it is not interpreted as a complete surface assessment.
+
+## Runtime and LLM
+
+Install requirements.txt in the project virtual environment. Copy .env.example to
+.env and set DEEPSEEK_API_KEY. Model configuration is in llm.py; active orchestrator,
+diagnosis and evidence-explanation clients share llm.deepseek_flash. Keep keys private.
+Shell settings take precedence over .env. Launch the Web UI using run_web.ps1 or
+run_web.bat. run_workflow.py is the offline construction / explicit investigation CLI.
+Deterministic construction, retrieval, reference checking and report formatting do not
+independently call an LLM. Orchestration and diagnosis do call the configured client.
+
+## Validation and known limits
+
+Run offline regression tests with:
 
 ```powershell
-python run_workflow.py --model songhua_swmm_2d --run-id rain1__baseline__20260721_165600 --until verification
+.\.venv\Scripts\python.exe -m unittest discover -s tests -q
 ```
 
-Rerun a completed stage:
+scripts/audit_unified_evidence.py rebuilds the two recorded Chicago cases in temporary
+copies, preserves historical event facts/direct composition, checks expanded
+processes against saved outputs and compares selected request records directly to
+their snapshot JSON.
+It never simulates or invokes the model. scripts/smoke_live_investigation.py
+requires an explicit --live option and a prepared modern task; it is not part of the
+offline suite.
 
-```powershell
-python run_workflow.py --model songhua_swmm_2d --run-id rain1__baseline__20260721_165600 --stage verification --rerun
-```
-
-## API And Web Test Setup
-
-The local `.env` configures the official DeepSeek API and one model for all LLM
-agents. For a fresh checkout, copy `.env.example` to `.env` and supply your
-DeepSeek API key before starting the service.
-
-Create and install the local environment:
-
-```powershell
-cd E:\SWMM_Agentic\SWMM-Agentic2
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-Start the new SWMM-Agentic2 web frontend:
-
-```powershell
-.\run_web.ps1
-```
-
-Open:
-
-```text
-http://127.0.0.1:8001
-```
-
-The original SWMM-Agentic frontend can remain on `http://127.0.0.1:8000`.
-
-## Verified Baseline
-
-The run below has been processed through the SWMM-Agentic2 workflow:
-
-```text
-models/songhua_swmm_2d/runs/rain1__baseline__20260721_165600/
-```
-
-Generated artifacts:
-
-```text
-workflow_state.json
-evidence/evidence_table.csv
-evidence/evidence_summary.json
-diagnosis/diagnosis_claims.json
-diagnosis/risk_ranking.csv
-verification/verification_report.json
-verification/unsupported_rate.txt
-```
-
-Observed verification summary:
-
-```text
-total_claims: 40
-supported: 40
-partially_supported: 0
-unsupported: 0
-unsupported_rate: 0.0
-```
-
-## Design Rules
-
-- Do not route official rainfall-to-SWMM-to-CA2D simulation to CodeRunner.
-- Do not build diagnosis claims from raw SWMM/CA2D files; use
-  `evidence_table.csv`.
-- Do not calculate unsupported rate with LLM free text; use
-  `VerificationAgent`.
-- Do not answer user-facing reports by rerunning diagnosis or verification; use
-  `ReportAgent` after `VERIFIED_READY`.
-- Do not skip workflow states unless rerun behavior is explicitly requested and
-  recorded in `workflow_state.json`.
-
-## Next Extensions
-
-Recommended next stages are:
-
-- `BenchmarkAgent`: execute task sets and compare tool-only, tool-using LLM, and
-  full workflow-stage Agentic variants.
+Not yet implemented: arbitrary-window new evidence calculation, diagnosis-directed
+new topology expansion, pump/control action and storage-volume extraction, reliable
+surface-source attribution, automatic task batching, CSO optimization, comprehensive
+high-load assessment, and independent hydraulic/causal validation. Outer LLM reply
+claims still require a separate execution-audit guard; deleting the old workflow does
+not by itself eliminate unsupported natural-language completion claims.

@@ -1,0 +1,15 @@
+{
+  "review_type": "human_editorial_review",
+  "raw_model_text_unchanged": true,
+  "intro_only": true,
+  "observations": [
+    "一段两句，不列数量、时刻、名单、机制或统计阈值",
+    "雨峰附近的时间概括与当前冒溢关系一致",
+    "道路为主、水深较大区域先出现、积水面积随后扩大及雨后道路存留均由当前材料支持"
+  ],
+  "accepted_chapter_five_unchanged": true,
+  "other_fields_equal_to_baseline": true,
+  "source_hashes_verified": true,
+  "report_agent_tests_passed": 41,
+  "scope": "本轮仅总述；其他章节后续分别对标"
+}

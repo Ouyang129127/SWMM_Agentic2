@@ -1,0 +1,29 @@
+{
+  "status": "completed",
+  "source_report": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122",
+  "excerpt_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\report_previews\\report_agent_examples\\event_prose_probe_20261007_v1\\逐节点分析_试写.md",
+  "event_count": 7,
+  "producer_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\labels.py": "25919da33bca7a6a9a45d2fd02bbe449ab1edc0640d9ab63d04081149486aa00",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\materials.py": "1342046bf994c8df0e9cf98bfc43678e08b02628575678d302ece95b64cc488d",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\narrative.py": "de9bacff9f1b916b88b8501ef3d6545e18c25d59e3e3325bc212bc093b9ec244",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\pipeline.py": "cc126d5c573f8d76c8452e66e0e5592452f04b67a4a7d9a36f0bb6cd402d3965",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\plots.py": "27952454051017e3480c3287c538f149262dc38a274c7038da3323a0946b28ae",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\render.py": "b69ea7996477e80a59f1cc007611637a1e793a483ecd2cba6ed55ded05db0287",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\__init__.py": "a07b16162cb63bff11432e1fd037013486c005f482d2009794c00351ebc0a84b",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\causes_overview_v1.md": "19c697310b2625f4f73d3d07594e5118d8c469e76fa77503dd6766469fca80c5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_lateral_v1.json": "c9f9e086082fd39668f9069f63269e541aff0c6d5f152dbf53d675c0cf2fec66",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_v1.json": "331d0222ed7c096362c5e9e765daea310bd2e18449bef56762ad287c28f6ef57",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_rewrite_v1.md": "f9a080cfef47b5ec6c7d5346629053b2ca00d16f689e8c32e3b4ad742f54b0cf",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\llm.py": "53ca78dd081305c3bc5f39a010477ddef6f3c0791064e2799ac248855272b2c8"
+  },
+  "source_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122\\report_materials.json": "ed5c0cff23dd6ef2bb89726dddf80c37d7364ceb42a774a94f020dcef59d8e5e",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122\\narrative.json": "fb2fee208fe561643c138b891ab82ca6e42dd033ee2790d3e0c78111b568ba4c",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\report_previews\\report_agent_examples\\causes_overview_probe_20261007_v2\\overview.json": "0125fb41c25a7c476124bd96fba3a36e25430a378576a5b058ecab62555662d8",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122\\模拟诊断报告.html": "9e188d1774d0a3c26b1002f68f9d9f090ad8b6aab00d72f35ee2899833dd3534",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\task.json": "b41eca85f113bb0df5fe6adb195913c00ab4e46c896b1e3949691e7ecd5dcab8"
+  },
+  "scope": "per-event text only; original HTML and task state unchanged",
+  "verification_scope": "structure, source identity, fact references and diagnosis status; prose needs editorial review"
+}

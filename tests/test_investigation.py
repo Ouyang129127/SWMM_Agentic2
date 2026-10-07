@@ -1,5 +1,5 @@
-import csv
 import json
+from evidence_fixtures import save_fixture
 import tempfile
 import sys
 from types import SimpleNamespace
@@ -30,10 +30,7 @@ class InvestigationTests(unittest.IsolatedAsyncioTestCase):
                  'source_model': 'm', 'run_id': 'r', 'event_id': 'N1:E001',
                  'metric_name': 'flooding', 'value': str(i)} for i in range(65)]
         rows.append(dict(rows[0], evidence_id='E_other', object_id='N2', event_id='N2:E001'))
-        with (self.root / 'evidence/evidence_table.csv').open('w', encoding='utf-8', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=list(rows[0]))
-            writer.writeheader()
-            writer.writerows(rows)
+        save_fixture(self.root, rows)
         self.patcher = patch('workflow_agents.investigation.resolve_run_root', return_value=self.root)
         self.patcher.start()
 
@@ -87,13 +84,21 @@ class InvestigationTests(unittest.IsolatedAsyncioTestCase):
         req = {'tool': 'evidence_lookup', 'object_id': 'N2', 'metric_name': 'flooding',
                'reason': '补充N2事件指标以调查相关过程'}
         state = await self.step('diagnose', AsyncMock(return_value=answer(requests=[req])))
-        self.assertEqual(state['state'], 'awaiting_evidence_confirmation')
+        self.assertEqual(state['state'], 'ready_for_verification')
         self.assertNotIn('E_other', state['visible_ids'])
         with self.assertRaises(ValueError):
             await self.step('diagnose', AsyncMock(return_value=answer()))
+        with self.assertRaises(ValueError):
+            await self.step('evidence')
+        await self.step('verify')
+        state = await self.step('report')
+        self.assertEqual(state['state'], 'awaiting_evidence_confirmation')
+        self.assertIn('补充N2事件指标', state['report'])
         state = await self.step('evidence')
         self.assertIn('E_other', state['visible_ids'])
-        read_new = AsyncMock(return_value=answer('E_other'))
+        updated = answer('E_other')
+        updated['claims'][0]['object_id'] = 'N2'
+        read_new = AsyncMock(return_value=updated)
         await self.step('diagnose', read_new)
         self.assertEqual(len(read_new.call_args.args[0]['visible_evidence']), 66)
 
@@ -111,13 +116,19 @@ class InvestigationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(state['revision'], 0)
         self.assertEqual(state['state'], 'ready_for_diagnosis')
 
-    async def test_repeated_unavailable_request_stops(self):
+    async def test_unavailable_request_finishes_without_repeated_diagnosis(self):
         await self.prepare()
         req = {'tool': 'unavailable', 'object_id': 'N1', 'metric_name': 'head_time_series', 'reason': '区分局部约束和下游影响'}
+        complete = AsyncMock(return_value=answer(requests=[req]))
+        await self.step('diagnose', complete)
+        await self.step('verify')
+        state = await self.step('report')
+        self.assertEqual(state['state'], 'preliminary_delivered')
+        self.assertEqual(state['evidence_closure'], 'capability_gaps')
         for _ in range(2):
-            await self.step('diagnose', AsyncMock(return_value=answer(requests=[req])))
-            state = await self.step('evidence')
-        self.assertEqual(state['state'], 'needs_user_decision')
+            state = await self.step('continue', complete)
+        complete.assert_awaited_once()
+        self.assertEqual(state['revision'], 1)
 
     async def test_snapshot_and_claim_tampering_rejected(self):
         await self.prepare()
@@ -155,6 +166,8 @@ class InvestigationTests(unittest.IsolatedAsyncioTestCase):
         import main
         dispatcher = AsyncMock(return_value='task result')
         with patch('main._investigation_action', dispatcher):
+            await main.DiagnosisAgent('m', 'r')
+            dispatcher.assert_awaited_with('m', 'r', 'initial', '', '')
             await main.DiagnosisAgent('m', 'r', message='分析N1')
             dispatcher.assert_awaited_with('m', 'r', 'prepare', '', '分析N1')
             await main.DiagnosisAgent('m', 'r', task_id='task')
@@ -163,8 +176,9 @@ class InvestigationTests(unittest.IsolatedAsyncioTestCase):
             dispatcher.assert_awaited_with('m', 'r', 'evidence', 'task')
             await main.VerificationAgent('m', 'r', task_id='task')
             dispatcher.assert_awaited_with('m', 'r', 'verify', 'task')
-            await main.ReportAgent('m', 'r', task_id='task')
-            dispatcher.assert_awaited_with('m', 'r', 'report', 'task', '')
+            with patch('workflow_agents.investigation_flow.load_active_task', return_value={'task_id':'task','state':'ready_for_report'}):
+                await main.ReportAgent('m', 'r', task_id='task')
+            dispatcher.assert_awaited_with('m', 'r', 'report', 'task')
 
 
 if __name__ == '__main__':

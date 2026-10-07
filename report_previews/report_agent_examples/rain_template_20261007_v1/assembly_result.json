@@ -1,0 +1,40 @@
+{
+  "status": "completed",
+  "source": "program_template",
+  "template_version": "rain_v1",
+  "excerpt_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\report_previews\\report_agent_examples\\rain_template_20261007_v1\\降雨特征_模板输出.md",
+  "source_report": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122",
+  "narrative_source": "E:\\SWMM_Agentic\\SWMM-Agentic2\\report_previews\\report_agent_examples\\scene_template_20261007_v1\\combined_narrative.json",
+  "source_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122\\report_materials.json": "ed5c0cff23dd6ef2bb89726dddf80c37d7364ceb42a774a94f020dcef59d8e5e",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122\\narrative.json": "fb2fee208fe561643c138b891ab82ca6e42dd033ee2790d3e0c78111b568ba4c",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\report_previews\\report_agent_examples\\scene_template_20261007_v1\\combined_narrative.json": "cab53c0df5a6cebd3a825d7de487916377833c22f31e17201ecaa04df97b8aba",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122\\模拟诊断报告.html": "9e188d1774d0a3c26b1002f68f9d9f090ad8b6aab00d72f35ee2899833dd3534",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\task.json": "b41eca85f113bb0df5fe6adb195913c00ab4e46c896b1e3949691e7ecd5dcab8"
+  },
+  "producer_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\labels.py": "25919da33bca7a6a9a45d2fd02bbe449ab1edc0640d9ab63d04081149486aa00",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\materials.py": "be625eae3e02185a4e7c3a7aeb45e8843cbb0c17ebfeafc25f342447a2a03576",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\narrative.py": "d7f9a77b6f7163e5ebed9e02b8d7195c56b586f071c24fb74dc43fa9036d45c5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\pipeline.py": "59992ab90d149b38f860a933ef772d04ee18da732b162e60ec8ed9478ba11bb9",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\plots.py": "27952454051017e3480c3287c538f149262dc38a274c7038da3323a0946b28ae",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\rain.py": "4646da2977078eb522bb4b3a35550d43215012ee2b1dfccbb99a2a7b58ea7098",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\render.py": "b69ea7996477e80a59f1cc007611637a1e793a483ecd2cba6ed55ded05db0287",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\scene.py": "6f2981bbe557efe771b5ed7d9b50a05b678a3dc76657588406e3888acf557c32",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\__init__.py": "a07b16162cb63bff11432e1fd037013486c005f482d2009794c00351ebc0a84b",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\causes_overview_v1.md": "19c697310b2625f4f73d3d07594e5118d8c469e76fa77503dd6766469fca80c5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_lateral_v1.json": "a692a416dd777d373c106cf9a1b530dc63e2601329a349f8fb99bfc02c795017",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_outflow_v1.json": "21c9e63395179014797ff57704a2cd2ee6b4fecafccd281680ec608bc8c757bb",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_P7_v1.json": "93a26bb32689b8d1db9125ab178248231728c263566173ac397a430d6d05387d",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_v1.json": "e05a60f76a3b0dec127418ca9318afde3f06b9922426958944b278a38bec65f2",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_rewrite_v1.md": "a94877f3517a808960c874c61b1d84cdfd18cb9b0fb03f8109e0b35cd8419321",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_rewrite_v2.md": "fcb2f0fb0d03f250ac6220b133d3f22653fb1c55e8a166ee48546a3385f58570",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\intro_rewrite_v1.md": "6ebe417ecccbb69f665308fbe204cc63518f88c8739805eccb1d5aca199b5797",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\rain_fixed_v1.md": "656ed4d0b9e821ff89539347cce0123c48829a6402ecfe5b5ed34f91d570c653",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\rain_template_v1.json": "5fb68b732f3e076c45b347b76a1ed782ad462294ee3b47145d0a7391e20899b4",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\scene_fixed_v1.md": "e846ca050dd872bcc944a06a33935bad6584fa62659e89245104bb981057fee5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\scene_template_v1.json": "503f3f162bde0e75cbf2f6688de4b331d1e02e60966b3a51585f0dbf6ea6b061",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\llm.py": "53ca78dd081305c3bc5f39a010477ddef6f3c0791064e2799ac248855272b2c8"
+  },
+  "scope": "rain only; all other prose, original HTML and task state unchanged"
+}

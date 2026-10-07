@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "source_report": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_155723_f52d5122",
+  "excerpt_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\report_previews\\report_agent_examples\\causes_overview_probe_20261007_v1\\第五章总体成因_试写.md",
+  "producer_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\labels.py": "25919da33bca7a6a9a45d2fd02bbe449ab1edc0640d9ab63d04081149486aa00",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\materials.py": "1342046bf994c8df0e9cf98bfc43678e08b02628575678d302ece95b64cc488d",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\narrative.py": "d231978a15b6f61e030a6aaabc888cb15afd22ccbeffdc68b0ac375c8e38aa06",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\pipeline.py": "4fd9d45b34f080f8fb8687448911c0bbc2e6ef83c561ba5d5a96f56b693fa99d",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\plots.py": "27952454051017e3480c3287c538f149262dc38a274c7038da3323a0946b28ae",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\render.py": "b69ea7996477e80a59f1cc007611637a1e793a483ecd2cba6ed55ded05db0287",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\__init__.py": "a07b16162cb63bff11432e1fd037013486c005f482d2009794c00351ebc0a84b",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\causes_overview_v1.md": "e835143d0751e714fe5d0e79e2e7bf1b56990077d49aa52ffaac5c00f3ceeb90",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_v1.json": "2da07531c118d9eb8dd5cba7d36be072145595795f0f4ab1c2710929aacc8e89",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_rewrite_v1.md": "e27ba4098d26cd834a29ba0c16e1d583ecf6feaaa524a256d3fdd42f1311dc32",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\llm.py": "53ca78dd081305c3bc5f39a010477ddef6f3c0791064e2799ac248855272b2c8"
+  },
+  "scope": "chapter-five overview only; original HTML and task state remain unchanged"
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "invalid_id": "FP_9ec89ef0141fb62d09da1",
+    "evidence_id": "FP_9ec89ef0141fb62d09a1",
+    "object_type": "node",
+    "object_id": "P42",
+    "event_id": "P42:E001",
+    "metric_name": "local_structure",
+    "reason": "第二次真实模型响应的全局M4引用多写一个d；对应P42结构证据在同一响应的逐事件段落中正确引用。核对冻结快照、事件索引及对象/指标后明确修正此处拼写；不作模糊自动匹配，不修改原始模型响应或工程判断。"
+  }
+]

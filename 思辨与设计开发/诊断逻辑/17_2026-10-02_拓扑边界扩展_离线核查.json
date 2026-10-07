@@ -1,0 +1,1544 @@
+{
+  "external_llm_calls": 0,
+  "simulations": 0,
+  "cases": [
+    {
+      "run_id": "chicago_single_event__baseline__20260927_192515",
+      "package_rows": 39502,
+      "event_count": 7,
+      "overflow_node_count": 7,
+      "event_facts_and_direct_composition_unchanged": true,
+      "historical_local_process_preserved": true,
+      "expanded_process_matches_saved_outputs": true,
+      "topology_scopes": [
+        {
+          "event_id": "P42:E001",
+          "node_id": "P42",
+          "old_node_count": 4,
+          "old_link_count": 3,
+          "new_node_count": 23,
+          "new_link_count": 22,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P38": [
+              "confluence"
+            ],
+            "P39": [
+              "terminal"
+            ],
+            "P41": [
+              "terminal"
+            ],
+            "P43": [
+              "terminal"
+            ],
+            "P45": [
+              "terminal"
+            ],
+            "P47": [
+              "terminal"
+            ],
+            "P49": [
+              "terminal"
+            ],
+            "P51": [
+              "terminal"
+            ],
+            "P53": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P42",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P42",
+                "P40",
+                "P39"
+              ],
+              "links": [
+                "G39",
+                "G38"
+              ],
+              "stop_node": "P39",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P42",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P42",
+                "P41"
+              ],
+              "links": [
+                "G40"
+              ],
+              "stop_node": "P41",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P42",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P42",
+                "P44",
+                "P46",
+                "P48",
+                "P50",
+                "P52",
+                "P54",
+                "P55",
+                "P57",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G41",
+                "G43",
+                "G45",
+                "G47",
+                "G49",
+                "G51",
+                "G53",
+                "G54",
+                "G56",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P44",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P44",
+                "P43"
+              ],
+              "links": [
+                "G42"
+              ],
+              "stop_node": "P43",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P46",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P46",
+                "P45"
+              ],
+              "links": [
+                "G44"
+              ],
+              "stop_node": "P45",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P48",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P48",
+                "P47"
+              ],
+              "links": [
+                "G46"
+              ],
+              "stop_node": "P47",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P50",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P50",
+                "P49"
+              ],
+              "links": [
+                "G48"
+              ],
+              "stop_node": "P49",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P52",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P52",
+                "P51"
+              ],
+              "links": [
+                "G50"
+              ],
+              "stop_node": "P51",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P54",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P54",
+                "P53"
+              ],
+              "links": [
+                "G52"
+              ],
+              "stop_node": "P53",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P38"
+              ],
+              "links": [
+                "G37"
+              ],
+              "stop_node": "P38",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        },
+        {
+          "event_id": "P43:E001",
+          "node_id": "P43",
+          "old_node_count": 2,
+          "old_link_count": 1,
+          "new_node_count": 22,
+          "new_link_count": 21,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P38": [
+              "confluence"
+            ],
+            "P42": [
+              "confluence"
+            ],
+            "P45": [
+              "terminal"
+            ],
+            "P47": [
+              "terminal"
+            ],
+            "P49": [
+              "terminal"
+            ],
+            "P51": [
+              "terminal"
+            ],
+            "P53": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P43",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P43",
+                "P44",
+                "P46",
+                "P48",
+                "P50",
+                "P52",
+                "P54",
+                "P55",
+                "P57",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G42",
+                "G43",
+                "G45",
+                "G47",
+                "G49",
+                "G51",
+                "G53",
+                "G54",
+                "G56",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P44",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P44",
+                "P42"
+              ],
+              "links": [
+                "G41"
+              ],
+              "stop_node": "P42",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P46",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P46",
+                "P45"
+              ],
+              "links": [
+                "G44"
+              ],
+              "stop_node": "P45",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P48",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P48",
+                "P47"
+              ],
+              "links": [
+                "G46"
+              ],
+              "stop_node": "P47",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P50",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P50",
+                "P49"
+              ],
+              "links": [
+                "G48"
+              ],
+              "stop_node": "P49",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P52",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P52",
+                "P51"
+              ],
+              "links": [
+                "G50"
+              ],
+              "stop_node": "P51",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P54",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P54",
+                "P53"
+              ],
+              "links": [
+                "G52"
+              ],
+              "stop_node": "P53",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P38"
+              ],
+              "links": [
+                "G37"
+              ],
+              "stop_node": "P38",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        },
+        {
+          "event_id": "P44:E001",
+          "node_id": "P44",
+          "old_node_count": 4,
+          "old_link_count": 3,
+          "new_node_count": 22,
+          "new_link_count": 21,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P38": [
+              "confluence"
+            ],
+            "P42": [
+              "confluence"
+            ],
+            "P43": [
+              "terminal"
+            ],
+            "P45": [
+              "terminal"
+            ],
+            "P47": [
+              "terminal"
+            ],
+            "P49": [
+              "terminal"
+            ],
+            "P51": [
+              "terminal"
+            ],
+            "P53": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P44",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P44",
+                "P42"
+              ],
+              "links": [
+                "G41"
+              ],
+              "stop_node": "P42",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P44",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P44",
+                "P43"
+              ],
+              "links": [
+                "G42"
+              ],
+              "stop_node": "P43",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P44",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P44",
+                "P46",
+                "P48",
+                "P50",
+                "P52",
+                "P54",
+                "P55",
+                "P57",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G43",
+                "G45",
+                "G47",
+                "G49",
+                "G51",
+                "G53",
+                "G54",
+                "G56",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P46",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P46",
+                "P45"
+              ],
+              "links": [
+                "G44"
+              ],
+              "stop_node": "P45",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P48",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P48",
+                "P47"
+              ],
+              "links": [
+                "G46"
+              ],
+              "stop_node": "P47",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P50",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P50",
+                "P49"
+              ],
+              "links": [
+                "G48"
+              ],
+              "stop_node": "P49",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P52",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P52",
+                "P51"
+              ],
+              "links": [
+                "G50"
+              ],
+              "stop_node": "P51",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P54",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P54",
+                "P53"
+              ],
+              "links": [
+                "G52"
+              ],
+              "stop_node": "P53",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P38"
+              ],
+              "links": [
+                "G37"
+              ],
+              "stop_node": "P38",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        },
+        {
+          "event_id": "P46:E001",
+          "node_id": "P46",
+          "old_node_count": 4,
+          "old_link_count": 3,
+          "new_node_count": 20,
+          "new_link_count": 19,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P38": [
+              "confluence"
+            ],
+            "P44": [
+              "confluence"
+            ],
+            "P45": [
+              "terminal"
+            ],
+            "P47": [
+              "terminal"
+            ],
+            "P49": [
+              "terminal"
+            ],
+            "P51": [
+              "terminal"
+            ],
+            "P53": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P46",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P46",
+                "P44"
+              ],
+              "links": [
+                "G43"
+              ],
+              "stop_node": "P44",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P46",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P46",
+                "P45"
+              ],
+              "links": [
+                "G44"
+              ],
+              "stop_node": "P45",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P46",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P46",
+                "P48",
+                "P50",
+                "P52",
+                "P54",
+                "P55",
+                "P57",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G45",
+                "G47",
+                "G49",
+                "G51",
+                "G53",
+                "G54",
+                "G56",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P48",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P48",
+                "P47"
+              ],
+              "links": [
+                "G46"
+              ],
+              "stop_node": "P47",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P50",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P50",
+                "P49"
+              ],
+              "links": [
+                "G48"
+              ],
+              "stop_node": "P49",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P52",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P52",
+                "P51"
+              ],
+              "links": [
+                "G50"
+              ],
+              "stop_node": "P51",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P54",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P54",
+                "P53"
+              ],
+              "links": [
+                "G52"
+              ],
+              "stop_node": "P53",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P38"
+              ],
+              "links": [
+                "G37"
+              ],
+              "stop_node": "P38",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        },
+        {
+          "event_id": "P48:E001",
+          "node_id": "P48",
+          "old_node_count": 4,
+          "old_link_count": 3,
+          "new_node_count": 18,
+          "new_link_count": 17,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P38": [
+              "confluence"
+            ],
+            "P46": [
+              "confluence"
+            ],
+            "P47": [
+              "terminal"
+            ],
+            "P49": [
+              "terminal"
+            ],
+            "P51": [
+              "terminal"
+            ],
+            "P53": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P48",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P48",
+                "P46"
+              ],
+              "links": [
+                "G45"
+              ],
+              "stop_node": "P46",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P48",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P48",
+                "P47"
+              ],
+              "links": [
+                "G46"
+              ],
+              "stop_node": "P47",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P48",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P48",
+                "P50",
+                "P52",
+                "P54",
+                "P55",
+                "P57",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G47",
+                "G49",
+                "G51",
+                "G53",
+                "G54",
+                "G56",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P50",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P50",
+                "P49"
+              ],
+              "links": [
+                "G48"
+              ],
+              "stop_node": "P49",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P52",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P52",
+                "P51"
+              ],
+              "links": [
+                "G50"
+              ],
+              "stop_node": "P51",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P54",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P54",
+                "P53"
+              ],
+              "links": [
+                "G52"
+              ],
+              "stop_node": "P53",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P38"
+              ],
+              "links": [
+                "G37"
+              ],
+              "stop_node": "P38",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        },
+        {
+          "event_id": "P6:E001",
+          "node_id": "P6",
+          "old_node_count": 4,
+          "old_link_count": 3,
+          "new_node_count": 32,
+          "new_link_count": 31,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P10": [
+              "terminal"
+            ],
+            "P12": [
+              "terminal"
+            ],
+            "P30": [
+              "confluence"
+            ],
+            "P31": [
+              "terminal"
+            ],
+            "P33": [
+              "terminal"
+            ],
+            "P35": [
+              "terminal"
+            ],
+            "P37": [
+              "terminal"
+            ],
+            "P4": [
+              "confluence"
+            ],
+            "P5": [
+              "terminal"
+            ],
+            "P54": [
+              "confluence"
+            ],
+            "P8": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P6",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P6",
+                "P4"
+              ],
+              "links": [
+                "G4"
+              ],
+              "stop_node": "P4",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P6",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P6",
+                "P5"
+              ],
+              "links": [
+                "G5"
+              ],
+              "stop_node": "P5",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P6",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P6",
+                "P7",
+                "P9",
+                "P11",
+                "P13",
+                "P14",
+                "P16",
+                "P32",
+                "P34",
+                "P36",
+                "P38",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G6",
+                "G7",
+                "G9",
+                "G11",
+                "G13",
+                "G14",
+                "G15",
+                "G31",
+                "G33",
+                "G35",
+                "G37",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P9",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P9",
+                "P8"
+              ],
+              "links": [
+                "G8"
+              ],
+              "stop_node": "P8",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P11",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P11",
+                "P10"
+              ],
+              "links": [
+                "G10"
+              ],
+              "stop_node": "P10",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P13",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P13",
+                "P12"
+              ],
+              "links": [
+                "G12"
+              ],
+              "stop_node": "P12",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P32",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P32",
+                "P30"
+              ],
+              "links": [
+                "G29"
+              ],
+              "stop_node": "P30",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P32",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P32",
+                "P31"
+              ],
+              "links": [
+                "G30"
+              ],
+              "stop_node": "P31",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P34",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P34",
+                "P33"
+              ],
+              "links": [
+                "G32"
+              ],
+              "stop_node": "P33",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P36",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P36",
+                "P35"
+              ],
+              "links": [
+                "G34"
+              ],
+              "stop_node": "P35",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P38",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P38",
+                "P37"
+              ],
+              "links": [
+                "G36"
+              ],
+              "stop_node": "P37",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P57",
+                "P55",
+                "P54"
+              ],
+              "links": [
+                "G56",
+                "G54",
+                "G53"
+              ],
+              "stop_node": "P54",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        },
+        {
+          "event_id": "P7:E001",
+          "node_id": "P7",
+          "old_node_count": 3,
+          "old_link_count": 2,
+          "new_node_count": 30,
+          "new_link_count": 29,
+          "boundary_nodes": {
+            "E1": [
+              "special_node:OUTFALLS"
+            ],
+            "P10": [
+              "terminal"
+            ],
+            "P12": [
+              "terminal"
+            ],
+            "P30": [
+              "confluence"
+            ],
+            "P31": [
+              "terminal"
+            ],
+            "P33": [
+              "terminal"
+            ],
+            "P35": [
+              "terminal"
+            ],
+            "P37": [
+              "terminal"
+            ],
+            "P54": [
+              "confluence"
+            ],
+            "P6": [
+              "confluence"
+            ],
+            "P8": [
+              "terminal"
+            ]
+          },
+          "traces": [
+            {
+              "origin_node": "P7",
+              "direction": "upstream",
+              "role": "main",
+              "nodes": [
+                "P7",
+                "P6"
+              ],
+              "links": [
+                "G6"
+              ],
+              "stop_node": "P6",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P7",
+              "direction": "downstream",
+              "role": "main",
+              "nodes": [
+                "P7",
+                "P9",
+                "P11",
+                "P13",
+                "P14",
+                "P16",
+                "P32",
+                "P34",
+                "P36",
+                "P38",
+                "P58",
+                "E1"
+              ],
+              "links": [
+                "G7",
+                "G9",
+                "G11",
+                "G13",
+                "G14",
+                "G15",
+                "G31",
+                "G33",
+                "G35",
+                "G37",
+                "G57"
+              ],
+              "stop_node": "E1",
+              "stop_reason": "special_node:OUTFALLS"
+            },
+            {
+              "origin_node": "P9",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P9",
+                "P8"
+              ],
+              "links": [
+                "G8"
+              ],
+              "stop_node": "P8",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P11",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P11",
+                "P10"
+              ],
+              "links": [
+                "G10"
+              ],
+              "stop_node": "P10",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P13",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P13",
+                "P12"
+              ],
+              "links": [
+                "G12"
+              ],
+              "stop_node": "P12",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P32",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P32",
+                "P30"
+              ],
+              "links": [
+                "G29"
+              ],
+              "stop_node": "P30",
+              "stop_reason": "confluence"
+            },
+            {
+              "origin_node": "P32",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P32",
+                "P31"
+              ],
+              "links": [
+                "G30"
+              ],
+              "stop_node": "P31",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P34",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P34",
+                "P33"
+              ],
+              "links": [
+                "G32"
+              ],
+              "stop_node": "P33",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P36",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P36",
+                "P35"
+              ],
+              "links": [
+                "G34"
+              ],
+              "stop_node": "P35",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P38",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P38",
+                "P37"
+              ],
+              "links": [
+                "G36"
+              ],
+              "stop_node": "P37",
+              "stop_reason": "terminal"
+            },
+            {
+              "origin_node": "P58",
+              "direction": "upstream",
+              "role": "side_branch",
+              "nodes": [
+                "P58",
+                "P57",
+                "P55",
+                "P54"
+              ],
+              "links": [
+                "G56",
+                "G54",
+                "G53"
+              ],
+              "stop_node": "P54",
+              "stop_reason": "confluence"
+            }
+          ],
+          "status": "complete_for_policy"
+        }
+      ],
+      "evidence_files": [
+        "evidence_package.json"
+      ],
+      "P6_scalar_facts": {
+        "total_flooding_volume": 16.282015116,
+        "max_flooding_flow": 79.3601532,
+        "flooding_duration": 5.0,
+        "overflow_event_count": 1.0,
+        "max_node_depth": 1.0
+      },
+      "prompts": [
+        {
+          "question": "全局洪涝诊断",
+          "visible_rows": 57,
+          "request_characters": 222868,
+          "component_characters": {
+            "task": 78,
+            "visible_evidence": 200172,
+            "evidence_shared_metadata": 301,
+            "hydraulic_structure": 15333,
+            "evidence_run": 90,
+            "evidence_source_files": 192,
+            "evidence_selection": 1351,
+            "evidence_overview": 914,
+            "inventory": 1027,
+            "observations": 117,
+            "previous_diagnosis": 4,
+            "verification_feedback": 4,
+            "transport_integrity": 25,
+            "context_policy": 124
+          },
+          "transport_status": "no_local_cap",
+          "transport_error": null,
+          "transport_integrity": "json_roundtrip_verified",
+          "context_policy": {
+            "local_character_limit": 0,
+            "local_limit_enabled": false,
+            "provider_token_limit": "separate; not inferred from character count"
+          },
+          "event_count": 7,
+          "process_sample_count": 40,
+          "lossless": true,
+          "rainfall_visible": true
+        },
+        {
+          "question": "分析P6",
+          "visible_rows": 384,
+          "request_characters": 132045,
+          "component_characters": {
+            "task": 74,
+            "visible_evidence": 111281,
+            "evidence_shared_metadata": 3564,
+            "hydraulic_structure": 11027,
+            "evidence_run": 90,
+            "evidence_source_files": 236,
+            "evidence_selection": 930,
+            "evidence_overview": 914,
+            "inventory": 518,
+            "observations": 118,
+            "previous_diagnosis": 4,
+            "verification_feedback": 4,
+            "transport_integrity": 25,
+            "context_policy": 124
+          },
+          "transport_status": "no_local_cap",
+          "transport_error": null,
+          "transport_integrity": "json_roundtrip_verified",
+          "context_policy": {
+            "local_character_limit": 0,
+            "local_limit_enabled": false,
+            "provider_token_limit": "separate; not inferred from character count"
+          },
+          "event_count": 1,
+          "process_sample_count": 8,
+          "lossless": true,
+          "rainfall_visible": true
+        },
+        {
+          "question": "分析P6:E001",
+          "visible_rows": 384,
+          "request_characters": 132057,
+          "component_characters": {
+            "task": 85,
+            "visible_evidence": 111281,
+            "evidence_shared_metadata": 3564,
+            "hydraulic_structure": 11027,
+            "evidence_run": 90,
+            "evidence_source_files": 236,
+            "evidence_selection": 931,
+            "evidence_overview": 914,
+            "inventory": 518,
+            "observations": 118,
+            "previous_diagnosis": 4,
+            "verification_feedback": 4,
+            "transport_integrity": 25,
+            "context_policy": 124
+          },
+          "transport_status": "no_local_cap",
+          "transport_error": null,
+          "transport_integrity": "json_roundtrip_verified",
+          "context_policy": {
+            "local_character_limit": 0,
+            "local_limit_enabled": false,
+            "provider_token_limit": "separate; not inferred from character count"
+          },
+          "event_count": 1,
+          "process_sample_count": 8,
+          "lossless": true,
+          "rainfall_visible": true
+        }
+      ],
+      "original_files_unchanged": true
+    },
+    {
+      "run_id": "chicago_triple_event__baseline__20260927_203812",
+      "package_rows": 39460,
+      "event_count": 0,
+      "overflow_node_count": 0,
+      "event_facts_and_direct_composition_unchanged": true,
+      "historical_local_process_preserved": true,
+      "expanded_process_matches_saved_outputs": true,
+      "topology_scopes": [],
+      "evidence_files": [
+        "evidence_package.json"
+      ],
+      "P6_scalar_facts": {
+        "total_flooding_volume": 0.0,
+        "max_flooding_flow": 0.0,
+        "flooding_duration": 0.0,
+        "overflow_event_count": 0.0,
+        "max_node_depth": 0.63765341
+      },
+      "prompts": [
+        {
+          "question": "全局洪涝诊断",
+          "visible_rows": 15,
+          "request_characters": 27665,
+          "component_characters": {
+            "task": 78,
+            "visible_evidence": 21593,
+            "evidence_shared_metadata": 2,
+            "hydraulic_structure": 2,
+            "evidence_run": 90,
+            "evidence_source_files": 154,
+            "evidence_selection": 683,
+            "evidence_overview": 770,
+            "inventory": 883,
+            "observations": 117,
+            "previous_diagnosis": 4,
+            "verification_feedback": 4,
+            "transport_integrity": 25,
+            "context_policy": 124
+          },
+          "transport_status": "no_local_cap",
+          "transport_error": null,
+          "transport_integrity": "json_roundtrip_verified",
+          "context_policy": {
+            "local_character_limit": 0,
+            "local_limit_enabled": false,
+            "provider_token_limit": "separate; not inferred from character count"
+          },
+          "event_count": 0,
+          "process_sample_count": 0,
+          "lossless": true,
+          "rainfall_visible": true
+        },
+        {
+          "question": "分析P6",
+          "visible_rows": 6,
+          "request_characters": 8821,
+          "component_characters": {
+            "task": 74,
+            "visible_evidence": 3161,
+            "evidence_shared_metadata": 2,
+            "hydraulic_structure": 2,
+            "evidence_run": 90,
+            "evidence_source_files": 176,
+            "evidence_selection": 763,
+            "evidence_overview": 770,
+            "inventory": 374,
+            "observations": 116,
+            "previous_diagnosis": 4,
+            "verification_feedback": 4,
+            "transport_integrity": 25,
+            "context_policy": 124
+          },
+          "transport_status": "no_local_cap",
+          "transport_error": null,
+          "transport_integrity": "json_roundtrip_verified",
+          "context_policy": {
+            "local_character_limit": 0,
+            "local_limit_enabled": false,
+            "provider_token_limit": "separate; not inferred from character count"
+          },
+          "event_count": 0,
+          "process_sample_count": 0,
+          "lossless": true,
+          "rainfall_visible": true
+        }
+      ],
+      "original_files_unchanged": true
+    }
+  ]
+}

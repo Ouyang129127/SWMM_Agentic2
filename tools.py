@@ -12,12 +12,7 @@ from typing_extensions import Annotated
 from ca2d import check_static_model, create_demo_static_model, run_ca2d_simulation
 from simulation_timing import load_timing, export_native_reports
 from workflow_agents import (
-    build_evidence_for_run as _build_evidence_for_run,
-    build_evidence_graph_for_run as _build_evidence_graph_for_run,
-    diagnose_run_from_evidence as _diagnose_run_from_evidence,
-    generate_report_for_request as _generate_report_for_request,
     run_workflow_stage as _run_workflow_stage,
-    verify_diagnosis_claims as _verify_diagnosis_claims,
 )
 
 APP_ROOT = Path(__file__).resolve().parent
@@ -1262,8 +1257,6 @@ def parse_and_convert_to_markdown(txt_path, md_path):
         "TextMessage (user)": "user",
         "TextMessage (Orchestrator)": "Orchestrator",
         "TextMessage (TaskExecutor)": "TaskExecutor",
-        "TextMessage (CodeRunner)": "CodeRunner",
-        "TextMessage (DataAnalyzer)": "DataAnalyzer",
         "ToolCallRequestEvent": "TOOL CALL",
         "ToolCallExecutionEvent": "TOOL RESULT",
         "ToolCallSummaryMessage": "TOOL SUMMARY",
@@ -1305,68 +1298,8 @@ def build_run_evidence(
         "Run ID under models/<model_name>/runs/.",
     ] = "",
 ) -> str:
-    result = _build_evidence_for_run(model_name=model_name, run_id=run_id)
-    return "EvidenceBuilderAgent completed:\n" + json.dumps(result, ensure_ascii=False, indent=2)
-
-
-def build_run_evidence_graph(
-    model_name: Annotated[
-        str,
-        "Name of a SWMM-2D model project under the project-root models/ directory.",
-    ] = "",
-    run_id: Annotated[
-        str,
-        "Run ID under models/<model_name>/runs/.",
-    ] = "",
-    anchor_limit: Annotated[
-        int,
-        "Maximum number of major overflow nodes to package.",
-    ] = 10,
-    neighbor_mode: Annotated[
-        str,
-        "Surface cell neighborhood mode: 4-neighbor or 8-neighbor.",
-    ] = "8-neighbor",
-    max_trace_depth: Annotated[
-        int,
-        "Maximum upstream/downstream link tracing depth from each overflow node.",
-    ] = 8,
-) -> str:
-    result = _build_evidence_graph_for_run(
-        model_name=model_name,
-        run_id=run_id,
-        anchor_limit=anchor_limit,
-        neighbor_mode=neighbor_mode,
-        max_trace_depth=max_trace_depth,
-    )
-    return "EvidenceGraphBuilder completed:\n" + json.dumps(result, ensure_ascii=False, indent=2)
-
-
-def diagnose_run(
-    model_name: Annotated[
-        str,
-        "Name of a SWMM-2D model project under the project-root models/ directory.",
-    ] = "",
-    run_id: Annotated[
-        str,
-        "Run ID under models/<model_name>/runs/.",
-    ] = "",
-) -> str:
-    result = _diagnose_run_from_evidence(model_name=model_name, run_id=run_id)
-    return "DiagnosisAgent completed:\n" + json.dumps(result, ensure_ascii=False, indent=2)
-
-
-def verify_run_diagnosis(
-    model_name: Annotated[
-        str,
-        "Name of a SWMM-2D model project under the project-root models/ directory.",
-    ] = "",
-    run_id: Annotated[
-        str,
-        "Run ID under models/<model_name>/runs/.",
-    ] = "",
-) -> str:
-    result = _verify_diagnosis_claims(model_name=model_name, run_id=run_id)
-    return "VerificationAgent completed:\n" + json.dumps(result, ensure_ascii=False, indent=2)
+    result = _run_workflow_stage(model_name=model_name, run_id=run_id, target_stage="evidence_building")
+    return json.dumps(result, ensure_ascii=False, indent=2)
 
 
 def run_workflow_stage(
@@ -1380,11 +1313,11 @@ def run_workflow_stage(
     ] = "",
     target_stage: Annotated[
         str,
-        "Optional exact stage: evidence_building, diagnosis, or verification. Empty means next legal stage.",
+        "Only evidence_building is supported; diagnosis requires a task_id.",
     ] = "",
     until_stage: Annotated[
         str,
-        "Optional final stage to reach sequentially: evidence_building, diagnosis, or verification.",
+        "Only evidence_building; task investigation is advanced separately.",
     ] = "",
     rerun: Annotated[
         bool,
@@ -1399,21 +1332,3 @@ def run_workflow_stage(
         rerun=rerun,
     )
     return "StatefulOrchestrator completed:\n" + json.dumps(result, ensure_ascii=False, indent=2)
-
-
-def generate_run_report(
-    model_name: Annotated[
-        str,
-        "Name of a SWMM-2D model project under the project-root models/ directory.",
-    ] = "",
-    run_id: Annotated[
-        str,
-        "Run ID under models/<model_name>/runs/. The run must be VERIFIED_READY.",
-    ] = "",
-    message: Annotated[
-        str,
-        "User-facing report request, such as full report, summary, or one-point cause explanation.",
-    ] = "",
-) -> str:
-    result = _generate_report_for_request(model_name=model_name, run_id=run_id, message=message)
-    return "ReportAgent completed:\n" + result["markdown"]

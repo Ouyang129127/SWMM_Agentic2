@@ -10,14 +10,12 @@ from typing import Any
 from .schemas import (
     COMPLETED_STAGE_BY_STATE,
     EVIDENCE_READY,
-    DIAGNOSIS_READY,
     FAILED,
     NO_SURFACE_INFLOW,
     NEXT_STAGE_BY_STATE,
     RUN_READY,
     SCENARIO_READY,
     START,
-    VERIFIED_READY,
     WORKFLOW_SCHEMA_NAME,
     WORKFLOW_SCHEMA_VERSION,
     artifacts_for_run,
@@ -71,17 +69,22 @@ def _rel(run_root: Path, path: Path) -> str:
         return str(path)
 
 
+def _has_current_evidence(run_root: Path) -> bool:
+    from .evidence_package import load_package
+    try:
+        load_package(run_root)
+    except (FileNotFoundError, ValueError):
+        return False
+    return True
+
+
 def infer_state_from_artifacts(run_root: Path) -> str:
     artifacts = artifacts_for_run(run_root)
-    if artifacts.verification_report.exists() and artifacts.unsupported_rate.exists():
-        return VERIFIED_READY
-    if artifacts.diagnosis_claims.exists() and artifacts.risk_ranking.exists():
-        return DIAGNOSIS_READY
-    if artifacts.evidence_table.exists() and artifacts.evidence_summary.exists():
+    if _has_current_evidence(run_root):
         return EVIDENCE_READY
-    if artifacts.run_summary.exists() and artifacts.swmm_node_flooding.exists() and artifacts.ca2d_surface_depth.exists():
+    if artifacts.run_summary.exists() and artifacts.swmm_nodes.exists() and artifacts.swmm_links.exists() and artifacts.ca2d_surface_depth.exists():
         return RUN_READY
-    if artifacts.run_summary.exists() and artifacts.swmm_node_flooding.exists():
+    if artifacts.run_summary.exists() and artifacts.swmm_nodes.exists() and artifacts.swmm_links.exists():
         try:
             summary = json.loads(artifacts.run_summary.read_text(encoding="utf-8"))
             if summary.get("ca2d", {}).get("status") == NO_SURFACE_INFLOW:
@@ -97,18 +100,14 @@ def build_state(model_name: str, run_id: str, run_root: Path, state: str | None 
     artifacts = artifacts_for_run(run_root)
     current_state = state or infer_state_from_artifacts(run_root)
     completed = []
-    for candidate in [SCENARIO_READY, RUN_READY, EVIDENCE_READY, DIAGNOSIS_READY, VERIFIED_READY]:
+    for candidate in [SCENARIO_READY, RUN_READY, EVIDENCE_READY]:
         stage = COMPLETED_STAGE_BY_STATE[candidate]
         if candidate == SCENARIO_READY:
             ok = artifacts.scenario_request.exists()
         elif candidate == RUN_READY:
             ok = artifacts.run_summary.exists()
-        elif candidate == EVIDENCE_READY:
-            ok = artifacts.evidence_table.exists() and artifacts.evidence_summary.exists()
-        elif candidate == DIAGNOSIS_READY:
-            ok = artifacts.diagnosis_claims.exists() and artifacts.risk_ranking.exists()
         else:
-            ok = artifacts.verification_report.exists() and artifacts.unsupported_rate.exists()
+            ok = _has_current_evidence(run_root)
         if ok:
             completed.append(stage)
 
@@ -128,15 +127,7 @@ def build_state(model_name: str, run_id: str, run_root: Path, state: str | None 
             "swmm_nodes": _rel(run_root, artifacts.swmm_nodes),
             "swmm_links": _rel(run_root, artifacts.swmm_links),
             "ca2d_surface_depth": _rel(run_root, artifacts.ca2d_surface_depth),
-            "evidence_table": _rel(run_root, artifacts.evidence_table),
-            "evidence_summary": _rel(run_root, artifacts.evidence_summary),
-            "rainfall_context": _rel(run_root, artifacts.rainfall_context),
-            "evidence_relation_table": _rel(run_root, artifacts.evidence_relation_table),
-            "overflow_node_evidence_packages": _rel(run_root, artifacts.overflow_node_evidence_packages),
-            "diagnosis_claims": _rel(run_root, artifacts.diagnosis_claims),
-            "risk_ranking": _rel(run_root, artifacts.risk_ranking),
-            "verification_report": _rel(run_root, artifacts.verification_report),
-            "unsupported_rate": _rel(run_root, artifacts.unsupported_rate),
+            "evidence_package": _rel(run_root, artifacts.evidence_package),
         },
         "errors": errors or [],
         "updated_at": datetime.now().isoformat(timespec="seconds"),
@@ -148,7 +139,17 @@ def load_or_initialize_state(model_name: str, run_id: str) -> tuple[Path, dict[s
     model_name = run_root.parents[1].name
     state_path = run_root / "workflow_state.json"
     if state_path.exists():
-        return run_root, json.loads(state_path.read_text(encoding="utf-8"))
+        existing = json.loads(state_path.read_text(encoding="utf-8"))
+        if existing.get('schema_version') == WORKFLOW_SCHEMA_VERSION and existing.get('state') in NEXT_STAGE_BY_STATE:
+            if existing.get('model_name') != model_name or existing.get('run_id') != run_id:
+                raise ValueError('Workflow state belongs to another model/run')
+            if existing['state'] == EVIDENCE_READY:
+                if not _has_current_evidence(run_root):
+                    return run_root, build_state(model_name, run_id, run_root)
+            existing['next_allowed_stage'] = NEXT_STAGE_BY_STATE[existing['state']]
+            return run_root, existing
+        # Obsolete run-level diagnosis artifacts never count as new completion.
+        return run_root, build_state(model_name, run_id, run_root)
     state = build_state(model_name, run_id, run_root)
     save_state(run_root, state)
     return run_root, state

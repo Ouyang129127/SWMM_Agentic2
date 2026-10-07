@@ -1,0 +1,6 @@
+{
+  "workflow_agents/reporting/narrative.py": "604bb1e3d9a7de3ed91299990d10a27f5c153b6db02974418ff06305c06a4415",
+  "workflow_agents/reporting/pipeline.py": "f5b322b7757f831ca34362f4d3c8c4c833ec84b7b170ee3d94295a2d1efa2fb8",
+  "workflow_agents/reporting/prompts/event_rewrite_v1.md": "697b721704e7a2b7fd939474d7afe621c3c4a7a914b12f6d8bfc87bb71d12552",
+  "tests/test_report_agent.py": "1b94db01cdac819458e5f9b7fe190971abd30cbafdb53e20d33d26f1d523270b"
+}

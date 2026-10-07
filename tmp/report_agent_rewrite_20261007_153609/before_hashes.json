@@ -1,0 +1,8 @@
+{
+  "workflow_agents/reporting/narrative.py": "6dae8ffeffc1aed560576fccaf7e05fedeab52ab7d0a615021e103e997cc0e0b",
+  "workflow_agents/reporting/pipeline.py": "710cb3def2b8a9dd6957d758d635ec768ea3301b8718b67199db16d6fe3356c8",
+  "workflow_agents/reporting/render.py": "6a9a4415f6bf02e1096d5a24730735844be4e2046aa5c80cf3fd83090463706c",
+  "workflow_agents/reporting/README.md": "abe5fae26277e8aa7601deaca8812f9a0e23b9dd92edc8a1b8ff49b4706333fd",
+  "tests/test_report_agent.py": "5b26bb2309b8c9807d8c7f58b921a38edbc3fb0095dcb0118cd42f32ee570bd9",
+  "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__20261005_104641\\diagnosis_tasks\\6b2fbc831220478db26b1006c694e884\\display_reports\\r2\\20261007_114033_fa589dd9\\模拟诊断报告.html": "1f168a675267bf52e049a1a3aa7cc919e148a648bc7fdc1f5f21421ab55d9206"
+}

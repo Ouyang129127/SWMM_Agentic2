@@ -69,7 +69,6 @@ deepseek_flash = DeepSeekFlashClient(
     },
     temperature=0,
     reasoning_effort="high",
-    max_tokens=12000,
     timeout=request_timeout_seconds,
 )
 

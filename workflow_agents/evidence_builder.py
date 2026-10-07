@@ -1,29 +1,22 @@
-"""Deterministic EvidenceBuilderAgent core."""
-
-from __future__ import annotations
-
+"""Deterministic EvidenceBuilder: one package, all saved events, no LLM."""
+import hashlib
 import json
+from collections import Counter
 from pathlib import Path
-from typing import Any
 
+import numpy as np
 import pandas as pd
 
-from .rainfall_context import build_rainfall_context, write_rainfall_context
-from .schemas import EVIDENCE_SCHEMA_NAME, WORKFLOW_SCHEMA_VERSION, artifacts_for_run
-from .state import resolve_run_root
+from .rainfall_context import build_rainfall_context
+from .event_packages import build_event_evidence, parse_run_input
+from .evidence_package import PACKAGE_SCHEMA, PACKAGE_VERSION, write_package
+from .reference_checks import sha256_file
 from .sampled_events import identify_events
-from .first_pass_evidence import build_first_pass
-
+from .state import resolve_run_root
 
 POSITIVE_FLOW_LS = 1e-9
 POSITIVE_DEPTH_M = 0.005
-FULLNESS_HIGH_RATIO = 0.80
-FULLNESS_NEAR_FULL_RATIO = 0.95
-FULLNESS_SURCHARGE_RATIO = 1.00
-FLOW_DIRECTION_CHANGE_THRESHOLD = 3
 FLOW_DIRECTION_EPS_LS = 1e-6
-REPEATED_OVERFLOW_EVENT_THRESHOLD = 2
-
 
 def _interval_volume(group: pd.DataFrame) -> float:
     group = group.sort_values("DateTime")
@@ -39,434 +32,152 @@ def _interval_duration(times: pd.Series, selected: pd.Series) -> float:
     return float(minutes[frame["selected"]].sum())
 
 
-def _load_summary(run_root: Path) -> dict[str, Any]:
-    path = run_root / "summary.json"
+def _read_tsv(path, object_column, fields):
     if not path.exists():
-        raise FileNotFoundError(f"Missing run summary: {path}")
-    return json.loads(path.read_text(encoding="utf-8"))
+        raise FileNotFoundError(f'Missing source file: {path}')
+    df = pd.read_csv(path, sep='\t', dtype={object_column: str})
+    missing = {object_column, 'date', 'time', *fields} - set(df.columns)
+    if missing or df.empty:
+        raise ValueError(f'Empty or incomplete source table: {path}; missing={sorted(missing)}')
+    if df[object_column].isna().any():
+        raise ValueError(f'Missing object ID: {path}')
+    df['DateTime'] = pd.to_datetime(df['date'].astype(str) + ' ' + df['time'].astype(str), errors='raise')
+    if df.duplicated([object_column, 'DateTime']).any():
+        raise ValueError(f'Duplicate object timestamps: {path}')
+    for field in fields:
+        df[field] = pd.to_numeric(df[field], errors='raise')
+        if not np.isfinite(df[field]).all():
+            raise ValueError(f'Non-finite {field}: {path}; missing values are not zero')
+    return df.sort_values([object_column, 'DateTime'])
 
 
-def _resolve_rainfall_file(summary: dict[str, Any], run_root: Path) -> Path:
-    for key in ["simulation_rainfall_file", "rainfall_event_copy", "rainfall_file"]:
-        value = summary.get(key)
-        if value:
-            path = Path(str(value))
-            if path.exists():
+def _rainfall_path(root, summary):
+    for key in ('simulation_rainfall_file', 'rainfall_event_copy', 'rainfall_file'):
+        if summary.get(key):
+            path = Path(summary[key])
+            if path.is_file():
                 return path
-            candidate = run_root / str(value)
-            if candidate.exists():
-                return candidate
-    candidate = run_root / "rainfall_event.txt"
-    return candidate
+            if (root / path).is_file():
+                return root / path
+    return root / 'rainfall_event.txt'
 
 
-def _read_tsv(path: Path, required_columns: set[str]) -> pd.DataFrame:
-    if not path.exists():
-        raise FileNotFoundError(f"Missing source file: {path}")
-    df = pd.read_csv(path, sep="\t")
-    missing = required_columns - set(df.columns)
-    if missing:
-        raise ValueError(f"{path} missing columns: {sorted(missing)}")
-    return df
-
-
-def _time_columns(df: pd.DataFrame) -> pd.Series:
-    return pd.to_datetime(df["date"].astype(str) + " " + df["time"].astype(str), errors="coerce")
-
-
-def _infer_step_minutes(times: pd.Series) -> float:
-    unique_times = sorted(pd.Timestamp(value) for value in times.dropna().unique())
-    if len(unique_times) < 2:
-        return 0.0
-    deltas = [
-        (unique_times[idx + 1] - unique_times[idx]).total_seconds() / 60.0
-        for idx in range(len(unique_times) - 1)
-        if unique_times[idx + 1] > unique_times[idx]
-    ]
-    return min(deltas) if deltas else 0.0
-
-
-def _base_row(summary: dict[str, Any], run_root: Path, source_file: Path, object_type: str, object_id: str, metric_name: str) -> dict[str, Any]:
-    return {
-        "run_id": summary.get("run_id", run_root.name),
-        "event_name": summary.get("event_name", ""),
-        "scenario_name": summary.get("scenario_name", ""),
-        "source_model": summary.get("model_name", ""),
-        "source_file": str(source_file.relative_to(run_root)).replace("\\", "/"),
-        "object_type": object_type,
-        "object_id": str(object_id),
-        "metric_name": metric_name,
-    }
-
-
-def _rank_metric(rows: list[dict[str, Any]], metric_name: str, descending: bool = True) -> None:
-    subset = [row for row in rows if row["metric_name"] == metric_name]
-    subset.sort(key=lambda row: float(row["value"]), reverse=descending)
-    for rank, row in enumerate(subset, start=1):
-        row["rank"] = rank
-
-
-def _flow_direction_changes(flow: pd.Series) -> int:
-    signs = []
-    for value in flow:
-        if value > FLOW_DIRECTION_EPS_LS:
-            sign = 1
-        elif value < -FLOW_DIRECTION_EPS_LS:
-            sign = -1
-        else:
-            continue
-        if not signs or signs[-1] != sign:
-            signs.append(sign)
-    if len(signs) < 2:
-        return 0
-    return len(signs) - 1
-
-
-def _positive_event_count(values: pd.Series, threshold: float) -> int:
-    """Count positive-event segments in a time-ordered numeric series."""
-    event_count = 0
-    in_event = False
-    for value in values:
-        positive = value > threshold
-        if positive and not in_event:
-            event_count += 1
-        in_event = positive
-    return event_count
-
-
-def _parse_link_full_depths(run_root: Path) -> dict[str, float]:
-    """Read SWMM [XSECTIONS] Geom1 as the full-depth reference for each link."""
-    candidates = [
-        run_root / "swmm" / "model_with_event.inp",
-        run_root.parents[1] / "swmm" / "scenarios" / "baseline" / "Model.inp",
-        run_root.parents[1] / "swmm" / "scenarios" / "baseline" / "model.inp",
-        run_root.parents[1] / "swmm" / "Model.inp",
-        run_root.parents[1] / "swmm" / "model.inp",
-    ]
-    inp_path = next((path for path in candidates if path.exists()), None)
-    if inp_path is None:
-        return {}
-
-    full_depths: dict[str, float] = {}
-    in_xsections = False
-    for raw_line in inp_path.read_text(encoding="utf-8", errors="ignore").splitlines():
-        line = raw_line.strip()
-        if not line:
-            continue
-        if line.startswith("["):
-            in_xsections = line.upper() == "[XSECTIONS]"
-            continue
-        if not in_xsections or line.startswith(";"):
-            continue
-        parts = line.split()
-        if len(parts) < 3:
-            continue
+def build_evidence_for_run(model_name, run_id):
+    root = resolve_run_root(model_name, run_id)
+    model_name, run_id = root.parents[1].name, root.name
+    summary_path = root / 'summary.json'
+    summary = json.loads(summary_path.read_text(encoding='utf-8'))
+    if summary.get('run_id', run_id) != run_id or summary.get('model_name', model_name) != model_name:
+        raise ValueError('Run summary belongs to another model/run')
+    rain_path = _rainfall_path(root, summary)
+    sources = [summary_path, root / 'swmm/model_with_event.inp', root / 'swmm/model.out',
+               root / 'swmm/nodes.tsv', root / 'swmm/links.tsv', root / 'ca2d/surface_depth.tsv', rain_path]
+    def source_name(path):
         try:
-            full_depth = float(parts[2])
+            return path.relative_to(root).as_posix()
         except ValueError:
-            continue
-        if full_depth > 0:
-            full_depths[str(parts[0])] = full_depth
-    return full_depths
-
-
-def build_evidence_for_run(model_name: str, run_id: str) -> dict[str, Any]:
-    """Build evidence_table.csv and evidence_summary.json for one completed run."""
-    run_root = resolve_run_root(model_name, run_id)
-    summary = _load_summary(run_root)
-    interval_timing = bool(summary.get("simulation_timing"))
-    artifacts = artifacts_for_run(run_root)
-    evidence_dir = run_root / "evidence"
-    evidence_dir.mkdir(parents=True, exist_ok=True)
-    rainfall_context = build_rainfall_context(
-        _resolve_rainfall_file(summary, run_root),
-        event_name=str(summary.get("event_name", "")),
-        run_id=str(summary.get("run_id", run_root.name)),
-        model_name=str(summary.get("model_name", run_root.parents[1].name)),
-        scenario_name=str(summary.get("scenario_name", "")),
-    )
-    write_rainfall_context(artifacts.rainfall_context, rainfall_context)
-
-    rows: list[dict[str, Any]] = []
-    overflow_event_rows: list[dict[str, Any]] = []
-
-    flooding = _read_tsv(artifacts.swmm_node_flooding, {"node_id", "date", "time", "flow_Ls"})
-    flooding["DateTime"] = _time_columns(flooding)
-    flooding["flow_Ls"] = pd.to_numeric(flooding["flow_Ls"], errors="coerce").fillna(0.0)
-    step_minutes = _infer_step_minutes(flooding["DateTime"])
-    step_seconds = step_minutes * 60.0
-    for node_id, group in flooding.groupby("node_id"):
-        group = group.sort_values("DateTime")
-        positive = group[group["flow_Ls"] > POSITIVE_FLOW_LS]
-        total_volume_m3 = float(group["flow_Ls"].sum() / 1000.0 * step_seconds) if step_seconds else 0.0
-        max_flow = float(group["flow_Ls"].max())
-        duration = float(len(positive) * step_minutes)
-        if interval_timing:
-            total_volume_m3 = _interval_volume(group)
-            duration = _interval_duration(group["DateTime"], group["flow_Ls"] > POSITIVE_FLOW_LS)
-        overflow_event_count = _positive_event_count(group["flow_Ls"], POSITIVE_FLOW_LS)
-        first_time = positive["DateTime"].min() if not positive.empty else group["DateTime"].min()
-        last_time = positive["DateTime"].max() if not positive.empty else group["DateTime"].max()
-        for metric, value, unit, threshold in [
-            ("total_flooding_volume", total_volume_m3, "m3", 0.0),
-            ("max_flooding_flow", max_flow, "L/s", 0.0),
-            ("flooding_duration", duration, "min", 0.0),
-        ]:
-            row = _base_row(summary, run_root, artifacts.swmm_node_flooding, "node", node_id, metric)
-            row.update(
-                {
-                    "value": value,
-                    "unit": unit,
-                    "time_start": "" if pd.isna(first_time) else pd.Timestamp(first_time).isoformat(sep=" "),
-                    "time_end": "" if pd.isna(last_time) else pd.Timestamp(last_time).isoformat(sep=" "),
-                    "duration_minutes": duration,
-                    "rank": "",
-                    "threshold": threshold,
-                    "exceedance_flag": bool(value > threshold),
-                }
-            )
-            rows.append(row)
-        row = _base_row(summary, run_root, artifacts.swmm_node_flooding, "node", node_id, "overflow_event_count")
-        row.update(
-            {
-                "value": float(overflow_event_count),
-                "unit": "count",
-                "time_start": "" if pd.isna(first_time) else pd.Timestamp(first_time).isoformat(sep=" "),
-                "time_end": "" if pd.isna(last_time) else pd.Timestamp(last_time).isoformat(sep=" "),
-                "duration_minutes": duration,
-                "rank": "",
-                "threshold": REPEATED_OVERFLOW_EVENT_THRESHOLD,
-                "exceedance_flag": bool(overflow_event_count >= REPEATED_OVERFLOW_EVENT_THRESHOLD),
-            }
-        )
-        overflow_event_rows.append(row)
-
-    nodes = _read_tsv(artifacts.swmm_nodes, {"node_id", "depth_m", "flooding_Ls", "date", "time"})
-    nodes["DateTime"] = _time_columns(nodes)
-    # node_flooding.tsv may contain only surface-mapped nodes; the event catalog
-    # must use every saved node, not only the CA2D injection subset.
-    event_catalog = identify_events(nodes.rename(columns={'flooding_Ls': 'flow_Ls'}).to_dict('records'), run_root.name, run_root.parents[1].name)
-    nodes["depth_m"] = pd.to_numeric(nodes["depth_m"], errors="coerce").fillna(0.0)
-    for node_id, group in nodes.groupby("node_id"):
-        idx = group["depth_m"].idxmax()
-        max_depth = float(group.loc[idx, "depth_m"])
-        row = _base_row(summary, run_root, artifacts.swmm_nodes, "node", node_id, "max_node_depth")
-        row.update(
-            {
-                "value": max_depth,
-                "unit": "m",
-                "time_start": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
-                "time_end": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
-                "duration_minutes": 0.0,
-                "rank": "",
-                "threshold": 0.0,
-                "exceedance_flag": bool(max_depth > 0.0),
-            }
-        )
+            return str(path.resolve())
+    before = {source_name(path): sha256_file(path) for path in sources if path.is_file()}
+    missing_sources = sorted(source_name(path) for path in sources if not path.exists())
+    model = parse_run_input(root / 'swmm/model_with_event.inp')
+    if not model['available'] or model['options'].get('FLOW_UNITS', '').upper() != 'LPS':
+        raise ValueError('Evidence extraction currently requires the run input with SI/LPS units')
+    nodes = _read_tsv(root / 'swmm/nodes.tsv', 'node_id', ['depth_m', 'flooding_Ls'])
+    if (nodes['flooding_Ls'] < -POSITIVE_FLOW_LS).any():
+        raise ValueError('Negative node flooding is not an overflow observation')
+    catalog = identify_events(nodes.rename(columns={'flooding_Ls': 'flow_Ls'}).to_dict('records'), run_id, model_name)
+    local = build_event_evidence(root, catalog)
+    rows = []
+    def add(group, kind, obj, metric, value, unit, source, method, threshold='', at=None, **details):
+        key = f'{kind}|{obj}|{metric}'
+        start, end = group['DateTime'].min(), group['DateTime'].max()
+        row = {'evidence_id': 'STAT_' + hashlib.sha256(key.encode()).hexdigest()[:20],
+               'source_model': model_name, 'run_id': run_id, 'event_id': '',
+               'event_name': summary.get('event_name', ''), 'scenario_name': summary.get('scenario_name', ''),
+               'object_type': kind, 'object_id': str(obj), 'metric_name': metric,
+               'value': float(value), 'unit': unit, 'source_file': source,
+               'time_start': str(start), 'time_end': str(end),
+               'calculation_method': method, 'threshold': threshold,
+               'at_time': str(at) if at is not None else None, **details}
         rows.append(row)
-
-    links = _read_tsv(artifacts.swmm_links, {"link_id", "flow_Ls", "depth_m", "date", "time"})
-    link_full_depths = _parse_link_full_depths(run_root)
-    links["DateTime"] = _time_columns(links)
-    link_step_minutes = _infer_step_minutes(links["DateTime"])
-    links["signed_flow_Ls"] = pd.to_numeric(links["flow_Ls"], errors="coerce").fillna(0.0)
-    links["flow_Ls"] = links["signed_flow_Ls"].abs()
-    links["depth_m"] = pd.to_numeric(links["depth_m"], errors="coerce").fillna(0.0)
-    for link_id, group in links.groupby("link_id"):
-        for metric, col, unit in [("max_flow", "flow_Ls", "L/s"), ("max_link_depth", "depth_m", "m")]:
-            idx = group[col].idxmax()
-            value = float(group.loc[idx, col])
-            row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, metric)
-            row.update(
-                {
-                    "value": value,
-                    "unit": unit,
-                    "time_start": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
-                    "time_end": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
-                    "duration_minutes": 0.0,
-                    "rank": "",
-                    "threshold": 0.0,
-                    "exceedance_flag": bool(value > 0.0),
-                }
-            )
-            rows.append(row)
-        direction_changes = _flow_direction_changes(group.sort_values("DateTime")["signed_flow_Ls"])
-        row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, "flow_direction_changes")
-        row.update(
-            {
-                "value": float(direction_changes),
-                "unit": "count",
-                "time_start": pd.Timestamp(group["DateTime"].min()).isoformat(sep=" "),
-                "time_end": pd.Timestamp(group["DateTime"].max()).isoformat(sep=" "),
-                "duration_minutes": 0.0,
-                "rank": "",
-                "threshold": FLOW_DIRECTION_CHANGE_THRESHOLD,
-                "exceedance_flag": bool(direction_changes >= FLOW_DIRECTION_CHANGE_THRESHOLD),
-            }
-        )
-        rows.append(row)
-        full_depth = link_full_depths.get(str(link_id))
-        if full_depth:
-            fullness = (group["depth_m"] / full_depth).clip(lower=0.0)
-            idx = fullness.idxmax()
-            max_fullness = float(fullness.loc[idx])
-            row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, "max_fullness")
-            row.update(
-                {
-                    "value": max_fullness,
-                    "unit": "ratio",
-                    "time_start": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
-                    "time_end": pd.Timestamp(group.loc[idx, "DateTime"]).isoformat(sep=" "),
-                    "duration_minutes": 0.0,
-                    "rank": "",
-                    "threshold": FULLNESS_HIGH_RATIO,
-                    "exceedance_flag": bool(max_fullness >= FULLNESS_HIGH_RATIO),
-                }
-            )
-            rows.append(row)
-            for metric, threshold in [
-                ("fullness_ge_0_8_duration", FULLNESS_HIGH_RATIO),
-                ("fullness_ge_0_95_duration", FULLNESS_NEAR_FULL_RATIO),
-                ("surcharge_duration", FULLNESS_SURCHARGE_RATIO),
-            ]:
-                exceedance = group[fullness >= threshold] if metric != "surcharge_duration" else group[fullness > threshold]
-                duration = float(len(exceedance) * link_step_minutes)
-                if interval_timing:
-                    selected = fullness >= threshold if metric != "surcharge_duration" else fullness > threshold
-                    duration = _interval_duration(group["DateTime"], selected)
-                first_time = exceedance["DateTime"].min() if not exceedance.empty else group["DateTime"].min()
-                last_time = exceedance["DateTime"].max() if not exceedance.empty else group["DateTime"].max()
-                duration_row = _base_row(summary, run_root, artifacts.swmm_links, "link", link_id, metric)
-                duration_row.update(
-                    {
-                        "value": duration,
-                        "unit": "min",
-                        "time_start": "" if pd.isna(first_time) else pd.Timestamp(first_time).isoformat(sep=" "),
-                        "time_end": "" if pd.isna(last_time) else pd.Timestamp(last_time).isoformat(sep=" "),
-                        "duration_minutes": duration,
-                        "rank": "",
-                        "threshold": threshold,
-                        "exceedance_flag": bool(duration > 0.0),
-                    }
-                )
-                rows.append(duration_row)
-
-    surface = _read_tsv(artifacts.ca2d_surface_depth, {"Smid", "Date", "Time", "Depth"})
-    surface = surface.rename(columns={"Date": "date", "Time": "time", "Depth": "Depth"})
-    surface["DateTime"] = _time_columns(surface)
-    surface["Depth"] = pd.to_numeric(surface["Depth"], errors="coerce").fillna(0.0)
-    surface_step = _infer_step_minutes(surface["DateTime"])
-    for smid, group in surface.groupby("Smid"):
-        positive = group[group["Depth"] > POSITIVE_DEPTH_M]
-        idx = group["Depth"].idxmax()
-        max_depth = float(group.loc[idx, "Depth"])
-        duration = float(len(positive) * surface_step)
-        if interval_timing:
-            duration = _interval_duration(group["DateTime"], group["Depth"] > POSITIVE_DEPTH_M)
-        first_time = positive["DateTime"].min() if not positive.empty else group["DateTime"].min()
-        last_time = positive["DateTime"].max() if not positive.empty else group["DateTime"].max()
-        for metric, value, unit, threshold in [
-            ("max_depth", max_depth, "m", 0.3),
-            ("ponding_duration", duration, "min", 60.0),
-        ]:
-            row = _base_row(summary, run_root, artifacts.ca2d_surface_depth, "cell", smid, metric)
-            row.update(
-                {
-                    "value": value,
-                    "unit": unit,
-                    "time_start": "" if pd.isna(first_time) else pd.Timestamp(first_time).isoformat(sep=" "),
-                    "time_end": "" if pd.isna(last_time) else pd.Timestamp(last_time).isoformat(sep=" "),
-                    "duration_minutes": duration,
-                    "rank": "",
-                    "threshold": threshold,
-                    "exceedance_flag": bool(value >= threshold),
-                }
-            )
-            rows.append(row)
-
-    rows.extend(overflow_event_rows)
-    for event in event_catalog['events']:
-        for metric, value, unit in [
-            ('event_peak_flooding', event['peak_flooding_Ls'], 'L/s'),
-            ('event_duration', event['duration_minutes'], 'min'),
-            ('event_estimated_volume', event['estimated_volume_m3'], 'm3'),
-        ]:
-            row = _base_row(summary, run_root, artifacts.swmm_node_flooding, 'node', event['node_id'], metric)
-            row.update(event_id=event['event_id'], value=value, unit=unit,
-                       time_start=event['start'], time_end=event['end'],
-                       duration_minutes=event['duration_minutes'], rank='', threshold='',
-                       exceedance_flag='', calculation_method=event['integration_method'])
-            rows.append(row)
-
-    for metric in [
-        "total_flooding_volume",
-        "max_flooding_flow",
-        "flooding_duration",
-        "overflow_event_count",
-        "max_node_depth",
-        "max_flow",
-        "max_link_depth",
-        "max_fullness",
-        "fullness_ge_0_8_duration",
-        "fullness_ge_0_95_duration",
-        "surcharge_duration",
-        "flow_direction_changes",
-        "max_depth",
-        "ponding_duration",
-    ]:
-        _rank_metric(rows, metric)
-
-    for idx, row in enumerate(rows, start=1):
-        prefix = {
-            "node": "N",
-            "link": "L",
-            "cell": "C",
-        }.get(row["object_type"], "E")
-        row["evidence_id"] = f"E_{prefix}_{idx:06d}"
-
-    columns = [
-        "evidence_id",
-        "run_id",
-        "event_name",
-        "event_id",
-        "calculation_method",
-        "scenario_name",
-        "source_model",
-        "source_file",
-        "object_type",
-        "object_id",
-        "metric_name",
-        "value",
-        "unit",
-        "time_start",
-        "time_end",
-        "duration_minutes",
-        "rank",
-        "threshold",
-        "exceedance_flag",
-    ]
-    evidence_df = pd.DataFrame(rows, columns=columns)
-    evidence_df.to_csv(artifacts.evidence_table, index=False, encoding="utf-8")
-
-    summary_payload = {
-        "schema_name": EVIDENCE_SCHEMA_NAME,
-        "schema_version": WORKFLOW_SCHEMA_VERSION,
-        "run_id": summary.get("run_id", run_root.name),
-        "model_name": summary.get("model_name", run_root.parents[1].name),
-        "event_name": summary.get("event_name", ""),
-        "scenario_name": summary.get("scenario_name", ""),
-        "evidence_table": str(artifacts.evidence_table),
-        "evidence_count": int(len(evidence_df)),
-        "overflow_events_file": "evidence/overflow_events.json",
-        "overflow_event_count": len(event_catalog['events']),
-        "first_pass_evidence_file": "evidence/first_pass_evidence.json",
-        "metrics": evidence_df.groupby("metric_name").size().to_dict(),
-        "source_files": sorted(evidence_df["source_file"].unique().tolist()),
-        "rainfall_context": rainfall_context,
-        "rainfall_context_file": str(artifacts.rainfall_context),
-    }
-    first_pass = build_first_pass(run_root, event_catalog)
-    (evidence_dir / 'first_pass_evidence.json').write_text(json.dumps(first_pass, ensure_ascii=False, indent=2, allow_nan=False), encoding='utf-8')
-    artifacts.evidence_summary.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    (evidence_dir / 'overflow_events.json').write_text(json.dumps(event_catalog, ensure_ascii=False, indent=2), encoding='utf-8')
-    return summary_payload
+    for node, group in nodes.groupby('node_id', sort=True):
+        events = [e for e in catalog['events'] if e['node_id'] == node]
+        facts = [('total_flooding_volume', sum(e['estimated_volume_m3'] for e in events), 'm3', 'sum_event_left_sample_volumes'),
+                 ('max_flooding_flow', group['flooding_Ls'].max(), 'L/s', 'maximum_saved_sample'),
+                 ('flooding_duration', sum(e['duration_minutes'] for e in events), 'min', 'sum_event_left_interval_durations'),
+                 ('overflow_event_count', len(events), 'count', 'positive_saved_sample_segments')]
+        for metric, value, unit, method in facts:
+            add(group, 'node', node, metric, value, unit, 'swmm/nodes.tsv', method,
+                at=group.loc[group['flooding_Ls'].idxmax(), 'DateTime'] if metric == 'max_flooding_flow' else None)
+        index = group['depth_m'].idxmax()
+        add(group, 'node', node, 'max_node_depth', group.loc[index, 'depth_m'], 'm', 'swmm/nodes.tsv',
+            'maximum_saved_sample', at=group.loc[index, 'DateTime'])
+    links = _read_tsv(root / 'swmm/links.tsv', 'link_id', ['flow_Ls', 'depth_m'])
+    for link, group in links.groupby('link_id', sort=True):
+        for metric, values, unit in [('max_flow', group['flow_Ls'].abs(), 'L/s'), ('max_link_depth', group['depth_m'], 'm')]:
+            index = values.idxmax()
+            add(group, 'link', link, metric, values.loc[index], unit, 'swmm/links.tsv',
+                'maximum_absolute_saved_flow' if metric == 'max_flow' else 'maximum_saved_sample', at=group.loc[index, 'DateTime'])
+        signs = [1 if v > 0 else -1 for v in group['flow_Ls'] if abs(v) > FLOW_DIRECTION_EPS_LS]
+        changes = sum(a != b for a, b in zip(signs, signs[1:]))
+        add(group, 'link', link, 'flow_direction_changes', changes, 'count', 'swmm/links.tsv',
+            'sign_changes_ignoring_near_zero', threshold=FLOW_DIRECTION_EPS_LS)
+        geometry = model['links'].get(link, {}).get('cross_section_fields')
+        try:
+            reference = float(geometry[1]) if geometry else 0
+        except (ValueError, IndexError):
+            reference = 0
+        if reference > 0:
+            fullness = group['depth_m'].clip(lower=0) / reference
+            index = fullness.idxmax()
+            definition = {'depth_reference_m': reference, 'reference_method': 'XSECTIONS_Geom1',
+                          'interpretation': 'depth/reference proxy; not proof of pressure, capacity failure or bottleneck'}
+            add(group, 'link', link, 'max_fullness', fullness.loc[index], 'ratio', 'swmm/links.tsv',
+                'maximum_depth_over_section_reference', at=group.loc[index, 'DateTime'], **definition)
+            for metric, threshold, selected in [('fullness_ge_0_8_duration', .8, fullness >= .8),
+                                                 ('fullness_ge_0_95_duration', .95, fullness >= .95),
+                                                 ('depth_above_section_reference_duration', 1., fullness > 1.)]:
+                add(group, 'link', link, metric, _interval_duration(group['DateTime'], selected), 'min',
+                    'swmm/links.tsv', 'saved_left_interval_threshold_duration', threshold=threshold, **definition)
+    surface_path = root / 'ca2d/surface_depth.tsv'
+    if surface_path.exists():
+        surface = pd.read_csv(surface_path, sep='\t', dtype={'Smid': str}).rename(columns={'Date': 'date', 'Time': 'time'})
+        required = {'Smid', 'date', 'time', 'Depth'}
+        if not required <= set(surface.columns) or surface.empty:
+            raise ValueError('Empty or incomplete surface results')
+        surface['DateTime'] = pd.to_datetime(surface['date'].astype(str) + ' ' + surface['time'].astype(str), errors='raise')
+        surface['Depth'] = pd.to_numeric(surface['Depth'], errors='raise')
+        if surface['Smid'].isna().any() or not np.isfinite(surface['Depth']).all() or surface.duplicated(['Smid', 'DateTime']).any():
+            raise ValueError('Invalid surface objects, timestamps or depth; missing is not zero')
+        for cell, group in surface.sort_values(['Smid', 'DateTime']).groupby('Smid', sort=True):
+            index = group['Depth'].idxmax()
+            add(group, 'cell', cell, 'max_depth', group.loc[index, 'Depth'], 'm', 'ca2d/surface_depth.tsv',
+                'maximum_saved_sample', at=group.loc[index, 'DateTime'])
+            add(group, 'cell', cell, 'ponding_duration', _interval_duration(group['DateTime'], group['Depth'] > POSITIVE_DEPTH_M),
+                'min', 'ca2d/surface_depth.tsv', 'saved_left_interval_threshold_duration', threshold=POSITIVE_DEPTH_M)
+        surface_status = 'available'
+    elif summary.get('ca2d', {}).get('status') == 'NO_SURFACE_INFLOW':
+        surface_status = 'not_simulated_no_surface_inflow'
+    else:
+        raise FileNotFoundError('Missing surface result without explicit NO_SURFACE_INFLOW status')
+    rainfall = build_rainfall_context(rain_path, event_name=summary.get('event_name', ''),
+                                     run_id=run_id, model_name=model_name, scenario_name=summary.get('scenario_name', ''))
+    rows.extend(local['evidence_rows'])
+    rows.append({'evidence_id': 'CTX_RAINFALL', 'source_model': model_name, 'run_id': run_id,
+                 'object_type': 'run', 'object_id': run_id, 'metric_name': 'rainfall_context',
+                 'value': rainfall, 'unit': 'structured', 'source_file': source_name(rain_path),
+                 'calculation_method': 'rainfall_context_v1'})
+    after = {source_name(path): sha256_file(path) for path in sources if path.is_file()}
+    if before != after or missing_sources != sorted(source_name(path) for path in sources if not path.exists()):
+        raise ValueError('Run artifacts changed during evidence extraction')
+    package = {'schema_name': PACKAGE_SCHEMA, 'schema_version': PACKAGE_VERSION,
+               'model_name': model_name, 'run_id': run_id,
+               'event_name': summary.get('event_name', ''), 'scenario_name': summary.get('scenario_name', ''),
+               'source_hashes': before, 'missing_sources': missing_sources,
+               'event_detection': {k: v for k, v in catalog.items() if k not in ('events', 'model_name', 'run_id')},
+               'overview': {**local['overview'], 'surface_status': surface_status,
+                            'evidence_count': len(rows), 'metrics': dict(sorted(Counter(r['metric_name'] for r in rows).items()))},
+               'packages': local['packages'], 'evidence_rows': rows}
+    path = write_package(root, package)
+    return {'model_name': model_name, 'run_id': run_id, 'evidence_package': str(path),
+            'schema_version': PACKAGE_VERSION, **package['overview']}

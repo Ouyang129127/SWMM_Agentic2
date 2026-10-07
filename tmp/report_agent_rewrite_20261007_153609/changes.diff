@@ -1,0 +1,525 @@
+--- before/workflow_agents/reporting/narrative.py
++++ after/workflow_agents/reporting/narrative.py
+@@ -2,9 +2,15 @@
+ import copy
+ import inspect
+ import json
++from pathlib import Path
+ import re
+ 
+ from .materials import MECHANISMS, SECTIONS
++
++
++PROMPT_DIRECTORY = Path(__file__).parent / 'prompts'
++EVENT_WRITING_GUIDE = (PROMPT_DIRECTORY / 'event_rewrite_v1.md').read_text(encoding='utf-8')
++TEACHING_EXAMPLE = json.loads((PROMPT_DIRECTORY / 'event_example_v1.json').read_text(encoding='utf-8'))
+ 
+ 
+ SYSTEM_PROMPT = '''你是SWMM-Agentic工作流的Report Agent，负责正式中文展示报告。
+@@ -18,13 +24,18 @@
+ 节点及管段用输入的原标识，模型与方案名称用提供的展示名，不自由编造区域、道路或方案名。
+ 六章：scene模拟基本场景，rain降雨特征，surface地表淹没与演变，overflow冒溢与地表联系，
+ causes总体成因及节点之间的联系，conclusions主要结论与关注重点。
++intro直接概括本次最有意义的发现，不堆砌时间和指标，不写“下文按……展开”。
+ scene一段：对象与方案→降雨条件→模拟时段及雨后覆盖。rain说明雨峰形态、明确时间尺度的峰值雨强和连续30分钟集中程度。
++scene只用累计雨量、历时与雨型交代降雨条件，峰值雨强和短时集中程度留在rain，避免两个章节复述相同内容。
+ surface区分1厘米一般积水和15厘米关注区域、最大水深与同时面积峰值、道路绿地及建筑物周边、雨后存留。
+ 水深分级15/27/40厘米只在图例中由程序处理，不要直接升级为正式预警/综合风险等级。不写降雨等级、重现期。
+ overflow讲事件规模、主要节点、相对雨峰时刻、冒溢输入与地表变化。总量的scope是当前任务，不将局部任务当全场。
+ causes保留综合成因推断与共同作用，不机械列六项机制。逐事件必须有发生过程、有支持的成因、候选影响三个独立字段。
++总体成因概括来水压力、输水限制与水位达到井口的关系，不把所有节点的入流减出流一律视为冒溢，不写“余量只能从节点冒出”。多数节点多路汇入，不代表仅有侧向来水的节点也是多源叠加。
++管网关系按incident_links描述。分支汇流用“P42、P43汇入P44”这样的表达；不能用节点排列编出不存在的连续连接。
+ 有支持的判断按当前诊断表达，候选段须明确使用“可能”。候选顶托不能写成确定主因；不量化未验证的贡献率或改造效益。
+ 直接来水比例仅为进入节点的组成，不是成因贡献。调蓄有限只在当前诊断支持时写入。
++统计口径和写作边界用来约束表达，不要逐项写成“这不是成因贡献”“未确定为主因”“没有回流证据”等报告补丁。
+ numeric_notes指出不成立的瞬时等式时，只分述同刻入流、出流和冒溢，不能说差值等于冒溢或流量闭合。
+ 节点注入网格水深不等于整个邻域水深；空间最近不等于水源归因。不能凭节点次序编造地表流向。
+ 建筑物周边积水不等于室内进水。没有道路分类时称“地表”，不把全部地表叫绿地。
+@@ -33,25 +44,31 @@
+ required_facts_by_section中的标记须在对应章节出现。雨峰与冒溢的先后关系采用提供的关系事实，不能自行改写成峰后才开始。
+ 结论综合规模、成因、地表关注阈值与存留位置；即使不达15厘米，仍表达已观察到的浅积水。
+ 每段要短而完整，围绕材料表达，不需要解释报告生成程序。选取关键事实解释变化和成因，不逐项罗列全部数值。
++所有章节先提炼本节要回答的问题，再选取事实、组织分析。用明确对象和变化动词说明含义，不沿输入字段顺序逐条翻译。
++scene交代一次模拟场景；rain讲降雨怎样集中；surface讲积水在哪里、如何发展和消退；overflow讲冒溢集中在哪里和何时；causes解释作用关系；conclusions提炼关键发现和关注位置，不复述每章数字。
++正文不写“在……方面”式连续分项，不将可追溯结论、方法边界或证据缺口搬进展示报告。候选判断用“可能”自然表达其力度。
+ 地表章节围绕规模、位置、演变和存留组织自然段；节点过程围绕冒溢起止、峰值和消退组织，避免每个采样时刻逐行转写。
+ 返回结构：{"intro":"概述一段", "sections":{"scene":["段落"],"rain":["段落"],"surface":["段落"],
+ "overflow":["段落"],"causes":["段落"],"conclusions":["结论条目"]},
+-"events":[{"event_id":"原事件ID","process":["发生过程"],"supported_mechanism_ids":["源supported机制ID"],
++"events":[{"event_id":"原事件ID","title":"节点标识：本节点特点","process":["发生过程"],"supported_mechanism_ids":["源supported机制ID"],
+ "supported_causes":["已有成因及共同作用"],"candidate_mechanism_ids":["源candidate机制ID"],
+ "candidate_influences":["可能的影响"]}]}。
+ events覆盖expected_event_ids每项恰好一次。机制ID只放结构字段，正文不显示。
+ 如没有事件，events为空，写明保存结果未识别冒溢；地表以实际数据表述。
+ 没有逐事件诊断的事件不编造成因，其成因字段及机制ID均为空。
+-'''
++''' + '\n逐节点转写的详细要求：\n' + EVENT_WRITING_GUIDE
+ 
+ 
+ class Facts:
+     def __init__(self):
+         self.values = {}
+-
+-    def add(self, text):
++        self.bindings = {}
++
++    def add(self, text, **binding):
+         key = f'F{len(self.values)+1:04d}'
+         self.values[key] = str(text)
++        if binding:
++            self.bindings[key] = binding
+         return f'[[{key}]]'
+ 
+ 
+@@ -88,10 +105,13 @@
+     # numbers are not sufficient: a model could attach final area to rain end.
+     # These complete clauses preserve the relationship when expanded into prose.
+     scene=materials['scene'];surface=materials['surface'];rain=materials['rain'];overflow=materials['overflow']
+-    when=lambda value:str(value)[:16].replace('T',' ')
++    same_day=str(scene['simulation_start'])[:10]==str(scene['simulation_end'])[:10]
++    def when(value):
++        value=str(value)[:16].replace('T',' ')
++        return value[11:] if same_day and value[:10]==str(scene['simulation_start'])[:10] else value
+     atom=lambda value:facts.add(value)
+     data['scene']={'model_display_name':scene['model_display_name'],'scenario_display_name':scene['scenario_display_name'],
+-        'simulation_span':atom(f"模拟时段为{when(scene['simulation_start'])}至{when(scene['simulation_end'])}"),
++        'simulation_span':atom(f"模拟日期为{str(scene['simulation_start'])[:10]}，模拟时段为{when(scene['simulation_start'])}至{when(scene['simulation_end'])}"),
+         'rain_span':atom(f"降雨时段为{when(scene.get('rain_start',scene['simulation_start']))}至{when(scene['rain_end'])}"),
+         'post_rain':atom(f"雨后继续模拟{scene['post_rain_hours']:g}小时") if 'post_rain_hours' in scene else None}
+     data['rain']={'shape':rain['shape'],'total_mm':atom(f"累计降雨量为{rain['total_mm']:.1f}毫米"),
+@@ -134,18 +154,33 @@
+     for event in materials['events']:
+         item={key:copy.deepcopy(event[key]) for key in ('event','node_id','event_id','process',
+                                                        'surface_associations','incident_links','allow_simple_peak_balance')}
+-        series=item['process']
+-        selected_times={series[0]['time'],series[-1]['time'],event['event']['start'],event['event'].get('peak_time')}
+-        item['process']=[row for row in series if row['time'] in selected_times]
++        # Keep the supplied local window, including the rise and decline. Do
++        # not hide the plateau between onset and peak from the writing model.
+         item['surface_associations']=[{k:v for k,v in row.items() if k not in ('row','col','smid')}
+                                       for row in item['surface_associations']]
+         item['incident_links']={name:{k:v for k,v in edge.items() if k in ('from_node','to_node','link_type')}
+                                 for name,edge in item['incident_links'].items()}
+         e=event['event'];node=event['node_id']
+-        item['event']={'summary':atom(f"{node}在{when(e['start'])}至{when(e['end'])}发生冒溢，持续{e['duration_minutes']:g}分钟，冒溢量为{e['estimated_volume_m3']:.2f}立方米"),
+-                      'peak':atom(f"{node}的冒溢峰值为{e['peak_flooding_Ls']:.2f}升/秒，出现在{when(e['peak_time'])}") if 'peak_time' in e else None}
+-        item['process']=[atom(f"{when(row['time'])}，{node}总入流为{row['total_inflow_Ls']:.1f}升/秒，直接相连管段排出量为{row['outflow_Ls']:.1f}升/秒，冒溢流量为{row['flooding_Ls']:.1f}升/秒，节点水深为{row['depth_m']:.3f}米"+
+-            (f"，水头为{row['head_m']:.3f}米" if 'head_m' in row else '')) for row in item['process']]
++        def event_atom(text, metric, timestamp=None):
++            return facts.add(text,event_id=event['event_id'],node_id=node,metric=metric,timestamp=timestamp)
++        item['event']={'summary':event_atom(f"{node}在{when(e['start'])}开始冒溢，至{when(e['end'])}结束，持续约{e['duration_minutes']:g}分钟，累计冒溢量约{e['estimated_volume_m3']:.2f}立方米",'event_summary'),
++                      'peak':event_atom(f"{when(e['peak_time'])}，{node}冒溢流量达到约{e['peak_flooding_Ls']:.1f}升/秒的峰值",'peak_flooding',e['peak_time']) if 'peak_time' in e else None}
++        snapshots=[]
++        for row in item['process']:
++            outgoing=[name for name,edge in item['incident_links'].items() if edge['from_node']==node]
++            actual=row.get('outgoing_by_link_Ls',{})
++            outlet=(outgoing[0] if len(outgoing)==1 and actual and
++                    abs(actual.get(outgoing[0],0.)-row['outflow_Ls'])<1e-6 else '相连管段合计')
++            time=when(row['time'])
++            snapshot={'phase':'before_start' if row['time']<e['start'] else 'after_end' if row['time']>=e['end'] else
++                      'peak' if row['time']==e.get('peak_time') else 'during_event',
++                'flow_comparison':event_atom(f"{time}，{node}总入流约为{row['total_inflow_Ls']:.1f}升/秒，{outlet}同期出流约为{row['outflow_Ls']:.1f}升/秒",'same_time_inflow_outflow',row['time']),
++                'flooding':event_atom(f"{time}，{node}冒溢流量约为{row['flooding_Ls']:.1f}升/秒",'flooding',row['time']),
++                'depth':event_atom(f"{time}，{node}节点水深约为{row['depth_m']:.2f}米",'depth',row['time'])}
++            if 'head_m' in row:
++                snapshot['head']=event_atom(f"{time}，{node}水头约为{row['head_m']:.3f}米",'head',row['time'])
++            snapshots.append(snapshot)
++        item['process']=snapshots
+         item['surface_associations']=[{'depth':atom(f"{node}附近的{row['land_type']}注入网格最大保存水深为{row['max_saved_depth_m']*100:.1f}厘米，出现在{when(row['max_depth_time'])}，模拟结束时该网格水深为{row['final_depth_m']*100:.1f}厘米"),
+             'attention_episodes':[atom(f"{node}附近的{row['land_type']}注入网格在{when(ep['first_saved'])}至{when(ep['last_saved'])}的保存时刻达到15厘米"+
+                 (f"，由相邻未达阈值时刻夹定的连续过程持续时间估计不超过{ep['continuous_episode_upper_estimate_min']:g}分钟" if ep['continuous_episode_upper_estimate_min'] is not None else '，过程在保存边界处未闭合')) for ep in row['attention_episodes']],
+@@ -154,8 +189,16 @@
+             required.setdefault('surface',[]).extend(association['attention_episodes'])
+         item['source_composition']={'meaning':'冒溢期间直接进入节点的水量组成，不是成因贡献',
+             'sources':[{'source_name':{'aggregate_lateral':'侧向入流','lateral':'侧向入流'}.get(s['source_id'],s['source_id']),
+-                        'share':atom(f"{ {'aggregate_lateral':'侧向入流','lateral':'侧向入流'}.get(s['source_id'],s['source_id']) }占{node}冒溢期间直接来水量的{s['event_volume_share']*100:.1f}%")}
++                        'share':event_atom(f"{ {'aggregate_lateral':'侧向入流','lateral':'侧向入流'}.get(s['source_id'],s['source_id']) }约占{node}冒溢期间直接来水量的{s['event_volume_share']*100:.1f}%",'source_composition')}
+                        for s in event['source_composition'].get('sources',[]) if s.get('event_volume_share')]}
++        sources=event['source_composition'].get('sources',[])
++        sources=[s for s in sources if s.get('event_volume_share')]
++        if sources:
++            names=[{'aggregate_lateral':'本地侧向来水','lateral':'本地侧向来水'}.get(s['source_id'],s['source_id']) for s in sources]
++            shares=[f"{s['event_volume_share']*100:.1f}%" for s in sources]
++            respective='分别' if len(sources)>1 else ''
++            item['source_composition']['summary']=event_atom(
++                f"{'、'.join(names)}{respective}约占{node}冒溢期间直接进入节点水量的{'、'.join(shares)}",'source_composition')
+         a=event['assessment']
+         item['diagnosis']=None if not a else {
+             'process_explanation':a['process_explanation'],
+@@ -166,6 +209,17 @@
+         # Native storage arrays stay in internal material records. The already
+         # supported diagnosis is the authority for the report's causal wording.
+         item['storage_process_available']=bool(event['storage_evidence'])
++        item['downstream_event_context']=[]
++        for edge in item['incident_links'].values():
++            if edge['from_node']!=node:
++                continue
++            downstream=edge['to_node']
++            related=[other['event'] for other in materials['events'] if other['node_id']==downstream]
++            overlap=any(other['start']<e['end'] and other['end']>e['start'] for other in related)
++            ended=any(other['end']<=e['start'] for other in related)
++            item['downstream_event_context'].append({'node_id':downstream,
++                'relation':'本事件期间也发生冒溢' if overlap else '此前的冒溢已在本事件开始前结束' if ended else
++                '当前任务事件列表未提供与本事件重叠的下游冒溢事件'})
+         data['events'].append(item)
+     data['diagnosis_overview']=materials['diagnosis_overview'].get('text','')
+     # Event assessments are already the current verified diagnosis. Avoid
+@@ -178,6 +232,7 @@
+     # produce a second, free-form numbers channel in the requested output.
+     data=_fact_tree(data,facts)
+     return {'materials':data,'fact_text':facts.values,
++            'fact_bindings':facts.bindings,'teaching_example':copy.deepcopy(TEACHING_EXAMPLE),
+             'expected_event_ids':[e['event_id'] for e in materials['events']],
+             'required_facts_by_section':{k:v for k,v in required.items() if v},
+             'rules':'All quantities and times in prose must reference fact_text via [[Fxxxx]].'},facts.values
+@@ -188,6 +243,8 @@
+     for paragraphs in response['sections'].values():
+         yield from paragraphs
+     for event in response['events']:
++        if event.get('title'):
++            yield event['title']
+         for field in ('process','supported_causes','candidate_influences'):
+             yield from event[field]
+ 
+@@ -200,22 +257,64 @@
+     for paragraphs in response['sections'].values():
+         if not isinstance(paragraphs,list) or not paragraphs or any(not isinstance(p,str) or not p.strip() for p in paragraphs):
+             raise ValueError('Section paragraphs must be nonempty strings')
+-    required=make_prompt(materials)[0]['required_facts_by_section']
++    current_prompt=make_prompt(materials)[0]
++    required=current_prompt['required_facts_by_section']
+     for section,tokens in required.items():
+         if any(token not in ''.join(response['sections'][section]) for token in tokens):
+             raise ValueError(f'Missing required location/duration or rain-peak relation fact in section {section}: '+str(tokens))
+     events=response.get('events')
+     if not isinstance(events,list):raise ValueError('Report events must be a list')
+     expected={e['event_id']:e for e in materials['events']}
++    bindings=current_prompt['fact_bindings']
++    event_inputs={event['event_id']:event for event in current_prompt['materials']['events']}
+     ids=[e.get('event_id') for e in events]
+     if len(ids)!=len(set(ids)) or set(ids)!=set(expected):
+         raise ValueError('Report must cover every event exactly once')
+     for event in events:
+         source=expected[event['event_id']];a=source['assessment']
++        if 'title' in event and (not isinstance(event['title'],str) or not event['title'].startswith(source['node_id'])):
++            raise ValueError('Event title must begin with its source node identifier')
+         for field in ('process','supported_causes','candidate_influences'):
+             if not isinstance(event.get(field),list) or any(not isinstance(s,str) or not s.strip() for s in event[field]):
+                 raise ValueError(f'Invalid event prose field: {field}')
+         if not event['process']:raise ValueError('Every event needs process prose')
++        process=''.join(event['process'])
++        for other in materials['events']:
++            if other['node_id']!=source['node_id'] and other['event']['start']==source['event']['start']:
++                if re.search(r'(?:紧随|晚于|早于|先于)\s*'+re.escape(other['node_id']),process):
++                    raise ValueError('These nodes start overflowing at the same saved time; do not describe a sequential onset')
++        for downstream in event_inputs[event['event_id']]['downstream_event_context']:
++            text=''.join(event['candidate_influences'])
++            if downstream['relation']=='此前的冒溢已在本事件开始前结束' and downstream['node_id'] in text:
++                if re.search(r'尚未冒溢|(?:同时|同期|同一时段)[^。；]{0,12}(?:也)?发生冒溢',text):
++                    raise ValueError('Downstream overflow already ended before this event; describe its concurrent high water rather than concurrent overflow or not-yet-overflow')
++        for key in ('summary','peak'):
++            token=event_inputs[event['event_id']]['event'].get(key)
++            if token and process.count(token)!=1:
++                raise ValueError('Event process must use event.summary and event.peak exactly once, before selected comparisons')
++        selected=[]
++        for token in re.findall(r'\[\[(F\d+)\]\]',process):
++            binding=bindings.get(token,{})
++            if binding.get('metric') in ('same_time_inflow_outflow','flooding','depth','head'):
++                selected.append(binding)
++        times={binding['timestamp'] for binding in selected}
++        if len(selected)>4 or len(times)>3 or any(sum(b['timestamp']==t for b in selected)>2 for t in times):
++            raise ValueError('Process copies too many sampled metrics. Use summary and peak, then at most four process facts from three times, two metrics per time; describe trends in prose')
++        peak_time=source['event'].get('peak_time')
++        if peak_time and any(b['metric']=='flooding' and b['timestamp']==peak_time for b in selected):
++            raise ValueError('Peak flooding is already in event.peak; do not repeat the same number with a flooding snapshot')
++        if peak_time and peak_time>source['event']['start']:
++            for paragraph in event['process']:
++                references=[bindings.get(token,{}) for token in re.findall(r'\[\[(F\d+)\]\]',paragraph)]
++                if (re.search(r'开始(?:出现)?冒溢|开始起溢',paragraph) and
++                    any(b.get('timestamp')==peak_time for b in references) and
++                    not any(b.get('timestamp')==source['event']['start'] for b in references)):
++                    raise ValueError('Peak comparison occurs after onset; describe the peak/rise, not the start of overflow')
++        for paragraph in event['process']+event['supported_causes']+event['candidate_influences']:
++            for token in re.findall(r'\[\[(F\d+)\]\]',paragraph):
++                owner=bindings.get(token,{}).get('event_id')
++                if owner and owner!=event['event_id']:
++                    raise ValueError('Fact belongs to another event: '+token)
+         for status,field,textfield in [('supported','supported_mechanism_ids','supported_causes'),
+                                        ('candidate','candidate_mechanism_ids','candidate_influences')]:
+             wanted={m['mechanism_id'] for m in a['mechanism_assessments'] if m['status']==status} if a else set()
+@@ -226,15 +325,29 @@
+         for p in event['candidate_influences']:
+             if '可能' not in p or re.search('已证实|已经证实|确定是|必然|主要原因',p):
+                 raise ValueError('Candidate influence must remain explicitly possible')
++            candidates=''.join(m['reason'] for m in a['mechanism_assessments'] if m['status']=='candidate') if a else ''
++            if re.search(r'顶托(?:的)?(?:作用|影响)(?:可能)?有限|顶托(?:作用)?(?:可能)?较弱|影响可能较小',p) and not re.search(r'有限|较小|较弱',candidates):
++                raise ValueError('Do not turn an unconfirmed candidate into a new small/limited-effect judgment; retain only its supplied possible role')
++        if re.search(r'出流(?:无法继续增加|不能再增加|不再增加)', ''.join(event['supported_causes'])):
++            raise ValueError('Full-pipe constraint does not establish constant outflow throughout the event; describe the supplied peak-time constraint')
+         if not source['allow_simple_peak_balance'] and re.search(r'(?:流量|差值|入流|出流|冒溢)[^。；]{0,40}(?:相等|等于|闭合)',
+                 ''.join(event['process']+event['supported_causes'])):
+             raise ValueError('Invalid instantaneous flow equality for this event')
+     object_names=set(known_ids)|{materials['scene']['model_display_name'],materials['scene']['scenario_display_name']}
++    nodes={event['node_id'] for event in materials['events']}
++    connections={frozenset((edge['from_node'],edge['to_node'])) for event in materials['events'] for edge in event['incident_links'].values()}
+     for p in prose_strings(response):
++        for left,right in re.findall(r'([A-Za-z][A-Za-z0-9_]*)\s*[—→]\s*([A-Za-z][A-Za-z0-9_]*)',p):
++            if left in nodes and right in nodes and frozenset((left,right)) not in connections:
++                raise ValueError('Narrated consecutive nodes are not connected; describe the actual branching topology: '+left+'/'+right)
++        if re.search(r'\[\[EX[^\]]*\]\]',p):
++            raise ValueError('Teaching example fact cannot appear in the current report')
+         tokens=re.findall(r'\[\[(F\d+)\]\]',p)
+         if any(t not in facts for t in tokens):raise ValueError('Unknown report fact token')
+         if '<' in p or '>' in p or re.search(r'\bM[1-6]\b|\b(?:supported|candidate|aggregate_lateral)\b|(?:FP_|SUP_|STAT_|SUM_)',expand(p,facts)):
+             raise ValueError('Report contains HTML or internal diagnostic labels')
++        if re.search(r'有证据支持|候选机制|需要补证|证据缺口|尚未证实|未被证实|保存步长|反事实验证',expand(p,facts)):
++            raise ValueError('Rewrite internal assessment language as reader-facing analysis: '+p)
+         for match in re.finditer(r'\[\[(F\d+)\]\]',p):
+             # Complete clauses cannot be treated as bare scalar values. Keep
+             # legacy scalar registries valid for callers and offline fixtures.
+--- before/workflow_agents/reporting/pipeline.py
++++ after/workflow_agents/reporting/pipeline.py
+@@ -17,11 +17,11 @@
+ from .plots import make_plots
+ from .render import render
+ 
+-VERSION = 'report_agent_v1.1'
++VERSION = 'report_agent_v1.2_event_rewrite'
+ 
+ 
+ def producer_hashes():
+-    paths=list(Path(__file__).parent.glob('*.py'))+[Path(__file__).parents[2]/'llm.py']
++    paths=list(Path(__file__).parent.glob('*.py'))+list((Path(__file__).parent/'prompts').glob('*'))+[Path(__file__).parents[2]/'llm.py']
+     return {str(path.resolve()):sha256_file(path) for path in paths}
+ 
+ 
+--- before/workflow_agents/reporting/render.py
++++ after/workflow_agents/reporting/render.py
+@@ -67,7 +67,8 @@
+             body+='<h3>逐节点发生过程与成因</h3><div class="node-nav">'+''.join(f'<a href="#event-{j}">{esc(e["node_id"])}'+(f' · 第{e["event"]["occurrence"]}次' if sum(x['node_id']==e['node_id'] for x in materials['events'])>1 else '')+'</a>' for j,e in enumerate(materials['events']))+'</div>' if materials['events'] else ''
+             for j,event in enumerate(materials['events']):
+                 text=by_event[event['event_id']]
+-                body+=f'<article class="node" id="event-{j}" data-node="{esc(event["node_id"])}"><h3>{esc(event["node_id"])} · {esc(event["event"]["start"])}—{esc(event["event"]["end"])}</h3><h4>发生过程</h4>'+paragraphs(text['process'])+figure(f'event_{j}')
++                title=text.get('title') or event['node_id']
++                body+=f'<article class="node" id="event-{j}" data-node="{esc(event["node_id"])}"><h3>{prose(title)}</h3><h4>发生过程</h4>'+paragraphs(text['process'])+figure(f'event_{j}')
+                 if text['supported_causes'] or text['candidate_influences']:body+='<div class="cause"><h4>成因判断</h4>'+paragraphs(text['supported_causes'])+paragraphs(text['candidate_influences'])+'</div>'
+                 body+='</article>'
+         sections.append(f'<section id="{key}"><h2><span>{i+1:02d}</span>{title}</h2>{body}</section>')
+--- before/workflow_agents/reporting/README.md
++++ after/workflow_agents/reporting/README.md
+@@ -23,3 +23,24 @@
+ attempt records. A previous successful file is preserved, but a failed new revision
+ cannot advertise it as the current report. No template narrative is substituted
+ when the model is unavailable.
++
++## Node prose experiment (v1.2)
++
++`prompts/event_rewrite_v1.md` teaches fact selection, process narration and faithful
++explanation of joint mechanisms. `prompts/event_example_v1.json` supplies the paired
++P6 teaching input/output. The guide is part of the system prompt; the example is
++included in every writing request and in `report_prompt.json`. Example facts use an
++`EX` namespace and cannot be substituted into the current report.
++
++Event process facts retain the local time window and separate bound flow comparisons,
++depth, flooding and head. Values remain tied to object and time inside each clause;
++the model selects useful clauses instead of copying every metric at every timestamp.
++Event-owned fact references cannot be reused under a different event. Candidate
++influences retain explicit uncertainty, and internal assessment patches are rejected.
++Generated node titles are escaped and shown above the process analysis.
++
++The prompt assets participate in producer hashes, invalidating cached reports when
++they change. Generations retain independent output directories and raw attempt logs.
++This first experiment focuses on node analysis; the other sections receive shared
++writing guidance and still need subsequent case review. Structural validation alone
++does not certify prose quality or causal fidelity.
+--- before/tests/test_report_agent.py
++++ after/tests/test_report_agent.py
+@@ -55,6 +55,8 @@
+             for eid in prompt['expected_event_ids']]}
+     for key,tokens in prompt.get('required_facts_by_section',{}).items():
+         result['sections'][key].append('；'.join(tokens)+'。')
++    for event,source in zip(result['events'],prompt['materials']['events']):
++        event['process']=['；'.join(token for token in source['event'].values() if token)+'。']
+     return result
+ 
+ 
+@@ -82,6 +84,18 @@
+     def test_candidate_must_retain_uncertainty(self):
+         r=answer(self.prompt);r['events'][0]['candidate_influences']=['下游顶托是主要原因。']
+         with self.assertRaisesRegex(ValueError,'explicitly possible'):self.valid(r)
++
++    def test_unconfirmed_candidate_cannot_be_rewritten_as_a_small_effect(self):
++        r=answer(self.prompt);r['events'][0]['candidate_influences']=['下游可能形成顶托，顶托作用可能有限。']
++        with self.assertRaisesRegex(ValueError,'limited-effect'):self.valid(r)
++
++    def test_full_pipe_cannot_be_rewritten_as_permanently_constant_flow(self):
++        r=answer(self.prompt);r['events'][0]['supported_causes']=['满流后出流无法继续增加，节点水位升高。']
++        with self.assertRaisesRegex(ValueError,'constant outflow'):self.valid(r)
++
++    def test_unconnected_nodes_cannot_be_presented_as_a_pipe_chain(self):
++        r=answer(self.prompt);r['sections']['causes']=['Junction_A—Outlet_B构成连续管网链。']
++        with self.assertRaisesRegex(ValueError,'branching topology'):self.valid(r)
+ 
+     def test_fabricated_numeric_claim_and_unknown_token_rejected(self):
+         for sentence in ('持续了99分钟。','面积为[[F9999]]。'):
+@@ -110,12 +124,82 @@
+         r=answer(self.prompt);r['intro']='总雨量为'+self.prompt['materials']['rain']['total_mm']+'。'
+         with self.assertRaisesRegex(ValueError,'standalone clause'):self.valid(r)
+ 
++    def test_local_rise_and_plateau_are_available_without_all_metric_sentences(self):
++        m=example(('Junction_A',))
++        m['events'][0]['process'].insert(1,{'time':'2024-01-01 00:07:00',
++            'total_inflow_Ls':12.,'outflow_Ls':5.,'flooding_Ls':7.,'depth_m':1.})
++        prompt,facts=make_prompt(m)
++        rows=prompt['materials']['events'][0]['process']
++        self.assertEqual(len(rows),3)
++        comparison=facts[rows[1]['flow_comparison'][2:-2]]
++        self.assertIn('00:07',comparison);self.assertIn('12.0升/秒',comparison)
++        self.assertNotIn('节点水深',comparison);self.assertNotIn('冒溢流量',comparison)
++        self.assertIn('节点水深',facts[rows[1]['depth'][2:-2]])
++
++    def test_current_event_cannot_use_another_event_numeric_fact(self):
++        r=answer(self.prompt)
++        r['events'][0]['process'].append(self.prompt['materials']['events'][1]['event']['summary']+'。')
++        with self.assertRaisesRegex(ValueError,'another event'):self.valid(r)
++
++    def test_teaching_fact_tokens_cannot_escape_into_current_report(self):
++        r=answer(self.prompt);r['events'][0]['process'].append('[[EX001]]。')
++        with self.assertRaisesRegex(ValueError,'Teaching example fact'):self.valid(r)
++
++    def test_internal_assessment_patch_is_rejected_but_natural_possible_language_passes(self):
++        r=answer(self.prompt);r['events'][0]['candidate_influences']=['下游水位可能影响排水，但尚未证实。']
++        with self.assertRaisesRegex(ValueError,'reader-facing'):self.valid(r)
++        r['events'][0]['candidate_influences']=['下游高水位可能限制向下游排水。']
++        self.valid(r)
++
++    def test_node_title_is_rendered_and_checked_for_unbound_numbers(self):
++        r=answer(self.prompt);r['events'][0]['title']='Junction_A：来水集中，排水压力增加'
++        self.valid(r)
++        p=self.root/'titled.html';render(self.materials,r,self.facts,self.images(),p,'now')
++        self.assertIn('Junction_A：来水集中，排水压力增加',p.read_text(encoding='utf-8'))
++        r['events'][0]['title']='Junction_A：持续99分钟'
++        with self.assertRaisesRegex(ValueError,'Unbound numeric'):self.valid(r)
++
+     def test_numeric_flow_mismatch_does_not_block_head_description(self):
+         self.materials['events'][0]['allow_simple_peak_balance']=False
+         r=answer(self.prompt);r['events'][0]['supported_causes']=['水头等于井口高程时发生冒溢。']
+         self.valid(r)
+-        r['events'][0]['process']=['入流与出流差值等于冒溢流量。']
++        r['events'][0]['process'].append('入流与出流差值等于冒溢流量。')
+         with self.assertRaisesRegex(ValueError,'flow equality'):self.valid(r)
++
++    def test_process_metric_dump_is_rejected_but_selected_comparison_passes(self):
++        r=answer(self.prompt)
++        snapshot=self.prompt['materials']['events'][0]['process'][0]
++        r['events'][0]['process'].append('；'.join(snapshot[k] for k in ('flow_comparison','depth','flooding'))+'。')
++        with self.assertRaisesRegex(ValueError,'too many sampled metrics'):self.valid(r)
++        r['events'][0]['process'][-1]=snapshot['flow_comparison']+'。来水增加了节点的排水压力。'
++        self.valid(r)
++
++    def test_peak_comparison_cannot_move_the_overflow_onset(self):
++        m=example(('Junction_A',));m['events'][0]['event']['peak_time']='2024-01-01 00:07:00'
++        m['events'][0]['process'][0]['time']='2024-01-01 00:04:00'
++        row=copy.deepcopy(m['events'][0]['process'][0]);row['time']='2024-01-01 00:07:00'
++        m['events'][0]['process'].insert(1,row)
++        prompt,facts=make_prompt(m);r=answer(prompt)
++        peak=prompt['materials']['events'][0]['process'][1]['flow_comparison']
++        r['events'][0]['process'].append(peak+'。节点水位升高并开始冒溢。')
++        with self.assertRaisesRegex(ValueError,'after onset'):validate(r,m,facts,['Junction_A'])
++        r['events'][0]['process'][-1]=peak+'。节点处于冒溢高峰。'
++        validate(r,m,facts,['Junction_A'])
++
++    def test_simultaneous_onsets_cannot_be_described_as_sequential(self):
++        r=answer(self.prompt);r['events'][2]['process'].append('Outlet_B紧随Junction_A之后发生冒溢。')
++        with self.assertRaisesRegex(ValueError,'same saved time'):self.valid(r)
++
++    def test_downstream_context_distinguishes_earlier_overflow_from_concurrent_water_level(self):
++        m=example(('Up','Down'))
++        m['events'][0]['event'].update(start='2024-01-01 00:10:00',end='2024-01-01 00:15:00')
++        m['events'][0]['incident_links']={'Pipe':{'from_node':'Up','to_node':'Down'}}
++        prompt,facts=make_prompt(m);r=answer(prompt)
++        self.assertIn('已在本事件开始前结束',prompt['materials']['events'][0]['downstream_event_context'][0]['relation'])
++        r['events'][0]['candidate_influences']=['下游Down尚未冒溢，其高水位可能影响排水。']
++        with self.assertRaisesRegex(ValueError,'already ended'):validate(r,m,facts,['Up','Down','Pipe'])
++        r['events'][0]['candidate_influences']=['下游Down的同期高水位可能限制向下游排水。']
++        validate(r,m,facts,['Up','Down','Pipe'])
+ 
+     def test_html_and_internal_labels_are_rejected(self):
+         for text in ('<script>危险</script>','M1导致冒溢。'):
+--- /dev/null
++++ workflow_agents\reporting\prompts\event_example_v1.json
+@@ -0,0 +1,37 @@
++{
++  "purpose": "示范如何选择事实并保留诊断的作用关系；不提供当前事件事实",
++  "source": "20261005_104641诊断r2的P6教学案例",
++  "input": {
++    "node_id": "P6",
++    "event_id": "P6:E001",
++    "fact_text": {
++      "EX001": "P6在01:37开始冒溢，至01:42结束，持续约5分钟，累计冒溢量约16.28立方米",
++      "EX002": "01:40，P6冒溢流量达到约79.4升/秒的峰值",
++      "EX003": "01:40，P6总入流约为295.0升/秒，G6同期出流约为215.6升/秒",
++      "EX004": "01:42，P6节点水深回落至约0.88米",
++      "EX005": "G4、G5及本地侧向来水分别约占P6冒溢期间直接进入节点水量的63.7%、20.1%和16.2%"
++    },
++    "process_description": "起溢后入流与冒溢增强；01:38至01:40，入流继续增加，G6出流基本稳定，节点水深保持1.0米；01:42水深回落，冒溢结束。完整过程见配套P6示例。",
++    "diagnosis": {
++      "supported": "M1多路来水同期汇入；M2 G6满流，出流未跟上来水增加；M4水头达到井口；M6可用调蓄有限，未明显缓冲来水高峰",
++      "candidate": "M3下游P7同期冒溢，其高水位可能对G6形成顶托",
++      "joint_assessment": "多路来水增加同期排水压力，G6满流输水受限，节点水位升至井口后冒溢；可用调蓄有限。下游P7高水位可能进一步影响G6排水。"
++    }
++  },
++  "output": {
++    "event_id": "P6:E001",
++    "title": "P6：多路来水叠加，G6高峰期输水受限",
++    "process": [
++      "[[EX001]]。冒溢流量随后增强；[[EX002]]。",
++      "[[EX003]]。起溢后的高峰阶段，来水继续增加，G6出流基本保持稳定，冒溢随之增强。随后节点水位回落；[[EX004]]，冒溢结束。"
++    ],
++    "supported_mechanism_ids": ["M1", "M2", "M4", "M6"],
++    "supported_causes": [
++      "P6接收G4、G5和本地侧向来水；[[EX005]]。多路来水在同一时段汇入，增加了节点的排水压力；G6已经满流，高峰附近的出流未能跟上来水增加，节点水位升至井口并发生冒溢。相关节点和管段的可用调蓄有限，也未能明显缓冲这一来水高峰。多路来水叠加、G6的局部输水约束与水位达到井口，共同解释了此次冒溢。"
++    ],
++    "candidate_mechanism_ids": ["M3"],
++    "candidate_influences": [
++      "下游P7同一时段也发生冒溢，其高水位可能对G6产生顶托，使P6向下游排水更加困难。这一影响可能与局部输水约束共同作用。"
++    ]
++  }
++}
+--- /dev/null
++++ workflow_agents\reporting\prompts\event_rewrite_v1.md
+@@ -0,0 +1,34 @@
++你是城市排水与内涝诊断报告的分析撰稿人。读者希望理解一次模拟发生了什么、为什么发生，以及各因素怎样共同作用。
++
++先识别事件变化和原诊断的作用关系，再重新组织表达。不要沿着原MD的项目顺序逐条改写，也不要仅把字段名称换成中文。过程数据支撑变化与比较；诊断解释和joint_assessment支撑原因。不能仅凭数值或机制名称补出新的因果链。
++
++写作前完成以下工作，不输出准备过程：
++1. 识别开始、增强、峰值、减弱及结束等实际变化，找出原诊断的主要解释与共同作用关系。
++2. 选取能解释这些变化的事实。图表承载详细采样值，正文不必逐时刻复述全部指标。
++3. 将原诊断已有的来水压力、排水限制、冒溢位置和其他实际作用组织成解释。没有对应材料的环节不补写；不要求每个节点凑齐同一组原因。
++4. 围绕具体节点、管段和变化形成连贯段落。读者应能理解每个判断的来由，以及不同因素如何作用于同一过程。
++5. 检查事实对应、判断力度、解释完整性及语言，修订后交付正文。
++
++逐事件process通常用一至两个自然段。先使用event.summary交代起止、持续时间和累计量，再使用event.peak（如有）交代峰值。接着用关键比较解释变化，结束附近的水深可说明消退。不要把规模放在数据堆叠之后写“整体规模方面”，也不要反复复述峰值。
++
++过程图已经提供完整曲线，process仅选择至多四个过程事实片段，来自至多三个采样时刻；同一时刻最多选择两类过程指标。event.summary和event.peak不占这一选择数量。通常选择峰值入流/出流对比和结束水深就够了，其余变化用有依据的自然语言概括。不要逐时刻列入流、出流、冒溢、水深、水头，不重复同刻的冒溢峰值。成因段落优先解释作用关系，避免把过程段的数据再抄一遍。
++
++supported_causes通常用一至两个自然段。保留joint_assessment中的实质解释和共同作用，不要压缩成“多源来水、满流、调蓄有限”的机制清单。说清各因素怎样增加排水压力、影响排水或决定冒溢位置。作用关系只能来自当前诊断；未确定主次时，不自行确定主因和贡献排序。调蓄或设施运行有实际作用时说明其作用；不适用项不逐项展开。
++
++candidate_influences单独保存，呈现时接在成因判断之后。自然使用“可能”说明候选因素如何影响具体对象与过程，不升级为确定原因。无需追加“尚未证实、无法拆分、需补证、保存步长影响”等内部说明。
++
++不要把“未证明顶托主因”改成“顶托作用可能有限”：前者是判断状态，后者新增了影响大小。候选段只保留原诊断已有的可能作用，不新增“影响较小、顶托较弱”等强度判断。
++
++满流输水受限不等于整个事件中出流恒定。不同节点的过程不一样；仅在当前数据和诊断支持时概括出流基本稳定，并注明高峰附近等相应时段。不要写“满流后出流无法继续增加”这种不限定时段的结论。
++
++title概括当前节点最有解释力的特点，以当前node_id开头。标题不能把候选影响写成确定主因，也不要把事件编号或完整日期搬进标题。
++
++事件先后以当前事件事实为准。同一起溢时刻的节点写“同时”，不能写“紧随……之后”。downstream_event_context补充下游冒溢与当前事件的时间关系：若下游此前冒溢已结束，候选段描述同期高水位，不写“同期冒溢”或“尚未冒溢”。修正时间表述不改变已有候选成因的判断力度。
++
++起溢时刻与峰值时刻要分清。峰值比较发生在起溢之后时，process描述“冒溢增强”或“处于高峰”，不能在峰值比较之后说节点“开始冒溢”。成因判断可以解释水位达到井口为何触发冒溢，但不能借峰值数据重新指定开始时刻。
++
++使用具体管段名称和“汇入、增加、保持、受限、升至、回落、减弱”等明确动词。避免反复使用“在……方面”“呈现……特征”“得到支持”“候选机制”等评估式表述。必要术语在作用关系中解释，例如“下游高水位可能形成顶托，使向下游排水更加困难”。
++
++直接来水组成不是致涝贡献；事件水量份额不是峰值流量比例。本次保存出流不是管段永久固定的最大能力。节点冒溢不直接等同于地表达到内涝关注阈值。不得新增地表回流路径、设施、贡献率或改造效益。
++
++teaching_example是输入和输出成对的P6教学案例。学习选择事实与组织关系的方法，当前事件事实全部来自materials。案例中的[[EX...]]仅用于教学，绝不能复制到当前输出，也不能把P6的过程或成因套到其他节点。输出仍遵守正式JSON结构与[[Fxxxx]]事实引用规则；机制ID只放结构字段。

@@ -36,6 +36,9 @@ class ModelProtocolTests(unittest.IsolatedAsyncioTestCase):
     def respond(self, request):
         body = json.loads(request.content)
         self.requests.append(body)
+        # Exercise the actual outgoing payload for JSON, tools and streaming.
+        for parameter in ('max_tokens', 'max_completion_tokens', 'max_output_tokens'):
+            self.assertNotIn(parameter, body)
         response = {"id": "probe", "object": "chat.completion", "created": 1,
                     "model": "deepseek-flash", "choices": [{"index": 0, "finish_reason": "stop",
                     "message": {"role": "assistant", "content": '{"ok": true}'}}],

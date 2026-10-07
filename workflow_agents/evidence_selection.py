@@ -1,16 +1,15 @@
-"""Task-scoped evidence selection and lossless transport, never top-N selection.
+"""Task-scoped evidence selection, never top-N selection or transport encoding.
 
 All source rows stay local. Global scalar statistics have their own IDs and
 reproducible selectors; citing one does not mark its source rows as read.
 """
-import copy
 import hashlib
 import json
 import math
 from collections import defaultdict
 
 
-SELECTION_VERSION = 'task_evidence_v2'
+SELECTION_VERSION = 'task_evidence_v3'
 EVENT_GROUPS = frozenset({
     'event_context', 'local_structure', 'local_process_series',
     'direct_source_composition', 'facilities_and_storage', 'surface_association',
@@ -105,8 +104,7 @@ def select_initial_evidence(rows, scope, model_name, run_id):
     """Return new summary rows, selected IDs, and explicit coverage/missingness.
 
     Selection is by task objects, event identity and hydraulic adjacency, never
-    row count/order/rank. An oversized complete selection is refused at the
-    request boundary rather than silently truncated here.
+    row count/order/rank. All selected records are supplied in full.
     """
     node, event = scope.get('node_id'), scope.get('event_id')
     event_rows = [r for r in rows if r.get('event_id')
@@ -119,27 +117,7 @@ def select_initial_evidence(rows, scope, model_name, run_id):
             related_nodes.update(row['value'].get('nodes', {}))
             related_links.update(row['value'].get('links', {}))
 
-    # The builder emits the same event facts both in event_context and as CSV
-    # scalars. Use the full event context only when identity, value and units
-    # agree exactly. Conflicting or unavailable facts must remain visible.
-    contexts = {(r['object_id'], r['event_id']): r['value'].get('event', {})
-                for r in event_rows if r['metric_name'] == 'event_context' and isinstance(r.get('value'), dict)}
-    duplicated, selected = [], []
-    event_fields = {'event_peak_flooding': ('peak_flooding_Ls', 'L/s'),
-                    'event_duration': ('duration_minutes', 'min'),
-                    'event_estimated_volume': ('estimated_volume_m3', 'm3')}
-    for r in event_rows:
-        field, unit = event_fields.get(r['metric_name'], ('', ''))
-        context = contexts.get((r['object_id'], r['event_id']), {})
-        value = _number(r.get('value'))
-        if (field and value is not None and value == _number(context.get(field))
-                and r.get('unit') == unit
-                and r.get('time_start') == context.get('start')
-                and r.get('time_end') == context.get('end')
-                and r.get('calculation_method') == context.get('integration_method')):
-            duplicated.append(r['evidence_id'])
-        else:
-            selected.append(r)
+    selected = list(event_rows)
     derived = []
     if node:
         for row in rows:
@@ -151,9 +129,9 @@ def select_initial_evidence(rows, scope, model_name, run_id):
     else:
         derived = _global_summaries(rows, model_name, run_id)
         selected.extend(derived)
-        # Preserve any run-level structured background already built.
-        selected.extend(r for r in rows if not r.get('event_id')
-                        and r['object_type'] == 'run' and isinstance(r.get('value'), dict))
+    # Common run context, including rainfall, is supplied for every scope.
+    selected.extend(r for r in rows if not r.get('event_id')
+                    and r['object_type'] == 'run' and isinstance(r.get('value'), dict))
 
     coverage = []
     for event_id in events:
@@ -162,10 +140,10 @@ def select_initial_evidence(rows, scope, model_name, run_id):
     manifest = {
         'policy': SELECTION_VERSION, 'selection_basis': 'task_scope_and_event_hydraulic_context',
         'scope': scope['scope'], 'event_coverage': coverage,
-        'duplicate_scalar_ids_available_on_request': sorted(duplicated),
         'related_nodes': sorted(related_nodes), 'related_links': sorted(related_links),
         'background_scope': 'Whole-run statistics remain background; do not substitute them for event values.',
         'limitations': ['Local packages cover only their saved process window; missing values remain unknown.',
+                        'Topology corridors stop at recorded boundaries; they do not guarantee all causes are covered.',
                         'Global statistics are not individual-object or causal diagnosis.'],
     }
     if not events:
@@ -194,66 +172,3 @@ def lookup_evidence(rows, request):
     selected = _ordered([r for r in rows if all(r.get(k) == v for k, v in filters.items())])
     return {'rows': selected, 'total_matches': len(selected), 'selection': filters,
             'complete_match_set': True}
-
-
-def _flatten(value, path=()):
-    if isinstance(value, dict) and value:
-        result = {}
-        for key, item in value.items():
-            result.update(_flatten(item, path + (key,)))
-        return result
-    return {path: value}
-
-
-def encode_series(series):
-    """Lossless field-path matrix: no temporal sampling or numerical rounding."""
-    if not series:
-        return series
-    flat = [_flatten(record) for record in series]
-    paths = sorted({path for record in flat for path in record})
-    # A key may disappear or become a dictionary in irregular inputs. Retain
-    # such inputs unchanged rather than risk an ambiguous path reconstruction.
-    if any(path[:i] in paths for path in paths for i in range(1, len(path))):
-        return series
-    constants, varying = [], []
-    for path in paths:
-        if all(path in record and record[path] == flat[0].get(path) for record in flat):
-            constants.append([list(path), flat[0][path]])
-        else:
-            varying.append(path)
-    records = []
-    for record in flat:
-        records.append({'values': [record.get(path) for path in varying],
-                        'absent': [i for i, path in enumerate(varying) if path not in record]})
-    encoded = {'encoding': 'lossless_field_path_matrix_v1', 'fields': [list(p) for p in varying],
-               'constants': constants, 'records': records}
-    return encoded if len(_json(encoded)) < len(_json(series)) else series
-
-
-def decode_series(value):
-    """Reference decoder used to verify transport equivalence."""
-    if isinstance(value, list):
-        return copy.deepcopy(value)
-    result = []
-    for record in value['records']:
-        tree = {}
-        items = list(value['constants']) + [(path, record['values'][i])
-                 for i, path in enumerate(value['fields']) if i not in record['absent']]
-        for path, item in items:
-            current = tree
-            for key in path[:-1]:
-                current = current.setdefault(key, {})
-            current[path[-1]] = copy.deepcopy(item)
-        result.append(tree)
-    return result
-
-
-def transport_evidence(rows):
-    """Keep IDs and every value; only repeated process-series keys are factored."""
-    result = copy.deepcopy(_ordered(rows))
-    for row in result:
-        if row['metric_name'] == 'local_process_series' and isinstance(row.get('value'), dict):
-            series = row['value'].get('series')
-            if isinstance(series, list):
-                row['value']['series'] = encode_series(series)
-    return result
