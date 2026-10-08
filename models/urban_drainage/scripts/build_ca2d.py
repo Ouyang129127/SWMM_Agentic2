@@ -278,7 +278,7 @@ def main():
     cell_id_grid = smid_grid - 1
 
     arrays = {
-        "elevation.npy": elevation.astype(np.float32), "smid_grid.npy": smid_grid,
+        "elevation.npy": elevation.astype(np.float32), "terrain.npy": terrain.astype(np.float32), "smid_grid.npy": smid_grid,
         "flow_mask.npy": flow_mask, "building_mask.npy": building_mask,
         "resistance.npy": resistance, "valid_mask.npy": valid_mask,
         "cell_id_grid.npy": cell_id_grid, "road_mask.npy": road_mask,

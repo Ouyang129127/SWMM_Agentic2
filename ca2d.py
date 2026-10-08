@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 from simulation_timing import load_timing
+from surface_rendering import MAP_RC, basemap_legend, draw_basemap, load_display_layers, prepare_basemap
 
 
 FLOOD_CMAP = LinearSegmentedColormap.from_list(
@@ -54,7 +55,7 @@ def load_model(model_dir: Path) -> Dict[str, object]:
         raise FileNotFoundError(
             f"CA2D static model is incomplete: {model_dir}. Missing: {', '.join(status['missing'])}"
         )
-    return {
+    model = {
         "config": json.loads((model_dir / "config.json").read_text(encoding="utf-8")),
         "elevation": np.load(model_dir / "elevation.npy"),
         "smid_grid": np.load(model_dir / "smid_grid.npy"),
@@ -63,6 +64,9 @@ def load_model(model_dir: Path) -> Dict[str, object]:
         "resistance": np.load(model_dir / "resistance.npy"),
         "node_mapping": pd.read_csv(model_dir / "node_to_cell_mapping.csv", dtype={"node_id": str}),
     }
+    model["display_layers"] = load_display_layers(
+        model_dir, model["config"], model["elevation"], model["flow_mask"], model["building_mask"])
+    return model
 
 
 def read_node_outflow_data(flooding_file: Path) -> pd.DataFrame:
@@ -255,51 +259,58 @@ def frame_to_records(depth, smid_grid, dt_value):
     )
 
 
-def render_depth(depth, elevation, flow_mask, building_mask, output_path, title):
-    fig, ax = plt.subplots(figsize=(9, 7), dpi=150)
-    ax.imshow(np.ma.masked_where(~flow_mask, elevation), cmap="Greys", alpha=0.62)
-    ax.imshow(np.ma.masked_where(~building_mask, building_mask), cmap="binary", alpha=0.32)
-    masked_depth = np.ma.masked_where((depth <= 0.005) | (~flow_mask), depth)
-    vmax = max(0.35, float(np.nanmax(depth)))
-    image = ax.imshow(masked_depth, cmap=FLOOD_CMAP, vmin=0, vmax=vmax, alpha=0.94)
-    ax.set_title(title)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    cbar = fig.colorbar(image, ax=ax, fraction=0.046, pad=0.04)
-    cbar.set_label("Water depth (m)")
-    fig.tight_layout()
-    fig.savefig(output_path)
-    plt.close(fig)
+def _depth_figure(depth, flow_mask, layers, title, subtitle, vmax, dpi):
+    # Preserve the selected preview's portrait layout for tall urban domains,
+    # while giving wide model domains enough room for their own aspect ratio.
+    ny, nx = depth.shape
+    width = max(6.3, 8.0 * nx / max(ny, 1))
+    fig = plt.figure(figsize=(width, 8.0), dpi=dpi)
+    ax = fig.add_axes([.055, .14, .79, .73])
+    draw_basemap(ax, layers)
+    image = ax.imshow(np.ma.masked_where((depth <= .005) | (~flow_mask), depth),
+                      cmap=FLOOD_CMAP, vmin=0, vmax=vmax, alpha=.94,
+                      interpolation="nearest", zorder=8)
+    fig.text(.5, .96, title, ha="center", fontsize=16, color="#26342d")
+    stamp = fig.text(.5, .914, subtitle, ha="center", fontsize=11, color="#707b74")
+    handles = basemap_legend(layers["road_known"])
+    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.5, .065),
+               ncol=len(handles), frameon=False, fontsize=9)
+    cbar = fig.colorbar(image, cax=fig.add_axes([.887, .245, .021, .50]))
+    cbar.set_label("水深（m）", fontsize=10)
+    cbar.outline.set_edgecolor("#bcc1bd")
+    return fig, image, stamp
 
 
-def make_gif(frames, elevation, flow_mask, building_mask, output_path):
+def render_depth(depth, elevation, flow_mask, building_mask, output_path, title, **display_layers):
+    layers = prepare_basemap(elevation, flow_mask, building_mask, **display_layers)
+    with plt.rc_context(MAP_RC):
+        fig, _, _ = _depth_figure(depth, flow_mask, layers, title, "", max(.35, float(np.nanmax(depth))), 150)
+        try:
+            fig.savefig(output_path)
+        finally:
+            plt.close(fig)
+
+
+def make_gif(frames, elevation, flow_mask, building_mask, output_path, **display_layers):
     if not frames:
         return
-    tmp_dir = output_path.parent / "_frames"
-    tmp_dir.mkdir(exist_ok=True)
+    layers = prepare_basemap(elevation, flow_mask, building_mask, **display_layers)
     images = []
     vmax = max(0.35, max(float(np.nanmax(frame)) for _time, frame in frames))
-
-    for i, (dt_value, frame) in enumerate(frames):
-        frame_path = tmp_dir / f"frame_{i:03d}.png"
-        fig, ax = plt.subplots(figsize=(7, 5), dpi=110)
-        ax.imshow(np.ma.masked_where(~flow_mask, elevation), cmap="Greys", alpha=0.62)
-        ax.imshow(np.ma.masked_where(~building_mask, building_mask), cmap="binary", alpha=0.30)
-        ax.imshow(np.ma.masked_where((frame <= 0.005) | (~flow_mask), frame), cmap=FLOOD_CMAP, vmin=0, vmax=vmax, alpha=0.94)
-        ax.set_title(dt_value.strftime("SWMM-2D %Y-%m-%d %H:%M:%S"))
-        ax.set_xticks([])
-        ax.set_yticks([])
-        fig.tight_layout()
-        fig.savefig(frame_path)
-        plt.close(fig)
-        images.append(Image.open(frame_path).convert("P", palette=Image.ADAPTIVE))
-
-    images[0].save(output_path, save_all=True, append_images=images[1:], duration=150, loop=0)
-    for image in images:
-        image.close()
-    for frame_path in tmp_dir.glob("frame_*.png"):
-        frame_path.unlink()
-    tmp_dir.rmdir()
+    with plt.rc_context(MAP_RC):
+        fig, image, stamp = _depth_figure(frames[0][1], flow_mask, layers, "地表积水演变", "", vmax, 120)
+        try:
+            for dt_value, frame in frames:
+                image.set_data(np.ma.masked_where((frame <= .005) | (~flow_mask), frame))
+                stamp.set_text(dt_value.strftime("%Y-%m-%d  %H:%M:%S"))
+                fig.canvas.draw()
+                rgb = np.asarray(fig.canvas.buffer_rgba())[..., :3].copy()
+                images.append(Image.fromarray(rgb).convert("P", palette=Image.Palette.ADAPTIVE, colors=256))
+            images[0].save(output_path, save_all=True, append_images=images[1:], duration=150, loop=0)
+        finally:
+            plt.close(fig)
+            for image in images:
+                image.close()
 
 
 def write_tif(depth, config, output_path):
@@ -437,9 +448,10 @@ def run_ca2d_simulation(
     final_depth_png = output_dir / "ca2d_final_depth.png"
     animation_gif = output_dir / "ca2d_animation.gif"
     max_depth_tif = output_dir / "ca2d_max_depth.tif"
-    render_depth(max_depth, elevation, model["flow_mask"], model["building_mask"], max_depth_png, "SWMM-2D maximum water depth")
-    render_depth(depth, elevation, model["flow_mask"], model["building_mask"], final_depth_png, "SWMM-2D final water depth")
-    make_gif(gif_frames, elevation, model["flow_mask"], model["building_mask"], animation_gif)
+    display_layers = model.get("display_layers", {})
+    render_depth(max_depth, elevation, model["flow_mask"], model["building_mask"], max_depth_png, "地表最大水深", **display_layers)
+    render_depth(depth, elevation, model["flow_mask"], model["building_mask"], final_depth_png, "模拟结束时水深", **display_layers)
+    make_gif(gif_frames, elevation, model["flow_mask"], model["building_mask"], animation_gif, **display_layers)
     tif_written = write_tif(max_depth, config, max_depth_tif)
 
     summary = {
@@ -511,6 +523,7 @@ def create_demo_static_model(model_dir: Path, nx=60, ny=50, cell_size=5.0) -> Di
     basin = np.exp(-(((x - 40) ** 2) / 260.0 + ((y - 32) ** 2) / 200.0))
     elevation -= 0.65 * basin
     elevation = elevation.astype(np.float32)
+    terrain = elevation.copy()
 
     building_mask = np.zeros((ny, nx), dtype=bool)
     building_mask[10:18, 12:22] = True
@@ -522,6 +535,7 @@ def create_demo_static_model(model_dir: Path, nx=60, ny=50, cell_size=5.0) -> Di
     resistance = np.where(flow_mask, 0.75, 0.0).astype(np.float32)
 
     np.save(model_dir / "elevation.npy", elevation)
+    np.save(model_dir / "terrain.npy", terrain)
     np.save(model_dir / "smid_grid.npy", smid_grid)
     np.save(model_dir / "flow_mask.npy", flow_mask)
     np.save(model_dir / "building_mask.npy", building_mask)

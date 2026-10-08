@@ -1,5 +1,17 @@
 # SWMM-Agentic2
 
+## CA2D 默认底图 — 2026-10-08
+
+后续模拟的 `ca2d_animation.gif`、`ca2d_max_depth.png` 和 `ca2d_final_depth.png`
+统一采用灰绿地形、灰色道路（`#d5dcdf`）、灰褐建筑的底图。土地保留柔和地形阴影
+和淡等高线；积水沿用黄—橙—红配色、0.005 m 显示阈值及至少 0–0.35 m 的色标范围。
+灰绿色只表示其余土地的显示颜色，不代表新增植被分类。没有道路图层的模型不绘制道路。
+
+`surface_rendering.py` 管理统一底图。新建 UrbanDrainage 和 demo 静态模型保存原始
+`terrain.npy` 供绘图使用；已有 UrbanDrainage 模型根据配置中记录的建筑抬高和道路降低
+恢复显示地形。其他模型没有原始地面图层时，建筑处的阴影采用周围地面插值。
+这些处理不修改求解器高程、阻力、水深或模拟时间。已有运行结果不会被自动覆盖。
+
 ## Current workflow — 2026-10-03
 
 The only diagnosis workflow is task-scoped LLM investigation:
