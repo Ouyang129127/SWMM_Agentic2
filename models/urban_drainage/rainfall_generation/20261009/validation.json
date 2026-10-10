@@ -1,0 +1,46 @@
+{
+  "checked_date": "2026-10-09",
+  "status": "passed",
+  "command": "python -m scripts.validate_and_plot_urban_storms_20261009",
+  "exit_code": 0,
+  "checks": [
+    "Three source SHA-256 hashes unchanged",
+    "49 timestamp/value rows per new file",
+    "48 five-minute interval-start rainfall intervals",
+    "Terminal zero at 2024-01-01 04:00:00",
+    "Non-negative intensities at 0.001 mm/h precision",
+    "Uniform source scaling with recorded decimal rounding correction",
+    "Exact 60/120/160 mm depth by Decimal stepwise integration",
+    "Peak counts and timestamps retained",
+    "Wet/dry intervals retained",
+    "Existing rainfall_context parser reads all additions correctly"
+  ],
+  "events": [
+    {
+      "file": "events/chicago_like_single_4h_60mm_5min.txt",
+      "sha256": "2acbd76c3ce19b19586c91a8df2ae4795a4c9be8f615620964fb76f04b27e3e7",
+      "total_rainfall_mm": 60,
+      "rows": 49,
+      "peak_count": 1,
+      "max_intensity_mm_h": 110.042
+    },
+    {
+      "file": "events/chicago_like_single_4h_120mm_5min.txt",
+      "sha256": "54dc45f65384d45815cd2e23b548f562c4770a0f9591c31e8bdb6f7f635b7f50",
+      "total_rainfall_mm": 120,
+      "rows": 49,
+      "peak_count": 1,
+      "max_intensity_mm_h": 220.089
+    },
+    {
+      "file": "events/chicago_like_double_4h_160mm_5min.txt",
+      "sha256": "e8940438003273d09331059cc9582a09a3aeaa33e41598e227aa1612d8fffce4",
+      "total_rainfall_mm": 160,
+      "rows": 49,
+      "peak_count": 2,
+      "max_intensity_mm_h": 188.346
+    }
+  ],
+  "original_sources_unchanged": true,
+  "simulation_executed": false
+}

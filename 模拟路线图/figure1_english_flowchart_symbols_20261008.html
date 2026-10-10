@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SWMM–CA2D Figure 1 — English versions</title>
+<style>
+:root{color-scheme:light;--ink:#2f3437;--muted:#646b67;--paper:#f3f0ea;--line:#d8d1c7}
+*{box-sizing:border-box}body{margin:0;padding:24px;background:var(--paper);color:var(--ink);font-family:Arial,"Segoe UI",sans-serif}.wrap{max-width:1320px;margin:auto;background:#fbfaf7;border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:0 12px 32px #49433b14}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:0 8px 18px;font-size:13px;color:var(--muted)}.toolbar a{color:#435e5a;text-decoration:none;border:1px solid #b6c0bc;padding:7px 12px;border-radius:4px}.canvas{overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto;background:#fbfaf7}svg text{font-family:Arial,"Segoe UI",sans-serif;fill:#2f3437}svg .title{font-size:26px;font-weight:700}svg .sub{font-size:16px;fill:#646b67}svg .head{font-size:19px;font-weight:700}svg .body{font-size:15px}svg .small{font-size:13px;fill:#555e59}svg .tag{font-size:12px;font-weight:600;letter-spacing:.5px}svg .main{stroke:#718580;stroke-width:2.3;fill:none;marker-end:url(#arrow)}svg .record{stroke:#9686a1;stroke-width:1.8;fill:none;marker-end:url(#dataArrow)}svg .repair{stroke:#9b7861;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#repairArrow)}svg .query{stroke:#688574;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#queryArrow)}svg .agent{fill:#dce4e1;stroke:#7c8e8b;stroke-width:1.4}svg .data{fill:#e7e0eb;stroke:#a798b2;stroke-width:1.1}svg .number{font-size:19px;fill:#4f6761;font-weight:700}.note{margin:16px 8px 0;font-size:13px;line-height:1.8;color:var(--muted)}@media print{body{padding:0;background:white}.wrap{border:0;padding:0;box-shadow:none}.toolbar,.note{display:none}svg{min-width:0}}
+svg .reportDocument{fill:#d8cfc4;stroke:#9d8f7f;stroke-width:1.4}</style>
+</head>
+<body><main class="wrap">
+<div class="toolbar"><span>Figure 1 · English · Flowchart symbols · 2026-10-08</span><a href="figure1_english_flowchart_symbols_20261008.svg" download="">Download vector SVG</a></div>
+<div class="canvas">
+<svg id="architecture" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1660" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">SWMM–CA2D Event-Centred Diagnosis Workflow</title>
+<desc id="fig-desc">Four core modules build evidence, assess mechanisms, check references, and generate reports. Failed checks return to diagnosis. After an initial report, approved evidence requests retrieve saved results for a revised diagnosis. Unresolved gaps are retained.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#718580"></path></marker>
+<marker id="dataArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9686a1"></path></marker>
+<marker id="repairArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9b7861"></path></marker>
+<marker id="queryArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#688574"></path></marker>
+</defs>
+<text x="640" y="45" class="title" text-anchor="middle">SWMM–CA2D Event-Centred Diagnosis Workflow</text>
+<text x="640" y="76" class="sub" text-anchor="middle">Relational evidence · Mechanism assessment · Reference checks · Reporting</text>
+
+
+<rect x="40" y="106" width="1200" height="155" rx="10" fill="#eee8df" stroke="#c7bbaa"></rect>
+<text x="62" y="136" class="tag">INPUTS &amp; SIMULATION</text>
+<path d="M78 153H388L372 235H62Z" fill="#f8f5ef" stroke="#cbbdac"></path>
+<text x="225" y="183" class="head" text-anchor="middle">User task and model inputs</text>
+<text x="225" y="214" class="body" text-anchor="middle">SWMM network / CA2D surface / Rainfall</text>
+<path d="M388 194H444" class="main"></path>
+<rect x="446" y="153" width="344" height="82" rx="7" fill="#d8cfc4" stroke="#a99a88"></rect>
+<text x="618" y="183" class="head" text-anchor="middle">Scenario setup and simulation</text>
+<text x="618" y="214" class="body" text-anchor="middle">Scenario Agent / Simulation Agent</text>
+<path d="M790 194H847" class="main"></path>
+<path d="M850 162C850 150 1216 150 1216 162V226C1216 238 850 238 850 226Z" fill="#f8f5ef" stroke="#cbbdac" stroke-width="1.2"></path><ellipse cx="1033" cy="162" rx="183" ry="9" fill="#f8f5ef" stroke="#cbbdac" stroke-width="1.2"></ellipse>
+<text x="1033" y="183" class="head" text-anchor="middle">Model structure and saved results</text>
+<text x="1033" y="214" class="body" text-anchor="middle">Nodes · Links · Surface time series</text>
+
+<rect x="420" y="286" width="460" height="44" rx="7" fill="#d4dccf" stroke="#8a9982"></rect>
+<text x="650" y="314" class="body" text-anchor="middle">Workflow management: Stage coordination and task records</text>
+<path d="M1033 235V272H901V350H650V380" class="main"></path>
+<text x="81" y="403" class="tag" fill="#688574">FEEDBACK &amp; USER INPUT</text>
+<rect x="930" y="345" width="310" height="780" rx="10" fill="#f3eff5" stroke="#d3c8d9"></rect>
+<text x="1085" y="374" class="tag" text-anchor="middle">TRACEABLE ARTIFACTS</text>
+
+
+<rect x="420" y="380" width="460" height="110" rx="9" class="agent"></rect><path d="M432 381V489M868 381V489" fill="none" stroke="#7c8e8b" stroke-width="1.2"></path>
+<text x="441" y="410" class="number">01</text>
+<text x="650" y="414" class="head" text-anchor="middle">Evidence Builder Agent</text>
+<text x="650" y="446" class="body" text-anchor="middle">Event detection · Local topology · Hydraulic time series</text>
+<text x="650" y="472" class="small" text-anchor="middle">Deterministic extraction and evidence organisation</text>
+<path d="M880 438H952" class="record"></path>
+<path d="M955 404C955 392 1215 392 1215 404V474C1215 486 955 486 955 474Z" fill="#e7e0eb" stroke="#a798b2" stroke-width="1.2"></path><ellipse cx="1085" cy="404" rx="130" ry="9" fill="#e7e0eb" stroke="#a798b2" stroke-width="1.2"></ellipse>
+<text x="1085" y="425" class="head" text-anchor="middle">Event evidence package</text>
+<text x="1085" y="451" class="body" text-anchor="middle" style="font-size: 13.25px;">Evidence IDs · Objects · Time windows</text>
+<text x="1085" y="472" class="small" text-anchor="middle">Source binding · Evidence snapshot</text>
+<path d="M650 490V540" class="main"></path>
+
+<rect x="420" y="540" width="460" height="124" rx="9" class="agent"></rect><path d="M432 541V663M868 541V663" fill="none" stroke="#7c8e8b" stroke-width="1.2"></path>
+<text x="441" y="570" class="number">02</text>
+<text x="650" y="575" class="head" text-anchor="middle">Diagnosis Agent</text>
+<text x="650" y="609" class="body" text-anchor="middle">Four questions · Mechanism comparison · Joint explanation</text>
+<text x="650" y="640" class="small" text-anchor="middle">LLM reasoning · Alternatives · Gaps and evidence requests</text>
+<path d="M880 601H952" class="record"></path>
+<path d="M955 558H1215V653Q1150 640 1085 653T955 653Z" class="data"></path>
+<text x="1085" y="588" class="head" text-anchor="middle">Structured diagnosis</text>
+<text x="1085" y="615" class="body" text-anchor="middle" style="font-size: 13px;">Process explanation · Mechanism status</text>
+<text x="1085" y="637" class="small" text-anchor="middle" style="font-size: 12.5px;">References · Alternatives · Evidence gaps</text>
+<path d="M650 664V720" class="main"></path>
+
+<rect x="420" y="720" width="460" height="115" rx="9" class="agent"></rect><path d="M432 721V834M868 721V834" fill="none" stroke="#7c8e8b" stroke-width="1.2"></path>
+<text x="441" y="750" class="number">03</text>
+<text x="650" y="755" class="head" text-anchor="middle">Verification Agent</text>
+<text x="650" y="788" class="body" text-anchor="middle">Reference checks + Structural and object-binding checks</text>
+<text x="650" y="816" class="small" text-anchor="middle">Deterministic checks; causal validity assessed separately</text>
+<path d="M880 777H952" class="record"></path>
+<path d="M955 735H1215V828Q1150 815 1085 828T955 828Z" class="data"></path>
+<text x="1085" y="765" class="head" text-anchor="middle">Verification record</text>
+<text x="1085" y="791" class="body" text-anchor="middle">Verified items · Missing references</text>
+<text x="1085" y="812" class="small" text-anchor="middle">Error feedback · Diagnosis version</text>
+<path d="M650 835V850" class="main"></path><path d="M650 910V970" class="main"></path><polygon points="650,850 750,880 650,910 550,880" fill="#ded6bd" stroke="#aa9b72"></polygon><text x="650" y="885" class="body" text-anchor="middle">Checks pass?</text>
+<text x="667" y="944" class="small">Yes</text>
+
+<rect x="420" y="970" width="460" height="120" rx="9" class="agent"></rect><path d="M432 971V1089M868 971V1089" fill="none" stroke="#7c8e8b" stroke-width="1.2"></path>
+<text x="441" y="1000" class="number">04</text>
+<text x="650" y="1005" class="head" text-anchor="middle">Report Agent</text>
+<text x="650" y="1038" class="body" text-anchor="middle">Structured diagnosis + Computed facts and plots</text>
+<text x="650" y="1067" class="small" text-anchor="middle">LLM narrative · Fact binding · Surface associations</text>
+<path d="M880 1030H952" class="record"></path>
+<path d="M955 987H1215V1080Q1150 1067 1085 1080T955 1080Z" class="data"></path>
+<text x="1085" y="1017" class="head" text-anchor="middle" style="font-size: 16.75px;">Report materials and records</text>
+<text x="1085" y="1043" class="body" text-anchor="middle">Facts · Plots · Narrative</text>
+<text x="1085" y="1064" class="small" text-anchor="middle" style="font-size: 12.75px;">Numeric binding · Source/version checks</text>
+<path d="M650 1090V1150" class="main"></path>
+
+<path d="M420 1150H880V1255Q765 1242 650 1255T420 1255Z" class="reportDocument"></path>
+<text x="650" y="1191" class="head" text-anchor="middle">Initial / Revised diagnosis report</text>
+<text x="650" y="1224" class="body" text-anchor="middle">Event explanations · Plots · Unresolved questions</text>
+
+
+<path d="M550 880H380V567H420" class="repair"></path><text x="405" y="869" class="small">No: Repair</text>
+<rect x="130" y="725" width="215" height="109" rx="8" fill="#eee2d8" stroke="#b19a87"></rect>
+<text x="237" y="756" class="head" text-anchor="middle" style="font-size: 17.75px;">Check failure recovery</text>
+<text x="237" y="784" class="body" text-anchor="middle" style="font-size: 12px;">Error feedback → Revise diagnosis</text>
+<text x="237" y="810" class="small" text-anchor="middle" style="font-size: 10.5px;">Repeated failure: Save errors and pause</text>
+<path d="M345 777H380" fill="none" stroke="#9b7861" stroke-width="1.3"></path>
+
+
+<rect x="130" y="514" width="215" height="132" rx="8" fill="#dce5dc" stroke="#8b9f8c"></rect>
+<text x="237" y="545" class="head" text-anchor="middle" style="font-size: 17px;">Evidence retrieval tools</text>
+<text x="237" y="576" class="body" text-anchor="middle" style="font-size: 14.25px;">Read saved simulation results</text>
+<text x="237" y="603" class="small" text-anchor="middle" style="font-size: 10.75px;">Extract by object / Metric / Time window</text>
+<text x="237" y="629" class="small" text-anchor="middle" style="font-size: 11px;">Bind new evidence to the existing task</text>
+<path d="M345 621H373" class="query" style="marker-end:none"></path>
+<path d="M373 621Q380 607 387 621H420" class="query"></path>
+<text x="237" y="673" class="small" text-anchor="middle">New evidence</text>
+<polygon points="237,1145 362,1210 237,1275 112,1210" fill="#ded6bd" stroke="#aa9b72"></polygon>
+<text x="237" y="1204" class="body" text-anchor="middle">Retrieve evidence?</text>
+<text x="237" y="1226" class="small" text-anchor="middle">Available and approved</text>
+
+<path d="M420 1200H386V1210H362" class="query"></path>
+<path d="M237 1145V1109H82V580H130" class="query"></path><text x="249" y="1090" class="small">Yes</text>
+<text x="101" y="1088" class="small">Execute after approval</text>
+
+<rect x="420" y="1295" width="795" height="70" rx="35" fill="#f0ece5" stroke="#d8d1c7"></rect><path d="M237 1275V1330H420" class="query"></path><text x="274" y="1318" class="small">No / Stop</text>
+<text x="817" y="1324" class="body" text-anchor="middle">Retain the current report and unresolved evidence gaps</text><text x="817" y="1347" class="small" text-anchor="middle">End of the current investigation round</text>
+<text x="640" y="1410" class="small" text-anchor="middle">Network–surface association uses injection cells and surface time series; source attribution is not performed.</text>
+
+<text x="62" y="1450" class="tag">FLOWCHART SYMBOLS</text>
+ <path d="M78 1475H213L199 1519H64Z" fill="#f8f5ef" stroke="#a99a88"></path><text x="139" y="1503" class="small" text-anchor="middle">Input / Data</text>
+ <rect x="244" y="1475" width="177" height="44" class="agent"></rect><path d="M256 1475V1519M409 1475V1519" stroke="#7c8e8b"></path><text x="332" y="1503" class="small" text-anchor="middle">Subprocess</text>
+ <polygon points="503,1473 565,1497 503,1521 441,1497" fill="#ded6bd" stroke="#aa9b72"></polygon><text x="503" y="1502" class="small" text-anchor="middle">Decision</text>
+ <path d="M603 1484C603 1472 756 1472 756 1484V1510C756 1522 603 1522 603 1510Z" fill="#e7e0eb" stroke="#a798b2" stroke-width="1.2"></path><ellipse cx="679.5" cy="1484" rx="76.5" ry="9" fill="#e7e0eb" stroke="#a798b2" stroke-width="1.2"></ellipse><text x="679" y="1506" class="small" text-anchor="middle">Stored data</text>
+ <path d="M797 1475H957V1510Q917 1497 877 1510T797 1510Z" class="data"></path><text x="877" y="1501" class="small" text-anchor="middle">Document</text>
+ <rect x="1003" y="1475" width="182" height="44" rx="22" fill="#f0ece5" stroke="#a99a88"></rect><text x="1094" y="1503" class="small" text-anchor="middle">Start / End</text>
+ <text x="62" y="1560" class="tag">CONNECTORS</text>
+ <path d="M270 1596H321" class="main"></path><text x="331" y="1602" class="small">Main flow</text>
+<path d="M435 1596H486" class="record"></path><text x="496" y="1602" class="small">Artifacts</text>
+<path d="M630 1596H681" class="repair"></path><text x="691" y="1602" class="small">Check repair</text>
+<path d="M825 1596H876" class="query"></path><text x="886" y="1602" class="small">Evidence retrieval</text>
+</svg>
+</div>
+<p class="note">Morandi palette retained from the existing figure. Verification and supporting structural checks are grouped by function. Reference traceability and causal validity are assessed separately. This offline figure uses no external scripts or fonts.</p>
+</main>
+</body></html>

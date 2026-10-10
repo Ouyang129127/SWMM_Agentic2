@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SWMM–CA2D · 事件中心型诊断总体架构 · v2</title>
+<style>
+:root{color-scheme:light;--ink:#2f3437;--muted:#646b67;--paper:#f3f0ea;--line:#d8d1c7}
+*{box-sizing:border-box}body{margin:0;padding:24px;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif}.wrap{max-width:1320px;margin:auto;background:#fbfaf7;border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:0 12px 32px #49433b14}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:0 8px 18px;font-size:13px;color:var(--muted)}.toolbar a{color:#435e5a;text-decoration:none;border:1px solid #b6c0bc;padding:7px 12px;border-radius:4px}.canvas{overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto;background:#fbfaf7}svg text{font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;fill:#2f3437}svg .title{font-size:28px;font-weight:700}svg .sub{font-size:16px;fill:#646b67}svg .head{font-size:21px;font-weight:700}svg .body{font-size:17px}svg .small{font-size:15px;fill:#555e59}svg .tag{font-size:13px;font-weight:600;letter-spacing:.5px}svg .main{stroke:#718580;stroke-width:2.3;fill:none;marker-end:url(#arrow)}svg .record{stroke:#9686a1;stroke-width:1.8;fill:none;marker-end:url(#dataArrow)}svg .repair{stroke:#9b7861;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#repairArrow)}svg .query{stroke:#688574;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#queryArrow)}svg .agent{fill:#dce4e1;stroke:#7c8e8b;stroke-width:1.4}svg .data{fill:#e7e0eb;stroke:#a798b2;stroke-width:1.1}svg .number{font-size:19px;fill:#4f6761;font-weight:700}.note{margin:16px 8px 0;font-size:13px;line-height:1.8;color:var(--muted)}@media print{body{padding:0;background:white}.wrap{border:0;padding:0;box-shadow:none}.toolbar,.note{display:none}svg{min-width:0}}
+</style>
+</head>
+<body><main class="wrap">
+<div class="toolbar"><span>图 1 · 总体架构｜中文讨论版 v2 · 2026-10-08</span><a href="agent_collaboration_logic_morandi_vertical_v2_20261008.svg" download>下载 SVG 矢量图</a></div>
+<div class="canvas">
+<svg id="architecture" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1350" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">SWMM–CA2D 事件中心型诊断工作流</title>
+<desc id="fig-desc">前置计算产生模型和模拟结果，四个核心模块依次构建证据、诊断、核验和报告。检查失败返回诊断修正；初步报告后用户可确认补证，工具读取已保存结果再进行诊断。不可获得的证据作为缺口保留。</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#718580"/></marker>
+<marker id="dataArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9686a1"/></marker>
+<marker id="repairArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9b7861"/></marker>
+<marker id="queryArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#688574"/></marker>
+</defs>
+<text x="640" y="45" class="title" text-anchor="middle">SWMM–CA2D 事件中心型诊断工作流</text>
+<text x="640" y="76" class="sub" text-anchor="middle">关系证据构建 · 机制解释 · 引用核验 · 受约束报告</text>
+
+<!-- 前置计算：弱化操作细节，保留输入及生成关系。 -->
+<rect x="40" y="106" width="1200" height="155" rx="10" fill="#eee8df" stroke="#c7bbaa"/>
+<text x="62" y="136" class="tag">前置计算 / INPUTS &amp; SIMULATION</text>
+<rect x="62" y="153" width="326" height="82" rx="7" fill="#f8f5ef" stroke="#cbbdac"/>
+<text x="225" y="183" class="head" text-anchor="middle">用户任务与模型条件</text>
+<text x="225" y="214" class="body" text-anchor="middle">SWMM 管网 / CA2D 地表 / 降雨情景</text>
+<path d="M388 194H444" class="main"/>
+<rect x="446" y="153" width="344" height="82" rx="7" fill="#d8cfc4" stroke="#a99a88"/>
+<text x="618" y="183" class="head" text-anchor="middle">情景准备与耦合模拟</text>
+<text x="618" y="214" class="body" text-anchor="middle">Scenario Agent / Simulation Agent</text>
+<path d="M790 194H847" class="main"/>
+<rect x="850" y="153" width="366" height="82" rx="7" fill="#f8f5ef" stroke="#cbbdac"/>
+<text x="1033" y="183" class="head" text-anchor="middle">模型结构与保存结果</text>
+<text x="1033" y="214" class="body" text-anchor="middle">节点 · 管段 · 地表过程</text>
+
+<rect x="420" y="286" width="460" height="44" rx="7" fill="#d4dccf" stroke="#8a9982"/>
+<text x="650" y="314" class="body" text-anchor="middle">工作流管理：阶段调度 · 状态与任务记录</text>
+<path d="M1033 235V272H901V350H650V380" class="main"/>
+<text x="81" y="403" class="tag" fill="#688574">反馈与用户参与</text>
+<rect x="930" y="345" width="310" height="688" rx="10" fill="#f3eff5" stroke="#d3c8d9"/>
+<text x="1085" y="374" class="tag" text-anchor="middle">可追溯产物 / 来源与版本绑定</text>
+
+<!-- 四个核心模块。 -->
+<rect x="420" y="380" width="460" height="110" rx="9" class="agent"/>
+<text x="441" y="410" class="number">01</text>
+<text x="650" y="414" class="head" text-anchor="middle">Evidence Builder Agent</text>
+<text x="650" y="446" class="body" text-anchor="middle">事件检测 · 局部拓扑 · 同期水力过程</text>
+<text x="650" y="472" class="small" text-anchor="middle">确定性提取与关系组织</text>
+<path d="M880 438H952" class="record"/>
+<rect x="955" y="395" width="260" height="88" rx="7" class="data"/>
+<text x="1085" y="425" class="head" text-anchor="middle">事件证据包</text>
+<text x="1085" y="451" class="body" text-anchor="middle">证据索引 · 对象与时窗</text>
+<text x="1085" y="472" class="small" text-anchor="middle">来源绑定 · 任务证据快照</text>
+<path d="M650 490V540" class="main"/>
+
+<rect x="420" y="540" width="460" height="124" rx="9" class="agent"/>
+<text x="441" y="570" class="number">02</text>
+<text x="650" y="575" class="head" text-anchor="middle">Diagnosis Agent</text>
+<text x="650" y="609" class="body" text-anchor="middle">四问驱动 · 机制比较 · 联合解释</text>
+<text x="650" y="640" class="small" text-anchor="middle">LLM 解释 / 竞争机制 / 缺口与补证请求</text>
+<path d="M880 601H952" class="record"/>
+<rect x="955" y="558" width="260" height="90" rx="7" class="data"/>
+<text x="1085" y="588" class="head" text-anchor="middle">结构化诊断</text>
+<text x="1085" y="615" class="body" text-anchor="middle">过程解释 · 机制状态</text>
+<text x="1085" y="637" class="small" text-anchor="middle">引用 · 竞争解释 · 证据缺口</text>
+<path d="M650 664V720" class="main"/>
+
+<rect x="420" y="720" width="460" height="115" rx="9" class="agent"/>
+<text x="441" y="750" class="number">03</text>
+<text x="650" y="755" class="head" text-anchor="middle">Verification Agent</text>
+<text x="650" y="788" class="body" text-anchor="middle">引用核验 + 配套结构与对象绑定检查</text>
+<text x="650" y="816" class="small" text-anchor="middle">确定性检查，不替代因果有效性评价</text>
+<path d="M880 777H952" class="record"/>
+<rect x="955" y="735" width="260" height="88" rx="7" class="data"/>
+<text x="1085" y="765" class="head" text-anchor="middle">核验记录</text>
+<text x="1085" y="791" class="body" text-anchor="middle">通过项 · 缺失引用</text>
+<text x="1085" y="812" class="small" text-anchor="middle">错误反馈 · 诊断版本绑定</text>
+<path d="M650 835V890" class="main"/>
+<text x="667" y="865" class="small">检查通过</text>
+
+<rect x="420" y="890" width="460" height="120" rx="9" class="agent"/>
+<text x="441" y="920" class="number">04</text>
+<text x="650" y="925" class="head" text-anchor="middle">Report Agent</text>
+<text x="650" y="958" class="body" text-anchor="middle">结构化诊断 + 确定性数值与图表</text>
+<text x="650" y="987" class="small" text-anchor="middle">LLM 叙述 / 事实绑定 / 地表表现关联</text>
+<path d="M880 950H952" class="record"/>
+<rect x="955" y="907" width="260" height="88" rx="7" class="data"/>
+<text x="1085" y="937" class="head" text-anchor="middle">报告材料与生成记录</text>
+<text x="1085" y="963" class="body" text-anchor="middle">事实文本 · 图表 · 叙述</text>
+<text x="1085" y="984" class="small" text-anchor="middle">数值绑定 · 来源与版本检查</text>
+<path d="M650 1010V1070" class="main"/>
+
+<rect x="420" y="1070" width="460" height="100" rx="24" fill="#d8cfc4" stroke="#9d8f7f" stroke-width="1.4"/>
+<text x="650" y="1111" class="head" text-anchor="middle">初步 / 修订诊断报告</text>
+<text x="650" y="1144" class="body" text-anchor="middle">事件解释 · 图文结果 · 未解决问题</text>
+
+<!-- 检查失败修正：无自动无限重试。 -->
+<path d="M420 777H380V567H420" class="repair"/>
+<rect x="130" y="725" width="215" height="109" rx="8" fill="#eee2d8" stroke="#b19a87"/>
+<text x="237" y="756" class="head" text-anchor="middle">检查失败修正</text>
+<text x="237" y="784" class="body" text-anchor="middle">反馈错误 → 修订诊断</text>
+<text x="237" y="810" class="small" text-anchor="middle">持续失败：保留错误并暂停</text>
+<path d="M345 777H371" fill="none" stroke="#9b7861" stroke-width="1.3"/>
+
+<!-- 补证：仅在报告交付后，经用户确认读取保存结果。 -->
+<rect x="130" y="514" width="215" height="132" rx="8" fill="#dce5dc" stroke="#8b9f8c"/>
+<text x="237" y="545" class="head" text-anchor="middle">按需补证工具</text>
+<text x="237" y="576" class="body" text-anchor="middle">读取已保存模拟结果</text>
+<text x="237" y="603" class="small" text-anchor="middle">按对象 / 指标 / 时窗提取</text>
+<text x="237" y="629" class="small" text-anchor="middle">新增证据绑定至原任务</text>
+<path d="M345 621H373" class="query" style="marker-end:none"/>
+<path d="M373 621Q380 607 387 621H420" class="query"/>
+<text x="352" y="651" class="small">补充证据</text>
+<rect x="130" y="1070" width="215" height="100" rx="8" fill="#ded6bd" stroke="#aa9b72"/>
+<text x="237" y="1106" class="head" text-anchor="middle">用户确认继续补证</text>
+<text x="237" y="1135" class="body" text-anchor="middle">有可执行的证据请求</text>
+<text x="237" y="1158" class="small" text-anchor="middle">不默认自主扩展调查</text>
+<path d="M420 1120H345" class="query"/>
+<path d="M237 1070V1029H82V580H130" class="query"/>
+<text x="101" y="1008" class="small">确认后执行</text>
+
+<rect x="420" y="1195" width="795" height="46" rx="6" fill="#f0ece5" stroke="#d8d1c7"/>
+<text x="817" y="1224" class="body" text-anchor="middle">无可执行请求或用户不继续：保留本轮报告与未解决的证据缺口</text>
+<text x="640" y="1279" class="small" text-anchor="middle">管网—地表联系：节点注入网格及积水过程关联；不表示已实现地表水源贡献追踪。</text>
+
+<path d="M270 1312H321" class="main"/><text x="331" y="1318" class="small">主流程</text>
+<path d="M435 1312H486" class="record"/><text x="496" y="1318" class="small">产物记录</text>
+<path d="M630 1312H681" class="repair"/><text x="691" y="1318" class="small">检查修正</text>
+<path d="M825 1312H876" class="query"/><text x="886" y="1318" class="small">补证调查</text>
+</svg>
+</div>
+<p class="note">基于旧版纵向流程图优化，保留莫兰迪配色。图中按功能合并展示核验与配套结构检查；不将引用通过等同于诊断正确。本文重点研究 M1–M4，机制细节见第 2.3 节。本页为离线 HTML/SVG，无外部字体、脚本或 CDN 依赖。</p>
+</main></body></html>

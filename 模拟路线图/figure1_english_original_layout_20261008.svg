@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="architecture" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1350" role="img" aria-labelledby="fig-title fig-desc" width="1280" height="1350"><style>
+:root{color-scheme:light;--ink:#2f3437;--muted:#646b67;--paper:#f3f0ea;--line:#d8d1c7}
+*{box-sizing:border-box}body{margin:0;padding:24px;background:var(--paper);color:var(--ink);font-family:Arial,"Segoe UI",sans-serif}.wrap{max-width:1320px;margin:auto;background:#fbfaf7;border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:0 12px 32px #49433b14}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:0 8px 18px;font-size:13px;color:var(--muted)}.toolbar a{color:#435e5a;text-decoration:none;border:1px solid #b6c0bc;padding:7px 12px;border-radius:4px}.canvas{overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto;background:#fbfaf7}svg text{font-family:Arial,"Segoe UI",sans-serif;fill:#2f3437}svg .title{font-size:26px;font-weight:700}svg .sub{font-size:16px;fill:#646b67}svg .head{font-size:19px;font-weight:700}svg .body{font-size:15px}svg .small{font-size:13px;fill:#555e59}svg .tag{font-size:12px;font-weight:600;letter-spacing:.5px}svg .main{stroke:#718580;stroke-width:2.3;fill:none;marker-end:url(#arrow)}svg .record{stroke:#9686a1;stroke-width:1.8;fill:none;marker-end:url(#dataArrow)}svg .repair{stroke:#9b7861;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#repairArrow)}svg .query{stroke:#688574;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#queryArrow)}svg .agent{fill:#dce4e1;stroke:#7c8e8b;stroke-width:1.4}svg .data{fill:#e7e0eb;stroke:#a798b2;stroke-width:1.1}svg .number{font-size:19px;fill:#4f6761;font-weight:700}.note{margin:16px 8px 0;font-size:13px;line-height:1.8;color:var(--muted)}@media print{body{padding:0;background:white}.wrap{border:0;padding:0;box-shadow:none}.toolbar,.note{display:none}svg{min-width:0}}
+</style>
+<title id="fig-title">SWMM–CA2D Event-Centred Diagnosis Workflow</title>
+<desc id="fig-desc">Four core modules build evidence, assess mechanisms, check references, and generate reports. Failed checks return to diagnosis. After an initial report, approved evidence requests retrieve saved results for a revised diagnosis. Unresolved gaps are retained.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#718580"/></marker>
+<marker id="dataArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9686a1"/></marker>
+<marker id="repairArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9b7861"/></marker>
+<marker id="queryArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#688574"/></marker>
+</defs>
+<text x="640" y="45" class="title" text-anchor="middle">SWMM–CA2D Event-Centred Diagnosis Workflow</text>
+<text x="640" y="76" class="sub" text-anchor="middle">Relational evidence · Mechanism assessment · Reference checks · Reporting</text>
+
+
+<rect x="40" y="106" width="1200" height="155" rx="10" fill="#eee8df" stroke="#c7bbaa"/>
+<text x="62" y="136" class="tag">INPUTS &amp; SIMULATION</text>
+<rect x="62" y="153" width="326" height="82" rx="7" fill="#f8f5ef" stroke="#cbbdac"/>
+<text x="225" y="183" class="head" text-anchor="middle">User task and model inputs</text>
+<text x="225" y="214" class="body" text-anchor="middle">SWMM network / CA2D surface / Rainfall</text>
+<path d="M388 194H444" class="main"/>
+<rect x="446" y="153" width="344" height="82" rx="7" fill="#d8cfc4" stroke="#a99a88"/>
+<text x="618" y="183" class="head" text-anchor="middle">Scenario setup and simulation</text>
+<text x="618" y="214" class="body" text-anchor="middle">Scenario Agent / Simulation Agent</text>
+<path d="M790 194H847" class="main"/>
+<rect x="850" y="153" width="366" height="82" rx="7" fill="#f8f5ef" stroke="#cbbdac"/>
+<text x="1033" y="183" class="head" text-anchor="middle">Model structure and saved results</text>
+<text x="1033" y="214" class="body" text-anchor="middle">Nodes · Links · Surface time series</text>
+
+<rect x="420" y="286" width="460" height="44" rx="7" fill="#d4dccf" stroke="#8a9982"/>
+<text x="650" y="314" class="body" text-anchor="middle">Workflow management: Stage coordination and task records</text>
+<path d="M1033 235V272H901V350H650V380" class="main"/>
+<text x="81" y="403" class="tag" fill="#688574">FEEDBACK &amp; USER INPUT</text>
+<rect x="930" y="345" width="310" height="688" rx="10" fill="#f3eff5" stroke="#d3c8d9"/>
+<text x="1085" y="374" class="tag" text-anchor="middle">TRACEABLE ARTIFACTS</text>
+
+
+<rect x="420" y="380" width="460" height="110" rx="9" class="agent"/>
+<text x="441" y="410" class="number">01</text>
+<text x="650" y="414" class="head" text-anchor="middle">Evidence Builder Agent</text>
+<text x="650" y="446" class="body" text-anchor="middle">Event detection · Local topology · Hydraulic time series</text>
+<text x="650" y="472" class="small" text-anchor="middle">Deterministic extraction and evidence organisation</text>
+<path d="M880 438H952" class="record"/>
+<rect x="955" y="395" width="260" height="88" rx="7" class="data"/>
+<text x="1085" y="425" class="head" text-anchor="middle">Event evidence package</text>
+<text x="1085" y="451" class="body" text-anchor="middle" style="font-size: 13.25px;">Evidence IDs · Objects · Time windows</text>
+<text x="1085" y="472" class="small" text-anchor="middle">Source binding · Evidence snapshot</text>
+<path d="M650 490V540" class="main"/>
+
+<rect x="420" y="540" width="460" height="124" rx="9" class="agent"/>
+<text x="441" y="570" class="number">02</text>
+<text x="650" y="575" class="head" text-anchor="middle">Diagnosis Agent</text>
+<text x="650" y="609" class="body" text-anchor="middle">Four questions · Mechanism comparison · Joint explanation</text>
+<text x="650" y="640" class="small" text-anchor="middle">LLM reasoning · Alternatives · Gaps and evidence requests</text>
+<path d="M880 601H952" class="record"/>
+<rect x="955" y="558" width="260" height="90" rx="7" class="data"/>
+<text x="1085" y="588" class="head" text-anchor="middle">Structured diagnosis</text>
+<text x="1085" y="615" class="body" text-anchor="middle" style="font-size: 13px;">Process explanation · Mechanism status</text>
+<text x="1085" y="637" class="small" text-anchor="middle" style="font-size: 12.5px;">References · Alternatives · Evidence gaps</text>
+<path d="M650 664V720" class="main"/>
+
+<rect x="420" y="720" width="460" height="115" rx="9" class="agent"/>
+<text x="441" y="750" class="number">03</text>
+<text x="650" y="755" class="head" text-anchor="middle">Verification Agent</text>
+<text x="650" y="788" class="body" text-anchor="middle">Reference checks + Structural and object-binding checks</text>
+<text x="650" y="816" class="small" text-anchor="middle">Deterministic checks; causal validity assessed separately</text>
+<path d="M880 777H952" class="record"/>
+<rect x="955" y="735" width="260" height="88" rx="7" class="data"/>
+<text x="1085" y="765" class="head" text-anchor="middle">Verification record</text>
+<text x="1085" y="791" class="body" text-anchor="middle">Verified items · Missing references</text>
+<text x="1085" y="812" class="small" text-anchor="middle">Error feedback · Diagnosis version</text>
+<path d="M650 835V890" class="main"/>
+<text x="667" y="865" class="small">Checks passed</text>
+
+<rect x="420" y="890" width="460" height="120" rx="9" class="agent"/>
+<text x="441" y="920" class="number">04</text>
+<text x="650" y="925" class="head" text-anchor="middle">Report Agent</text>
+<text x="650" y="958" class="body" text-anchor="middle">Structured diagnosis + Computed facts and plots</text>
+<text x="650" y="987" class="small" text-anchor="middle">LLM narrative · Fact binding · Surface associations</text>
+<path d="M880 950H952" class="record"/>
+<rect x="955" y="907" width="260" height="88" rx="7" class="data"/>
+<text x="1085" y="937" class="head" text-anchor="middle" style="font-size: 16.75px;">Report materials and records</text>
+<text x="1085" y="963" class="body" text-anchor="middle">Facts · Plots · Narrative</text>
+<text x="1085" y="984" class="small" text-anchor="middle" style="font-size: 12.75px;">Numeric binding · Source/version checks</text>
+<path d="M650 1010V1070" class="main"/>
+
+<rect x="420" y="1070" width="460" height="100" rx="24" fill="#d8cfc4" stroke="#9d8f7f" stroke-width="1.4"/>
+<text x="650" y="1111" class="head" text-anchor="middle">Initial / Revised diagnosis report</text>
+<text x="650" y="1144" class="body" text-anchor="middle">Event explanations · Plots · Unresolved questions</text>
+
+
+<path d="M420 777H380V567H420" class="repair"/>
+<rect x="130" y="725" width="215" height="109" rx="8" fill="#eee2d8" stroke="#b19a87"/>
+<text x="237" y="756" class="head" text-anchor="middle" style="font-size: 17.75px;">Check failure recovery</text>
+<text x="237" y="784" class="body" text-anchor="middle" style="font-size: 12px;">Error feedback → Revise diagnosis</text>
+<text x="237" y="810" class="small" text-anchor="middle" style="font-size: 10.5px;">Repeated failure: Save errors and pause</text>
+<path d="M345 777H371" fill="none" stroke="#9b7861" stroke-width="1.3"/>
+
+
+<rect x="130" y="514" width="215" height="132" rx="8" fill="#dce5dc" stroke="#8b9f8c"/>
+<text x="237" y="545" class="head" text-anchor="middle" style="font-size: 17px;">Evidence retrieval tools</text>
+<text x="237" y="576" class="body" text-anchor="middle" style="font-size: 14.25px;">Read saved simulation results</text>
+<text x="237" y="603" class="small" text-anchor="middle" style="font-size: 10.75px;">Extract by object / Metric / Time window</text>
+<text x="237" y="629" class="small" text-anchor="middle" style="font-size: 11px;">Bind new evidence to the existing task</text>
+<path d="M345 621H373" class="query" style="marker-end:none"/>
+<path d="M373 621Q380 607 387 621H420" class="query"/>
+<text x="352" y="651" class="small" style="font-size: 10.25px;">New evidence</text>
+<rect x="130" y="1070" width="215" height="100" rx="8" fill="#ded6bd" stroke="#aa9b72"/>
+<text x="237" y="1106" class="head" text-anchor="middle">User approval</text>
+<text x="237" y="1135" class="body" text-anchor="middle" style="font-size: 10.75px;">Executable evidence requests available</text>
+<text x="237" y="1158" class="small" text-anchor="middle" style="font-size: 12.75px;">User decides whether to continue</text>
+<path d="M420 1120H345" class="query"/>
+<path d="M237 1070V1029H82V580H130" class="query"/>
+<text x="101" y="1008" class="small">Execute after approval</text>
+
+<rect x="420" y="1195" width="795" height="46" rx="6" fill="#f0ece5" stroke="#d8d1c7"/>
+<text x="817" y="1224" class="body" text-anchor="middle">No executable request or user stops: Retain report and unresolved evidence gaps</text>
+<text x="640" y="1279" class="small" text-anchor="middle">Network–surface association uses injection cells and surface time series; source attribution is not performed.</text>
+
+<path d="M270 1312H321" class="main"/><text x="331" y="1318" class="small">Main flow</text>
+<path d="M435 1312H486" class="record"/><text x="496" y="1318" class="small">Artifacts</text>
+<path d="M630 1312H681" class="repair"/><text x="691" y="1318" class="small">Check repair</text>
+<path d="M825 1312H876" class="query"/><text x="886" y="1318" class="small">Evidence retrieval</text>
+</svg>

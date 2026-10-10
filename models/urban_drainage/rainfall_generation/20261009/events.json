@@ -1,0 +1,109 @@
+{
+  "created_date": "2026-10-09",
+  "method": "uniform scaling of existing normalized Chicago-like synthetic rainfall",
+  "model": "urban_drainage",
+  "unit": "mm/h",
+  "timestamp_convention": "interval_start",
+  "interval_minutes": 5,
+  "duration_minutes": 240,
+  "rainfall_start": "2024-01-01 00:00:00",
+  "rainfall_end": "2024-01-01 04:00:00",
+  "suggested_post_rainfall_hours": 3,
+  "local_idf_calibration": false,
+  "return_period_years": null,
+  "rounding": "Round scaled intensities to 0.001 mm/h using half-up rounding; correct integer-unit sum at the global peak to enforce exact target depth.",
+  "original_sources_preserved": [
+    {
+      "file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "sha256": "e9c96ec2bb82a1873c01f4fbe13275583514597d0763d6095b83e73f811e88bf"
+    },
+    {
+      "file": "events/chicago_like_single_4h_80mm_5min.txt",
+      "sha256": "3c40fb31a847e64379566d4f263c2c27b623ac199ae10ceb9e36a5feedd22c8a"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "sha256": "073dc313524d8913e8908e3b9273e6a44abab69da41c4716fe1b28fbfa9a4281"
+    }
+  ],
+  "events": [
+    {
+      "file": "events/chicago_like_single_4h_60mm_5min.txt",
+      "shape": "single",
+      "target_total_rainfall_mm": 60,
+      "source_file": "events/chicago_like_single_4h_80mm_5min.txt",
+      "source_sha256": "3c40fb31a847e64379566d4f263c2c27b623ac199ae10ceb9e36a5feedd22c8a",
+      "scale_factor": 0.75,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 240,
+      "max_intensity_mm_h": 110.042,
+      "total_rainfall_mm": 60,
+      "peak_count": 1,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 01:35:00",
+          "end": "2024-01-01 01:40:00",
+          "intensity_mm_h": 110.042
+        }
+      ],
+      "rounding_total_correction_mm_h": -0.007,
+      "correction_timestamp": "2024-01-01 01:35:00",
+      "max_deviation_from_exact_scaling_mm_h": 0.007
+    },
+    {
+      "file": "events/chicago_like_single_4h_120mm_5min.txt",
+      "shape": "single",
+      "target_total_rainfall_mm": 120,
+      "source_file": "events/chicago_like_single_4h_80mm_5min.txt",
+      "source_sha256": "3c40fb31a847e64379566d4f263c2c27b623ac199ae10ceb9e36a5feedd22c8a",
+      "scale_factor": 1.5,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 240,
+      "max_intensity_mm_h": 220.089,
+      "total_rainfall_mm": 120,
+      "peak_count": 1,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 01:35:00",
+          "end": "2024-01-01 01:40:00",
+          "intensity_mm_h": 220.089
+        }
+      ],
+      "rounding_total_correction_mm_h": -0.009,
+      "correction_timestamp": "2024-01-01 01:35:00",
+      "max_deviation_from_exact_scaling_mm_h": 0.009
+    },
+    {
+      "file": "events/chicago_like_double_4h_160mm_5min.txt",
+      "shape": "double",
+      "target_total_rainfall_mm": 160,
+      "source_file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "source_sha256": "e9c96ec2bb82a1873c01f4fbe13275583514597d0763d6095b83e73f811e88bf",
+      "scale_factor": 2,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 220,
+      "max_intensity_mm_h": 188.346,
+      "total_rainfall_mm": 160,
+      "peak_count": 2,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 00:40:00",
+          "end": "2024-01-01 00:45:00",
+          "intensity_mm_h": 154.1
+        },
+        {
+          "start": "2024-01-01 02:50:00",
+          "end": "2024-01-01 02:55:00",
+          "intensity_mm_h": 188.346
+        }
+      ],
+      "rounding_total_correction_mm_h": 0,
+      "correction_timestamp": "2024-01-01 02:50:00",
+      "max_deviation_from_exact_scaling_mm_h": 0
+    }
+  ],
+  "simulation_executed": false
+}
