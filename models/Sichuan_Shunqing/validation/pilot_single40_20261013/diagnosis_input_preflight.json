@@ -1,0 +1,23 @@
+{
+  "run_id": "sq40_20261013_p1",
+  "task_id": "b7555bef02de4449acc3fd774c0c2f7e",
+  "event_count": 404,
+  "overflow_nodes": 87,
+  "visible_records": 2440,
+  "request_characters": 72971274,
+  "estimated_tokens_by_previous_80mm_ratio": 28200572,
+  "token_estimate_status": "inference_only_not_provider_count",
+  "component_characters": {
+    "task": 280,
+    "visible_evidence": 72572981,
+    "evidence_selection": 20613,
+    "evidence_overview": 940,
+    "inventory": 1076,
+    "observations": 120,
+    "previous_diagnosis": 4,
+    "verification_feedback": 4,
+    "evidence_binding": 63701,
+    "diagnosis_contract_version": 21,
+    "event_manifest": 306665
+  }
+}

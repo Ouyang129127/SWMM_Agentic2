@@ -1,0 +1,232 @@
+{
+  "cases": [
+    {
+      "run_id": "b80t_20261012_200227",
+      "task_id": "1bb3770dcbb74beeb8bf20c162da1e9c",
+      "event_count": 302,
+      "visible_records": 1828,
+      "request_characters": 22899678,
+      "component_characters": {
+        "task": 281,
+        "visible_evidence": 22602831,
+        "evidence_selection": 15263,
+        "evidence_overview": 938,
+        "inventory": 1074,
+        "observations": 120,
+        "previous_diagnosis": 4,
+        "verification_feedback": 4,
+        "evidence_binding": 47789,
+        "diagnosis_contract_version": 21,
+        "event_manifest": 226484
+      },
+      "evidence_groups": {
+        "local_process_series": {
+          "rows": 302,
+          "serialized_characters": 16996923
+        },
+        "local_structure": {
+          "rows": 302,
+          "serialized_characters": 4394829
+        },
+        "direct_source_composition": {
+          "rows": 302,
+          "serialized_characters": 505827
+        },
+        "event_context": {
+          "rows": 302,
+          "serialized_characters": 279333
+        },
+        "facilities_and_storage": {
+          "rows": 302,
+          "serialized_characters": 272833
+        },
+        "surface_association": {
+          "rows": 302,
+          "serialized_characters": 108436
+        },
+        "overflow_event_overview": {
+          "rows": 1,
+          "serialized_characters": 20581
+        },
+        "summary:link:depth_above_section_reference_duration": {
+          "rows": 1,
+          "serialized_characters": 1570
+        },
+        "summary:link:max_fullness": {
+          "rows": 1,
+          "serialized_characters": 1544
+        },
+        "summary:link:fullness_ge_0_95_duration": {
+          "rows": 1,
+          "serialized_characters": 1533
+        },
+        "summary:cell:ponding_duration": {
+          "rows": 1,
+          "serialized_characters": 1528
+        },
+        "summary:link:fullness_ge_0_8_duration": {
+          "rows": 1,
+          "serialized_characters": 1528
+        },
+        "summary:node:total_flooding_volume": {
+          "rows": 1,
+          "serialized_characters": 1519
+        },
+        "summary:link:flow_direction_changes": {
+          "rows": 1,
+          "serialized_characters": 1514
+        },
+        "summary:node:overflow_event_count": {
+          "rows": 1,
+          "serialized_characters": 1500
+        },
+        "summary:node:flooding_duration": {
+          "rows": 1,
+          "serialized_characters": 1493
+        },
+        "summary:node:max_flooding_flow": {
+          "rows": 1,
+          "serialized_characters": 1477
+        },
+        "summary:link:max_flow": {
+          "rows": 1,
+          "serialized_characters": 1462
+        },
+        "summary:link:max_link_depth": {
+          "rows": 1,
+          "serialized_characters": 1462
+        },
+        "summary:node:max_node_depth": {
+          "rows": 1,
+          "serialized_characters": 1462
+        },
+        "summary:cell:max_depth": {
+          "rows": 1,
+          "serialized_characters": 1461
+        },
+        "rainfall_context": {
+          "rows": 1,
+          "serialized_characters": 1187
+        }
+      },
+      "llm_called_by_preflight": false,
+      "provider_rejected_tokens": 8849839,
+      "provider_context_limit_tokens": 1048576
+    },
+    {
+      "run_id": "b80f_20261012_200334",
+      "task_id": "84ba4fd5106748ac970ddadd2094a84f",
+      "event_count": 239,
+      "visible_records": 1450,
+      "request_characters": 15761956,
+      "component_characters": {
+        "task": 281,
+        "visible_evidence": 15525379,
+        "evidence_selection": 12228,
+        "evidence_overview": 938,
+        "inventory": 1074,
+        "observations": 120,
+        "previous_diagnosis": 4,
+        "verification_feedback": 4,
+        "evidence_binding": 37961,
+        "diagnosis_contract_version": 21,
+        "event_manifest": 179077
+      },
+      "evidence_groups": {
+        "local_process_series": {
+          "rows": 239,
+          "serialized_characters": 11487089
+        },
+        "local_structure": {
+          "rows": 239,
+          "serialized_characters": 3090530
+        },
+        "direct_source_composition": {
+          "rows": 239,
+          "serialized_characters": 395371
+        },
+        "event_context": {
+          "rows": 239,
+          "serialized_characters": 220901
+        },
+        "facilities_and_storage": {
+          "rows": 239,
+          "serialized_characters": 203064
+        },
+        "surface_association": {
+          "rows": 239,
+          "serialized_characters": 85815
+        },
+        "overflow_event_overview": {
+          "rows": 1,
+          "serialized_characters": 18914
+        },
+        "summary:link:depth_above_section_reference_duration": {
+          "rows": 1,
+          "serialized_characters": 1568
+        },
+        "summary:link:max_fullness": {
+          "rows": 1,
+          "serialized_characters": 1546
+        },
+        "summary:link:fullness_ge_0_95_duration": {
+          "rows": 1,
+          "serialized_characters": 1535
+        },
+        "summary:cell:ponding_duration": {
+          "rows": 1,
+          "serialized_characters": 1528
+        },
+        "summary:link:fullness_ge_0_8_duration": {
+          "rows": 1,
+          "serialized_characters": 1528
+        },
+        "summary:node:total_flooding_volume": {
+          "rows": 1,
+          "serialized_characters": 1521
+        },
+        "summary:link:flow_direction_changes": {
+          "rows": 1,
+          "serialized_characters": 1516
+        },
+        "summary:node:overflow_event_count": {
+          "rows": 1,
+          "serialized_characters": 1498
+        },
+        "summary:node:flooding_duration": {
+          "rows": 1,
+          "serialized_characters": 1493
+        },
+        "summary:node:max_flooding_flow": {
+          "rows": 1,
+          "serialized_characters": 1477
+        },
+        "summary:link:max_flow": {
+          "rows": 1,
+          "serialized_characters": 1462
+        },
+        "summary:link:max_link_depth": {
+          "rows": 1,
+          "serialized_characters": 1462
+        },
+        "summary:node:max_node_depth": {
+          "rows": 1,
+          "serialized_characters": 1460
+        },
+        "summary:cell:max_depth": {
+          "rows": 1,
+          "serialized_characters": 1459
+        },
+        "rainfall_context": {
+          "rows": 1,
+          "serialized_characters": 1191
+        }
+      },
+      "llm_called_by_preflight": false,
+      "estimated_tokens_by_rejected_case_character_ratio": 6091386,
+      "token_estimate_status": "inference_only_not_provider_measurement"
+    }
+  ],
+  "code_modified": false,
+  "model_calls_during_preflight": 0
+}

@@ -1,0 +1,13 @@
+{
+  "checked_date": "2026-10-11",
+  "stage": "prepared_awaiting_execution_confirmation",
+  "input_preflight": "passed",
+  "offline_tests": {"count": 84, "status": "passed", "real_simulations": false, "real_api_calls": false},
+  "dependencies_available": ["pyswmm", "swmm.toolkit", "numpy", "pandas", "matplotlib", "autogen_core"],
+  "llm_configuration": {"provider_host": "api.deepseek.com", "model": "deepseek-flash", "api_key_configured": true, "network_request_made": false},
+  "frozen_files": 77,
+  "new_case_run_directories_created": 0,
+  "simulation_executed": false,
+  "existing_user_changes_preserved": true,
+  "causal_validity_checked": false
+}

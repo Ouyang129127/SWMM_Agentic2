@@ -202,7 +202,7 @@ class UnifiedTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaisesRegex(ValueError, '诊断与引用核查'):
                 await main.ReportAgent('m', 'r')
 
-    async def test_web_diagnosis_and_report_only_route_to_task_roles(self):
+    async def test_unbound_web_diagnosis_and_report_are_planning_only(self):
         import web_app
         with patch('web_app.run_web_orchestrator_agent_turn', new_callable=AsyncMock, return_value='task route') as role, \
              patch('web_app.deterministic_workflow_stage_evidence') as old:
@@ -210,4 +210,5 @@ class UnifiedTests(unittest.IsolatedAsyncioTestCase):
                 result = await web_app.run_orchestrator_turn([{'role': 'user', 'content': question}])
                 self.assertEqual(result, 'task route')
             self.assertEqual(role.await_count, 3)
+            self.assertTrue(all(call.kwargs['planning_only'] for call in role.await_args_list))
             old.assert_not_called()

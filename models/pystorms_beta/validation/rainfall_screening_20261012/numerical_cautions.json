@@ -1,0 +1,229 @@
+[
+  {
+    "depth_mm": 20,
+    "run_id": "bs20_20261012_p1",
+    "one_positive_sample_segments": 0,
+    "all_segments": 0,
+    "event_nodes": {},
+    "most_frequent_nonconverging_nodes": [
+      "Node OUT0 (1.02%)",
+      "Node J10 (0.46%)",
+      "Node J57 (0.26%)",
+      "Node J56 (0.18%)",
+      "Node J18 (0.13%)"
+    ],
+    "warnings": [
+      "WARNING 04: minimum elevation drop used for Conduit C33",
+      "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+      "WARNING 02: maximum depth increased for Node J120"
+    ]
+  },
+  {
+    "depth_mm": 40,
+    "run_id": "bs40_20261012_p1",
+    "one_positive_sample_segments": 36,
+    "all_segments": 68,
+    "event_nodes": {
+      "J144": 1,
+      "J146": 1,
+      "J33": 16,
+      "J56": 39,
+      "J57": 7,
+      "J74": 3,
+      "J8": 1
+    },
+    "most_frequent_nonconverging_nodes": [
+      "Node OUT0 (33.91%)",
+      "Node J74 (20.01%)",
+      "Node J57 (19.83%)",
+      "Node J76 (17.95%)",
+      "Node J14 (15.50%)"
+    ],
+    "warnings": [
+      "WARNING 04: minimum elevation drop used for Conduit C33",
+      "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+      "WARNING 02: maximum depth increased for Node J120"
+    ],
+    "J146_peak_neighbors": [
+      {
+        "node_id": "J146",
+        "depth_m": 0.370252639,
+        "flooding_Ls": 0.0,
+        "date": "2016-10-08",
+        "time": "20:24:00"
+      },
+      {
+        "node_id": "J146",
+        "depth_m": 0.353971273,
+        "flooding_Ls": 0.0,
+        "date": "2016-10-08",
+        "time": "20:25:00"
+      },
+      {
+        "node_id": "J146",
+        "depth_m": 0.365931153,
+        "flooding_Ls": 0.0,
+        "date": "2016-10-08",
+        "time": "20:26:00"
+      },
+      {
+        "node_id": "J146",
+        "depth_m": 1.06308162,
+        "flooding_Ls": 6077.21436,
+        "date": "2016-10-08",
+        "time": "20:27:00"
+      },
+      {
+        "node_id": "J146",
+        "depth_m": 0.310444921,
+        "flooding_Ls": 0.0,
+        "date": "2016-10-08",
+        "time": "20:28:00"
+      },
+      {
+        "node_id": "J146",
+        "depth_m": 0.3488352,
+        "flooding_Ls": 0.0,
+        "date": "2016-10-08",
+        "time": "20:29:00"
+      },
+      {
+        "node_id": "J146",
+        "depth_m": 0.373093098,
+        "flooding_Ls": 0.0,
+        "date": "2016-10-08",
+        "time": "20:30:00"
+      }
+    ],
+    "J144_late_event": [
+      {
+        "event_id": "J144:E001",
+        "node_id": "J144",
+        "run_id": "bs40_20261012_p1",
+        "model_name": "pystorms_beta",
+        "occurrence": 1,
+        "start": "2016-10-08 22:00:00",
+        "end": "2016-10-08 22:01:00",
+        "last_positive_time": "2016-10-08 22:00:00",
+        "peak_time": "2016-10-08 22:00:00",
+        "peak_flooding_Ls": 3946.15649,
+        "duration_minutes": 1.0,
+        "estimated_volume_m3": 236.7693894,
+        "positive_sample_count": 1,
+        "left_censored": false,
+        "right_censored": false,
+        "saved_step_seconds": 60.0,
+        "integration_method": "left_sample_rectangle"
+      }
+    ],
+    "J146_late_event": [
+      {
+        "event_id": "J146:E001",
+        "node_id": "J146",
+        "run_id": "bs40_20261012_p1",
+        "model_name": "pystorms_beta",
+        "occurrence": 1,
+        "start": "2016-10-08 20:27:00",
+        "end": "2016-10-08 20:28:00",
+        "last_positive_time": "2016-10-08 20:27:00",
+        "peak_time": "2016-10-08 20:27:00",
+        "peak_flooding_Ls": 6077.21436,
+        "duration_minutes": 1.0,
+        "estimated_volume_m3": 364.6328616,
+        "positive_sample_count": 1,
+        "left_censored": false,
+        "right_censored": false,
+        "saved_step_seconds": 60.0,
+        "integration_method": "left_sample_rectangle"
+      }
+    ]
+  },
+  {
+    "depth_mm": 60,
+    "run_id": "bs60_20261012_p1",
+    "one_positive_sample_segments": 141,
+    "all_segments": 201,
+    "event_nodes": {
+      "J100": 1,
+      "J102": 3,
+      "J103": 1,
+      "J104": 1,
+      "J113": 4,
+      "J13": 1,
+      "J15": 1,
+      "J155": 3,
+      "J33": 9,
+      "J4": 2,
+      "J56": 118,
+      "J57": 15,
+      "J65": 9,
+      "J7": 3,
+      "J74": 28,
+      "J8": 1,
+      "J9": 1
+    },
+    "most_frequent_nonconverging_nodes": [
+      "Node OUT0 (55.32%)",
+      "Node J74 (35.16%)",
+      "Node J57 (32.53%)",
+      "Node J76 (31.58%)",
+      "Node J56 (26.76%)"
+    ],
+    "warnings": [
+      "WARNING 04: minimum elevation drop used for Conduit C33",
+      "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+      "WARNING 02: maximum depth increased for Node J120"
+    ]
+  },
+  {
+    "depth_mm": 80,
+    "run_id": "b80t_20261012_200227",
+    "one_positive_sample_segments": 179,
+    "all_segments": 302,
+    "event_nodes": {
+      "J0": 1,
+      "J100": 1,
+      "J101": 1,
+      "J102": 1,
+      "J103": 2,
+      "J104": 1,
+      "J113": 1,
+      "J124": 3,
+      "J13": 8,
+      "J145": 1,
+      "J146": 2,
+      "J15": 9,
+      "J155": 3,
+      "J18": 6,
+      "J20": 2,
+      "J25": 1,
+      "J27": 1,
+      "J33": 3,
+      "J4": 1,
+      "J5": 1,
+      "J54": 1,
+      "J56": 159,
+      "J57": 16,
+      "J59": 1,
+      "J64": 6,
+      "J65": 32,
+      "J7": 1,
+      "J74": 31,
+      "J8": 1,
+      "J9": 2,
+      "J98": 3
+    },
+    "most_frequent_nonconverging_nodes": [
+      "Node OUT0 (63.47%)",
+      "Node J74 (39.57%)",
+      "Node J76 (37.60%)",
+      "Node J57 (35.68%)",
+      "Node J56 (31.46%)"
+    ],
+    "warnings": [
+      "WARNING 04: minimum elevation drop used for Conduit C33",
+      "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+      "WARNING 02: maximum depth increased for Node J120"
+    ]
+  }
+]

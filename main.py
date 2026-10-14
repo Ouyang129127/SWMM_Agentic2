@@ -30,6 +30,7 @@ from tools import (
 from workflow_agents import load_scenario_request, prepare_scenario_request
 from workflow_agents.schemas import RUN_READY
 from workflow_agents.state import build_state, save_state
+from workflow_agents.web_presentation import details
 
 APP_ROOT = Path(__file__).resolve().parent
 WORKSPACE_DIR = APP_ROOT
@@ -346,7 +347,7 @@ async def explain_validation_evidence(user_message: str, evidence: str) -> str:
         "2. 如果 Evidence 中 problems 为空或 ready=true，只能说明未发现缺失项。\n"
         "3. 如果 Evidence 中列出 problems 或 missing，只能逐条解释这些已有问题。\n"
         "4. 必须说明本结果来自固定验证器，并提到 schema_name/schema_version/validator（如果 Evidence 中存在）。\n"
-        "5. 用中文，先给 3-6 句自然语言说明，再给一个简短结论。\n"
+        "5. 用中文，只给两句结果概括；不逐字段复述JSON，不重复路径与结构规范。\n"
         "6. 不要输出代码，不要输出与 SWMM-2D 无关的内容。\n\n"
         f"User request:\n{user_message}\n\n"
         f"Evidence:\n```{fence_type}\n{evidence_block}\n```"
@@ -367,8 +368,7 @@ async def explain_validation_evidence(user_message: str, evidence: str) -> str:
 
     return (
         explanation.strip()
-        + "\n\n**结构化证据**\n"
-        + f"```{fence_type}\n{evidence_block}\n```"
+        + '\n\n' + details('完整检查证据', f"```{fence_type}\n{evidence_block}\n```")
     )
 
 
@@ -384,7 +384,7 @@ async def explain_simulation_evidence(user_message: str, evidence: str) -> str:
         "2. 必须说明本次执行走的是 tool-first 固定管线：降雨事件写入 SWMM -> PySWMM 运行 -> 导出节点溢流 -> CA2D 计算 -> 保存 runs 结果。\n"
         "3. 如果 Evidence 表明运行完成，概括 run_id、输出目录、SWMM 步数/保存步数、CA2D 最大水深等已有指标。\n"
         "4. 如果 Evidence 是错误文本，只解释该错误文本，并提示下一步应检查已有字段指向的路径或参数。\n"
-        "5. 用中文，先给 3-6 句自然语言说明，再给一个简短结论。\n"
+        "5. 用中文，两句概括是否成功和主要指标；不逐字段复述JSON，不重复管线说明。\n"
         "6. 不要输出代码，不要输出与 SWMM-2D 无关的内容。\n\n"
         f"User request:\n{user_message}\n\n"
         f"Evidence:\n```{fence_type}\n{evidence_block}\n```"
@@ -405,23 +405,14 @@ async def explain_simulation_evidence(user_message: str, evidence: str) -> str:
 
     return (
         explanation.strip()
-        + "\n\n**结构化证据**\n"
-        + f"```{fence_type}\n{evidence_block}\n```"
+        + '\n\n' + details('完整模拟证据', f"```{fence_type}\n{evidence_block}\n```")
     )
 
 
 async def run_web_orchestrator_agent_turn(task_prompt: str, planning_only: bool = False) -> str:
-    """Run the web-chat StatefulOrchestrator while keeping construction out of web_app.py."""
+    """One text response; web workflow mutations belong to the approval controller."""
     from llm import deepseek_flash
 
-    tool_list = [] if planning_only else [
-        ScenarioAgent,
-        SimulationAgent,
-        EvidenceBuilderAgent,
-        DiagnosisAgent,
-        VerificationAgent,
-        ReportAgent,
-    ]
     mode_prompt = (
         "\nThis is a planning-only turn. Do not call any tools. Give a short step-by-step plan, "
         "state that no execution has been performed yet, and ask the user whether to continue.\n"
@@ -430,15 +421,17 @@ async def run_web_orchestrator_agent_turn(task_prompt: str, planning_only: bool 
     )
     orchestrator = AssistantAgent(
         name="StatefulOrchestrator",
-        system_message=orchestrator_prompt + web_interactive_prompt + mode_prompt,
+        system_message=orchestrator_prompt + web_interactive_prompt + mode_prompt + (
+            '\nWeb execution is controlled by the application state machine. You have no tools. '
+            'Return one explanation or plan, never invent execution, approvals, run_id or progress. '
+            'Answer in concise Chinese: result, key point and next action. Do not repeat raw JSON, full reports or long scope lists. '
+            'A user confirmation is handled by the application, not by your own subsequent messages.\n'
+        ),
         model_client=deepseek_flash,
-        tools=tool_list,
     )
-    termination = MaxMessageTermination(8) | TextMentionTermination("TERMINATE")
     team = RoundRobinGroupChat(
         participants=[orchestrator],
-        termination_condition=termination,
-        max_turns=8,
+        max_turns=1,
     )
     result = await team.run(task=task_prompt)
     return _extract_agent_reply(result.messages)

@@ -1,0 +1,175 @@
+{
+  "cases": [
+    {
+      "run_id": "chicago_like_single_4h_80mm_5min__baseline__batch_20261011_v1_01",
+      "status": "completed_with_gaps",
+      "revision": 2,
+      "events": 7,
+      "visible_evidence": 65,
+      "supplement_files": 7,
+      "last_failure": null,
+      "html_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_single_4h_80mm_5min__baseline__batch_20261011_v1_01\\diagnosis_tasks\\aa9af3e6908747e19d01fc31c6bdd4d2\\display_reports\\r2\\20261011_100522_694f3631\\模拟诊断报告.html",
+      "html_sha256": "8f5a78ff0302464e559b56a5d2ab21b40308010e7bd337f11ee4217060a4a483",
+      "html_bytes": 1563254,
+      "html_checks": {
+        "status": "passed",
+        "sections": 6,
+        "events": 7,
+        "embedded_images": 13,
+        "all_images_verified": true,
+        "numeric_policy": "supplied_fact_tokens",
+        "causal_policy": "current_diagnosis_statuses",
+        "verification_scope": "structure, source identity and references; not causal certification"
+      },
+      "delivery": "current",
+      "reference_summary": {
+        "total_claims": 66,
+        "references_verified": 66,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "reported_token_totals": {
+        "prompt_tokens": 573550,
+        "completion_tokens": 115436
+      },
+      "audit_files": 6
+    },
+    {
+      "run_id": "chicago_like_single_4h_120mm_5min__baseline__batch_20261011_v1_02",
+      "status": "failed",
+      "revision": 0,
+      "events": 12,
+      "visible_evidence": 88,
+      "supplement_files": 0,
+      "last_failure": {
+        "attempt_id": "0812fdc47f6e4e9ab3d211e4bc772ec1",
+        "status": "failed",
+        "audit_file": "diagnosis_attempt_0812fdc47f6e4e9ab3d211e4bc772ec1.json",
+        "error_type": "ValueError",
+        "phase": "validation",
+        "error_message": "mechanism_assessments/M4: mechanism applicability/support must cite visible evidence; invalid IDs=[], references=None",
+        "validation_error": "mechanism_assessments/M4: mechanism applicability/support must cite visible evidence; invalid IDs=[], references=None"
+      },
+      "reported_token_totals": {
+        "prompt_tokens": 991263,
+        "completion_tokens": 52042
+      },
+      "audit_files": 2
+    },
+    {
+      "run_id": "chicago_like_double_4h_80mm_5min__baseline__batch_20261011_v1_03",
+      "status": "completed",
+      "revision": 1,
+      "events": 0,
+      "visible_evidence": 16,
+      "supplement_files": 0,
+      "last_failure": null,
+      "html_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_double_4h_80mm_5min__baseline__batch_20261011_v1_03\\diagnosis_tasks\\906325c1595844be8bbb4668b1babdb5\\display_reports\\r1\\20261011_101305_c336331a\\模拟诊断报告.html",
+      "html_sha256": "ba1513a04f140fa347c70786d71a140c18424c3c7bb8d1c1a4d60613ae335292",
+      "html_bytes": 813939,
+      "html_checks": {
+        "status": "passed",
+        "sections": 6,
+        "events": 0,
+        "embedded_images": 5,
+        "all_images_verified": true,
+        "numeric_policy": "supplied_fact_tokens",
+        "causal_policy": "current_diagnosis_statuses",
+        "verification_scope": "structure, source identity and references; not causal certification"
+      },
+      "delivery": "current",
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "reported_token_totals": {
+        "prompt_tokens": 10377,
+        "completion_tokens": 3010
+      },
+      "audit_files": 2
+    },
+    {
+      "run_id": "chicago_like_double_4h_160mm_5min__baseline__batch_20261011_v1_04",
+      "status": "failed",
+      "revision": 1,
+      "events": 13,
+      "visible_evidence": 121,
+      "supplement_files": 3,
+      "last_failure": {
+        "attempt_id": "53a5a2310175419caf5de1d623dde187",
+        "status": "failed",
+        "audit_file": "diagnosis_attempt_53a5a2310175419caf5de1d623dde187.json",
+        "error_type": "BadRequestError",
+        "phase": "completion",
+        "error_message": "Error code: 400 - {'error': {'message': \"This model's maximum context length is 1048576 tokens. However, you requested 2156585 tokens (2156585 in the messages, 0 in the completion). Please reduce the length of the messages or completion. (request_id: 3868ef92-80e8-450f-89a1-81566458f969)\", 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}",
+        "http_status": 400
+      },
+      "html_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_double_4h_160mm_5min__baseline__batch_20261011_v1_04\\diagnosis_tasks\\b4ae203ad0984f0cadc48a968fa5b040\\display_reports\\r1\\20261011_101613_fc3bd1a8\\模拟诊断报告.html",
+      "html_sha256": "c97a57dd0fa45262c8575d406f0b8101c065b271631a7a162f95f3ce60f257af",
+      "html_bytes": 3225321,
+      "html_checks": {
+        "status": "passed",
+        "sections": 6,
+        "events": 13,
+        "embedded_images": 19,
+        "all_images_verified": true,
+        "numeric_policy": "supplied_fact_tokens",
+        "causal_policy": "current_diagnosis_statuses",
+        "verification_scope": "structure, source identity and references; not causal certification"
+      },
+      "delivery": "historical_pre_supplement",
+      "reference_summary": {
+        "total_claims": 110,
+        "references_verified": 110,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "reported_token_totals": {
+        "prompt_tokens": 816258,
+        "completion_tokens": 77201
+      },
+      "audit_files": 5
+    },
+    {
+      "run_id": "chicago_like_triple_4h_80mm_5min__baseline__batch_20261011_v1_05",
+      "status": "completed",
+      "revision": 1,
+      "events": 0,
+      "visible_evidence": 16,
+      "supplement_files": 0,
+      "last_failure": null,
+      "html_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_triple_4h_80mm_5min__baseline__batch_20261011_v1_05\\diagnosis_tasks\\23a14e7fecf3445b8da919066e889ace\\display_reports\\r1\\20261011_102005_b6a89492\\模拟诊断报告.html",
+      "html_sha256": "ceb34cfab0722b30c20f1e408388e3d7e1e408e7aee212ef80048719e2a6f040",
+      "html_bytes": 811649,
+      "html_checks": {
+        "status": "passed",
+        "sections": 6,
+        "events": 0,
+        "embedded_images": 5,
+        "all_images_verified": true,
+        "numeric_policy": "supplied_fact_tokens",
+        "causal_policy": "current_diagnosis_statuses",
+        "verification_scope": "structure, source identity and references; not causal certification"
+      },
+      "delivery": "current",
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "reported_token_totals": {
+        "prompt_tokens": 10375,
+        "completion_tokens": 2901
+      },
+      "audit_files": 2
+    }
+  ],
+  "execution_lock_present": false
+}

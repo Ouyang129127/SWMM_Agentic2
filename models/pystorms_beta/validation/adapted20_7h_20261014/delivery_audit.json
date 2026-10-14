@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "execution_status": "completed_with_gaps",
+  "simulation_hours": 7,
+  "revision": 3,
+  "supplement_rounds": 2,
+  "completion_calls": 7,
+  "calls_by_role": {
+    "diagnosis": 3,
+    "report": 4
+  },
+  "stop_reason": "supplement_round_limit",
+  "event_count": 9,
+  "package_evidence_count": 107568,
+  "snapshot_evidence_count": 107583,
+  "visible_evidence_count": 75,
+  "verification_summary": {
+    "total_claims": 85,
+    "references_verified": 85,
+    "references_missing": 0,
+    "no_references": 0,
+    "reference_failure_rate": 0.0
+  },
+  "report_quality_checks": {
+    "status": "passed",
+    "sections": 6,
+    "events": 9,
+    "embedded_images": 15,
+    "all_images_verified": true,
+    "numeric_policy": "supplied_fact_tokens",
+    "causal_policy": "current_diagnosis_statuses",
+    "verification_scope": "structure, source identity and references; not causal certification"
+  },
+  "source_hashes_verified": true,
+  "html_hash_verified": true,
+  "old_run_and_inputs_unchanged": true,
+  "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f\\模拟诊断报告.html",
+  "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\preliminary_report_r3.md",
+  "pending_evidence_requests": true,
+  "unavailable_request_count": 2,
+  "started_at": "2026-10-14T02:03:59.130822+00:00",
+  "finished_at": "2026-10-14T02:18:40.453493+00:00",
+  "attempts": [
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\diagnosis_attempt_19bc743cf83544f48db244df3de2f375.json",
+      "status": "completed",
+      "phase": "validated",
+      "usage": {
+        "prompt_tokens": 317012,
+        "completion_tokens": 22790
+      },
+      "error": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\diagnosis_attempt_66b80856dcb94e1d913382425274804d.json",
+      "status": "completed",
+      "phase": "validated",
+      "usage": {
+        "prompt_tokens": 356674,
+        "completion_tokens": 21889
+      },
+      "error": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\diagnosis_attempt_990bfec007804bc58adec04d8e1a23c0.json",
+      "status": "completed",
+      "phase": "validated",
+      "usage": {
+        "prompt_tokens": 284957,
+        "completion_tokens": 38678
+      },
+      "error": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r1\\20261014_100828_c1b7c992\\narrative_attempt_1.json",
+      "status": "passed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 52272,
+        "completion_tokens": 23561
+      },
+      "error": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r2\\20261014_101205_5f37f7d7\\narrative_attempt_1.json",
+      "status": "passed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 52303,
+        "completion_tokens": 17892
+      },
+      "error": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f\\narrative_attempt_1.json",
+      "status": "failed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 52934,
+        "completion_tokens": 23749
+      },
+      "error": "Use each complete fact token as a standalone clause separated by punctuation; remove repeated labels in: 从全过程看，[[F0013]]；[[F0014]]。达到15厘米的关注区域面积较小，[[F0020]]，降雨结束附近已回落至[[F0022]]，模拟结束时为[[F0021]]。"
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f\\narrative_attempt_2.json",
+      "status": "passed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 56570,
+        "completion_tokens": 16236
+      },
+      "error": null
+    }
+  ],
+  "causal_validity_checked": false,
+  "expert_diagnostic_accuracy": "NOT_EVALUATED",
+  "semantic_unsupported_rate": "NOT_EVALUATED"
+}

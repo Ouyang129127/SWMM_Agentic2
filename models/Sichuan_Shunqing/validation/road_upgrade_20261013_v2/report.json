@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "version": "pipe_aligned_continuous_roads_v2",
+  "date": "2026-10-13",
+  "assumption": "pipes buried under assumed roads",
+  "previous_road_cells": 3808,
+  "current_road_cells": 4515,
+  "added_road_cells": 707,
+  "pipes_checked": 131,
+  "pipes_with_old_gaps": 92,
+  "pipes_with_current_gaps": 0,
+  "nodes_on_roads": 113,
+  "old_nodes_off_road": 7,
+  "mapping_rim_conflicts": 0,
+  "buildings_removed": 0,
+  "domain_changed": false,
+  "baseline_inp_changed": false,
+  "unchanged_inputs_sha256": {
+    "shunqing.inp": "fc7c00fdb738de0adcbe93535b9cabdc72fef2fa1ea701bb3b937aade5cdf1ea",
+    "swmm\\scenarios\\baseline\\model.inp": "3c7821e31eb10724b2db3cbdd49220f75606e0d3d806c20820295b8150479ec1",
+    "static\\terrain.npy": "6c40cd20abcfdb99cb49e6cabbe750d7feb5ced2685d11745755bd73de843e68",
+    "static\\building_mask.npy": "eba73e0cfcc9dfc62082dbead107df4071e875b018ec7127ea595e3b98e0403f",
+    "static\\flow_mask.npy": "ad4585fc07a788f83b4f4d91a8528ba4ec56a6cc912a08e4d6ea484c2a981c8d",
+    "static\\valid_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "static\\cell_id_grid.npy": "5af865e39cd4d02efddcfc9fb8c8ee853b9b37165e94a81740d4852d921f97d6",
+    "static\\smid_grid.npy": "92e913df84c7942fe0ac41c63ecdf0766ff0df05c8653011fff0a72e536ecc82"
+  },
+  "backup_directory": "validation/road_upgrade_20261013_v2/before",
+  "artificial_injection": {
+    "duration_seconds": 600,
+    "flow_lps_per_junction": 2,
+    "input_volume_m3": 125.99999999999987,
+    "stored_volume_m3": 125.99998845700742,
+    "relative_mass_error": 9.161105121768477e-08,
+    "wet_cells": 7809,
+    "maximum_depth_m": 0.006434414070099592
+  },
+  "rainfall_runs": 0,
+  "llm_calls": 0,
+  "current_artifact_sha256": {
+    "static/building_mask.npy": "eba73e0cfcc9dfc62082dbead107df4071e875b018ec7127ea595e3b98e0403f",
+    "static/ca2d_layout_preview.png": "85e793aab8aa988903672225bbed202abec8020c1716d4410613a29d57c8b256",
+    "static/ca2d_roads_completed.png": "1f6744acf365eca10cecf4213e32610aecc12e05f190f3ad626dad841fadc5ad",
+    "static/ca2d_smoke_test.png": "7e7dfe3d7c8a17fece378bb5c8ae5ae327759bb2f9c47799882babf56f829701",
+    "static/catchment_mask.npy": "7eefddba82d7eb461a39b04ecc360c814d2909137e7b7a2f15ac772eba6872a9",
+    "static/cells.csv": "212fc4db69856a94b41abbd7d7c5430579cff45aaaef0338b359f0266aa73a14",
+    "static/cell_id_grid.npy": "5af865e39cd4d02efddcfc9fb8c8ee853b9b37165e94a81740d4852d921f97d6",
+    "static/config.json": "5ae529acbe69e733deb39026580adfdda95c6ede07e6e344686ea36e145a711b",
+    "static/domain_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "static/elevation.npy": "a1665f0473a4f61ac7bd9232ce2fa3abff859e2783328a2fc490d85f19ae2958",
+    "static/flow_mask.npy": "ad4585fc07a788f83b4f4d91a8528ba4ec56a6cc912a08e4d6ea484c2a981c8d",
+    "static/node_anchor_mask.npy": "eded6aba0651fca91758a69a3d398854ee8e487c5694536e3b6a806dadd871a2",
+    "static/node_to_cell_mapping.csv": "8f6b505abf4532c043551e6c36d1584339aeebdb21560034ecacde0d8ddcc65e",
+    "static/README.md": "39b8f61180eeb77dfc0256b2a36084667355886d65417241f10d258df82c041a",
+    "static/resistance.npy": "667ae0010239c4c7eb1a2f33436cb028d87a52653d7a25224e651ba915529d76",
+    "static/road_lowering_mask.npy": "2072ab0dcba8df50636887b92d5e1e52f1f4fe9ea52f088736855d05568d4c39",
+    "static/road_mask.npy": "6fe12dd4fee8bfbecfe632dde347e5d284bbe9e81a14c0c36ba8826af7dfaa2d",
+    "static/smid_grid.npy": "92e913df84c7942fe0ac41c63ecdf0766ff0df05c8653011fff0a72e536ecc82",
+    "static/synthetic_buildings.csv": "77094384ac7260a08469211c2cc279e4aa126d3f86a82a6069b9c3ce4f0d4c54",
+    "static/synthetic_streets.csv": "6d62e1842041c5f92c0fca19b2a6f0ab533eda9d78e7fcd058ea4d320ffc540a",
+    "static/terrain.npy": "6c40cd20abcfdb99cb49e6cabbe750d7feb5ced2685d11745755bd73de843e68",
+    "static/valid_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "preparation_manifest.json": "8cc561fa09d918f30d692945d653a86eab21d58ca1176c9392a5883b3d9afff4",
+    "validation/preflight_report.json": "882001cb894f6d1590c29d44d6ae433e3d3dce92472d65981a961fd94089fd7e"
+  },
+  "metadata_precision_repair": "Mapping CSV height values stored as float64 representations of unchanged float32 array values; no surface calculation changed",
+  "test_attempt_1": {
+    "passed": 10,
+    "failed": 1,
+    "reason": "CSV float32 formatting lost 1.34e-5 m against array; repaired output metadata without loosening test tolerance"
+  },
+  "independent_dense_path_check": {
+    "spacing_m_max": 5,
+    "pipes_with_gaps": 0
+  },
+  "regression_tests": {
+    "passed": 11,
+    "failed": 0
+  },
+  "project_layout_ready": true
+}

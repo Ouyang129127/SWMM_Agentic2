@@ -1,0 +1,59 @@
+{
+  "source_input": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\swmm\\model_with_event.inp",
+  "source_sha256": "dd1d3a392d8580dd8806ce72383b05b8a84fdf74a0703c4f73599334ba99a5f2",
+  "subcatchment_count": 165,
+  "all_slopes_1pct": true,
+  "all_widths_sqrt_area_within_rounding": true,
+  "rain_gages": [
+    [
+      "RG1",
+      "INTENSITY",
+      "0:05",
+      "1.0",
+      "TIMESERIES",
+      "2yr12hr"
+    ]
+  ],
+  "outfalls": [
+    [
+      "OUT0",
+      "-1.078992",
+      "TIMESERIES",
+      "base_30",
+      "YES"
+    ]
+  ],
+  "tide_base30_row_count": 25,
+  "tide_last_row": [
+    "base_30",
+    "10/09/2016",
+    "0:00",
+    "0.7363968"
+  ],
+  "simulation_options": {
+    "FLOW_UNITS": [
+      "LPS"
+    ],
+    "FLOW_ROUTING": [
+      "DYNWAVE"
+    ],
+    "START_DATE": [
+      "10/08/2016"
+    ],
+    "START_TIME": [
+      "00:00:00"
+    ],
+    "END_DATE": [
+      "10/09/2016"
+    ],
+    "END_TIME": [
+      "00:00:00"
+    ],
+    "REPORT_STEP": [
+      "00:01:00"
+    ],
+    "ROUTING_STEP": [
+      "00:00:10"
+    ]
+  }
+}

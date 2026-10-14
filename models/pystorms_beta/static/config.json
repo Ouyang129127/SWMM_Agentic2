@@ -1,0 +1,63 @@
+{
+  "cell_size": 5.0,
+  "grid_shape": [
+    283,
+    283
+  ],
+  "bounds": [
+    0,
+    0,
+    1415.0,
+    1415.0
+  ],
+  "crs": null,
+  "spatial_units": "metre",
+  "source_map_units": "anonymous display units",
+  "source_elevation_units": "feet, converted to metre",
+  "coordinate_transform": {
+    "method": "median hydraulic conduit length / nonzero anonymous endpoint distance",
+    "metres_per_anonymous_unit": 0.012910663163536106,
+    "source_origin": [
+      5000.0,
+      5000.0
+    ],
+    "target_translation_m": [
+      60,
+      60
+    ],
+    "nonzero_distance_conduits": 203,
+    "scale_quantiles_m_per_unit": [
+      0.002015090090257629,
+      0.010893443415358027,
+      0.012910663163536106,
+      0.018663646658545245,
+      0.10781605752154913
+    ],
+    "status": "synthetic scale assumption; no recovered CRS, roads or surveyed geometry"
+  },
+  "source_inp": "swmm/scenarios/baseline/model.inp",
+  "n_nodes": 210,
+  "n_mapped_nodes": 210,
+  "n_valid_cells": 52495,
+  "n_flow_cells": 47541,
+  "n_building_cells": 4954,
+  "n_road_cells": 4177,
+  "n_buildings": 350,
+  "n_streets": 211,
+  "node_mapping_distance_max": 3.5355339059327378,
+  "shared_cell_rim_conflicts": 6,
+  "domain_method": "convex hull of scaled anonymous coordinates with 30 m margin; synthetic, not a watershed boundary",
+  "terrain_method": "8-nearest IDW of model junction rims and storage tops; mapped cells anchored to median rim",
+  "road_method": "hypothetical 10 m corridors along network layout, lowered by 0.10 m except rim anchors",
+  "building_method": "deterministic synthetic footprints raised by 15 m and excluded from flow",
+  "assumption_status": "technical-validation surface; not original-city DEM/roads/buildings",
+  "domain_area_ha": 131.2375,
+  "rainfall_catchment_area_ha": 131.4916729335195,
+  "building_raise_m": 15,
+  "road_lowering_m": 0.1,
+  "building_node_clearance_m": 8,
+  "land_conveyance_coefficient": 0.62,
+  "road_conveyance_coefficient": 0.9,
+  "coupling": "one-way SWMM node overflow to surface; no rainfall or tidal water injected directly into CA2D",
+  "surface_boundary": "closed invalid-domain perimeter; solver outermost raster ring inactive"
+}

@@ -1,12 +1,17 @@
-"""Opt-in, model-local timing policy and native SWMM report export."""
+"""Model-local timing policy and the current native SWMM result exporter."""
 import json
 import math
 from pathlib import Path
 
 
-def load_timing(model_root):
+def load_timing(model_root, *, required=False):
     path = Path(model_root) / "simulation_timing.json"
     if not path.exists():
+        if required:
+            raise FileNotFoundError(
+                f"Missing required simulation timing configuration: {path}. "
+                "Add this model's simulation_timing.json before starting a rainfall run."
+            )
         return {}
     policy = json.loads(path.read_text(encoding="utf-8"))
     for key in ("swmm_save_interval_minutes", "boundary_interval_minutes", "ca2d_save_interval_minutes"):

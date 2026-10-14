@@ -1,0 +1,54 @@
+{
+  "status": "failed",
+  "run_id": "chicago_like_triple_4h_120mm_5min__baseline__batch_20261011_additions_v1_03",
+  "event_file": "chicago_like_triple_4h_120mm_5min.txt",
+  "started_at": "2026-10-11T03:32:34.399347+00:00",
+  "pid": 49844,
+  "supplement_rounds": 1,
+  "provider_calls": 4,
+  "calls_by_role": {
+    "diagnosis": 2,
+    "report": 2
+  },
+  "history": [
+    {
+      "stage": "scenario",
+      "at": "2026-10-11T03:32:34.399347+00:00"
+    },
+    {
+      "stage": "simulation",
+      "at": "2026-10-11T03:32:34.403857+00:00"
+    },
+    {
+      "stage": "simulation_handoff",
+      "at": "2026-10-11T03:32:48.582195+00:00"
+    },
+    {
+      "stage": "evidence",
+      "at": "2026-10-11T03:32:48.585724+00:00"
+    },
+    {
+      "stage": "initial_diagnosis_verification_report",
+      "at": "2026-10-11T03:33:06.915289+00:00"
+    },
+    {
+      "stage": "supplement_round_1",
+      "at": "2026-10-11T05:35:50.093758+00:00"
+    }
+  ],
+  "simulation_reused": false,
+  "simulation_executed": true,
+  "stage": "supplement_round_1",
+  "simulation_summary": {
+    "max_flooding_Ls": 83.87844848632812,
+    "sampled_overflow_volume_m3": 34.1365194906,
+    "max_surface_depth_m": 0.1692119836807251
+  },
+  "simulation_handoff": {
+    "previous_state": "SCENARIO_READY",
+    "target_state": "RUN_READY"
+  },
+  "task_id": "8fcabaab70f647bf907b3d03094a2992",
+  "error_type": "FileNotFoundError",
+  "finished_at": "2026-10-11T05:35:50.715807+00:00"
+}

@@ -1,0 +1,120 @@
+{
+  "depth_mm": 20,
+  "run_id": "bs20_20261012_p1",
+  "event_count": 0,
+  "overflow_nodes": 0,
+  "evidence_rows": 107514,
+  "visible_records": 16,
+  "request_characters": 42895,
+  "estimated_tokens_using_80mm_ratio": 16577,
+  "token_estimate_status": "inference_from_80mm_provider_count_not_measured; not a guarantee of acceptance",
+  "provider_context_limit_observed_in_80mm": 1048576,
+  "provider_calls": 0,
+  "task_id": "99664acd58e14b07a19895313c42cc7b",
+  "diagnosis_status": "not_requested_offline_preflight_only",
+  "evidence_groups": {
+    "rainfall_context": {
+      "rows": 1,
+      "serialized_characters": 1173
+    },
+    "summary:cell:max_depth": {
+      "rows": 1,
+      "serialized_characters": 1441
+    },
+    "summary:cell:ponding_duration": {
+      "rows": 1,
+      "serialized_characters": 1508
+    },
+    "summary:link:depth_above_section_reference_duration": {
+      "rows": 1,
+      "serialized_characters": 1560
+    },
+    "summary:link:flow_direction_changes": {
+      "rows": 1,
+      "serialized_characters": 1506
+    },
+    "summary:link:fullness_ge_0_8_duration": {
+      "rows": 1,
+      "serialized_characters": 1520
+    },
+    "summary:link:fullness_ge_0_95_duration": {
+      "rows": 1,
+      "serialized_characters": 1525
+    },
+    "summary:link:max_flow": {
+      "rows": 1,
+      "serialized_characters": 1452
+    },
+    "summary:link:max_fullness": {
+      "rows": 1,
+      "serialized_characters": 1540
+    },
+    "summary:link:max_link_depth": {
+      "rows": 1,
+      "serialized_characters": 1454
+    },
+    "summary:node:flooding_duration": {
+      "rows": 1,
+      "serialized_characters": 1479
+    },
+    "summary:node:max_flooding_flow": {
+      "rows": 1,
+      "serialized_characters": 1453
+    },
+    "summary:node:max_node_depth": {
+      "rows": 1,
+      "serialized_characters": 1456
+    },
+    "summary:node:overflow_event_count": {
+      "rows": 1,
+      "serialized_characters": 1486
+    },
+    "summary:node:total_flooding_volume": {
+      "rows": 1,
+      "serialized_characters": 1481
+    },
+    "overflow_event_overview": {
+      "rows": 1,
+      "serialized_characters": 12492
+    }
+  },
+  "component_characters": {
+    "task": 277,
+    "visible_evidence": 34543,
+    "evidence_selection": 683,
+    "evidence_overview": 779,
+    "inventory": 918,
+    "observations": 118,
+    "previous_diagnosis": 4,
+    "verification_feedback": 4,
+    "evidence_binding": 677,
+    "diagnosis_contract_version": 21,
+    "event_manifest": 2
+  },
+  "routing_continuity_error_percent": -5.82,
+  "runoff_continuity_error_percent": -0.002,
+  "native_flooding_volume_m3_rounded": 0.0,
+  "sampled_surface_input_volume_m3": 0.0,
+  "sampling_volume_difference_percent": null,
+  "max_surface_depth_m": 0.0,
+  "max_flooding_Ls": 0.0,
+  "peak_flood_node": null,
+  "peak_flood_time": null,
+  "first_overflow_time": null,
+  "last_overflow_time": null,
+  "overflow_nodes_crosscheck": 0,
+  "overflow_after_rain_end_sample_rows": 0,
+  "native_initial_stored_volume_m3_rounded": 176.0,
+  "native_final_stored_volume_m3_rounded": 12617.0,
+  "native_external_outflow_m3_rounded": 0.0,
+  "warnings": [
+    "WARNING 04: minimum elevation drop used for Conduit C33",
+    "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+    "WARNING 02: maximum depth increased for Node J120"
+  ],
+  "engine_errors": [],
+  "input_copy_sha256": "a378a2850a7941f3d480dda18f68e78740283dfba33999a1d9e2dbbbb7fcec50",
+  "swmm_output_timestamps": 1441,
+  "ca2d_output_timestamps": 289,
+  "ca2d_final_volume_m3": 0.0
+}

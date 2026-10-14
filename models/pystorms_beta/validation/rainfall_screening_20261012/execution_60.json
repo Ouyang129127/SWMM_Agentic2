@@ -1,0 +1,32 @@
+{
+  "run_id": "bs60_20261012_p1",
+  "depth_mm": 60,
+  "purpose": "exploratory_rainfall_screening",
+  "scenario": "baseline",
+  "provider_calls": 0,
+  "simulation_status": "completed",
+  "pid": 27356,
+  "start_utc": "2026-10-12T14:28:11.458304+00:00",
+  "input_sha256": "bb08de4c24fbd34e471aaeca4221ae8d7e30d53de89b4e6c7881f1411ab723f3",
+  "fixed_source_inp_sha256": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+  "hard_timeout_seconds": 1800,
+  "elapsed_seconds": 97.89099999982864,
+  "end_utc": "2026-10-12T14:29:49.350211+00:00",
+  "evidence_status": "completed",
+  "evidence_command": [
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\.venv\\Scripts\\python.exe",
+    "-u",
+    "run_workflow.py",
+    "--model",
+    "pystorms_beta",
+    "--run-id",
+    "bs60_20261012_p1",
+    "--stage",
+    "evidence_building"
+  ],
+  "evidence_pid": 26240,
+  "evidence_elapsed_seconds": 69.14099999982864,
+  "offline_preflight_status": "completed",
+  "offline_preflight_elapsed_seconds": 5.125,
+  "task_id": "f73769e672c34c7baecf0d60b2c03a4e"
+}

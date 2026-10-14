@@ -1,0 +1,131 @@
+{
+  "prepared_on": "2026-10-13",
+  "source_file": "shunqing.inp",
+  "source_sha256": "fc7c00fdb738de0adcbe93535b9cabdc72fef2fa1ea701bb3b937aade5cdf1ea",
+  "original_snapshot_sha256": "fc7c00fdb738de0adcbe93535b9cabdc72fef2fa1ea701bb3b937aade5cdf1ea",
+  "source_license": "UNVERIFIED",
+  "source_counts": {
+    "TITLE": 3,
+    "OPTIONS": 33,
+    "EVAPORATION": 2,
+    "RAINGAGES": 1,
+    "SUBCATCHMENTS": 106,
+    "SUBAREAS": 106,
+    "INFILTRATION": 106,
+    "JUNCTIONS": 105,
+    "OUTFALLS": 8,
+    "CONDUITS": 131,
+    "XSECTIONS": 131,
+    "TIMESERIES": 2058,
+    "REPORT": 3,
+    "TAGS": 1,
+    "MAP": 2,
+    "COORDINATES": 113,
+    "VERTICES": 0,
+    "POLYGONS": 1051,
+    "SYMBOLS": 1
+  },
+  "source_area_ha": 3996.508775604993,
+  "coordinate_transform": {
+    "operation": "translation_only",
+    "scale": 1.0,
+    "source_origin": [
+      11806800.0,
+      3602020.0
+    ],
+    "formula": "local_xy = source_xy - source_origin",
+    "crs": null,
+    "coordinate_units_basis": "metres inferred from pipe endpoint distance and hydraulic length agreement",
+    "source_map_units": "None",
+    "georeference_status": "CRS not provided; no EPSG asserted"
+  },
+  "surface": {
+    "cell_size": 20.0,
+    "grid_shape": [
+      580,
+      364
+    ],
+    "bounds": [
+      0,
+      0,
+      7280.0,
+      11600.0
+    ],
+    "crs": null,
+    "spatial_units": "metre",
+    "coordinate_transform": {
+      "operation": "translation_only",
+      "scale": 1.0,
+      "source_origin": [
+        11806800.0,
+        3602020.0
+      ],
+      "formula": "local_xy = source_xy - source_origin",
+      "crs": null,
+      "coordinate_units_basis": "metres inferred from pipe endpoint distance and hydraulic length agreement",
+      "source_map_units": "None",
+      "georeference_status": "CRS not provided; no EPSG asserted"
+    },
+    "source_inp": "swmm/scenarios/baseline/model.inp",
+    "source_elevation_units": "metre (LPS SWMM)",
+    "n_nodes": 113,
+    "n_mapped_nodes": 113,
+    "n_valid_cells": 104875,
+    "n_flow_cells": 99639,
+    "n_building_cells": 5236,
+    "n_road_cells": 3808,
+    "n_buildings": 843,
+    "n_streets": 131,
+    "domain_area_ha": 4195.0,
+    "rainfall_catchment_area_ha": 3996.508775604993,
+    "node_mapping_distance_max": 13.00832041493419,
+    "shared_cell_rim_conflicts": 0,
+    "domain_method": "union of original subcatchment polygon cell centres, hypothetical corridors and node neighborhoods; 40 m square-grid dilation",
+    "terrain_method": "8-nearest IDW from 105 model junction rims; mapped junction cells anchored; not surveyed DEM",
+    "road_method": "hypothetical 20 m corridors along pipe endpoints, lowered by 0.10 m except rim anchors",
+    "building_method": "deterministic 40-60 m synthetic obstacle blocks raised by 15 m and excluded from flow",
+    "assumption_status": "regional technical-validation surface; not a real-city flood prediction",
+    "resolution_scope": "20 m grid cannot validate narrow street/individual-building inundation; no resolution-convergence test yet",
+    "surface_boundary": "closed invalid-domain perimeter, with inactive outermost raster ring",
+    "coupling": "one-way node overflow injection only; no surface-to-sewer exchange, no direct surface rainfall",
+    "infiltration_evaporation_on_surface": false,
+    "building_raise_m": 15,
+    "road_lowering_m": 0.1,
+    "land_conveyance_coefficient": 0.62,
+    "road_conveyance_coefficient": 0.9
+  },
+  "candidate_event_count": 19,
+  "formal_matrix_frozen": false,
+  "formal_runs_executed": false,
+  "source_hydraulic_parameters_changed": false,
+  "source_changes": [
+    "REPORT_STEP 30 min -> 1 min",
+    "display coordinates, polygons, symbols translated; MAP relabelled metres on explicit scale inference"
+  ],
+  "adverse_slope_links": [
+    {
+      "link_id": "GQ18",
+      "invert_slope": -0.00016651402880696486
+    },
+    {
+      "link_id": "GQ60",
+      "invert_slope": -0.002035747730141281
+    },
+    {
+      "link_id": "GQ79",
+      "invert_slope": -0.0033938571186153065
+    },
+    {
+      "link_id": "GQ114",
+      "invert_slope": -0.006143260842855387
+    }
+  ],
+  "boundaries": "original eight FREE outfalls preserved; no imposed tide or river stage",
+  "warnings": [
+    "No surveyed DEM, road or building data provided",
+    "No grid-convergence, rainfall-runoff calibration or physical flood validation",
+    "Original four adverse slopes retained; no automatic correction",
+    "No pump/gate/storage mechanism assessment possible from absent source facilities",
+    "Regional grid and closed, one-way surface do not resolve real-city recession or individual-building flooding"
+  ]
+}

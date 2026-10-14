@@ -1,0 +1,54 @@
+{
+  "simulation_hours": 7,
+  "rainfall_mm": 20,
+  "positive_saved_flooding_nodes": 8,
+  "positive_saved_samples": 57,
+  "positive_node_ids": [
+    "J100",
+    "J101",
+    "J102",
+    "J103",
+    "J4",
+    "J7",
+    "J8",
+    "J9"
+  ],
+  "first_saved_overflow": "2016-10-08 01:36:00",
+  "last_saved_overflow": "2016-10-08 01:54:00",
+  "native_flooding_volume_m3_rounded": 271,
+  "sampled_surface_input_m3": 273.3259458504,
+  "max_surface_depth_m": 0.3263024687767029,
+  "continuity_errors_pct": [
+    -0.009,
+    0.293
+  ],
+  "steps_not_converging_pct": 8.72,
+  "warnings": [
+    "WARNING 04: minimum elevation drop used for Conduit C33",
+    "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+    "WARNING 02: maximum depth increased for Node J120"
+  ],
+  "swmm_saved_times": 421,
+  "ca2d_saved_times": 85,
+  "ca2d_result_records": 4462075,
+  "ca2d_final_volume_m3": 273.3259582519531,
+  "ca2d_boundary_volume_error_m3": -2.2737367544323206e-13,
+  "raw_surface_bytes": 137431055,
+  "swmm_prefix_comparison_with_old_24h": {
+    "node_flooding.tsv": {
+      "new_rows": 88410,
+      "old_first7h_rows": 88410,
+      "exact_saved_table_match": true
+    },
+    "nodes.tsv": {
+      "new_rows": 88410,
+      "old_first7h_rows": 88410,
+      "exact_saved_table_match": false
+    },
+    "links.tsv": {
+      "new_rows": 88831,
+      "old_first7h_rows": 88831,
+      "exact_saved_table_match": false
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "run_id": "sq40_20261013_p1",
+  "model_name": "Sichuan_Shunqing",
+  "status": "failed",
+  "stage": "initial_diagnosis_verification_report",
+  "purpose": "exploratory_full_workflow_pilot",
+  "start_utc": "2026-10-13T02:44:20.920431+00:00",
+  "pid": 34272,
+  "provider_calls": 1,
+  "supplement_rounds": 0,
+  "input_sha256": {
+    "models\\Sichuan_Shunqing\\events\\chicago_like_single_4h_40mm_5min.txt": "acc8ea47e9754f4d70b330aabf9e781f9d92fe8c8192598223ee95d848ae33b3",
+    "models\\Sichuan_Shunqing\\shunqing.inp": "fc7c00fdb738de0adcbe93535b9cabdc72fef2fa1ea701bb3b937aade5cdf1ea",
+    "models\\Sichuan_Shunqing\\swmm\\scenarios\\baseline\\model.inp": "3c7821e31eb10724b2db3cbdd49220f75606e0d3d806c20820295b8150479ec1",
+    "models\\Sichuan_Shunqing\\simulation_timing.json": "4ae55b0419739ec2c19d5517eaa49dd237236a666a314290d1a841c9c30027d7",
+    "models\\Sichuan_Shunqing\\static\\building_mask.npy": "eba73e0cfcc9dfc62082dbead107df4071e875b018ec7127ea595e3b98e0403f",
+    "models\\Sichuan_Shunqing\\static\\catchment_mask.npy": "7eefddba82d7eb461a39b04ecc360c814d2909137e7b7a2f15ac772eba6872a9",
+    "models\\Sichuan_Shunqing\\static\\cell_id_grid.npy": "5af865e39cd4d02efddcfc9fb8c8ee853b9b37165e94a81740d4852d921f97d6",
+    "models\\Sichuan_Shunqing\\static\\domain_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "models\\Sichuan_Shunqing\\static\\elevation.npy": "a1665f0473a4f61ac7bd9232ce2fa3abff859e2783328a2fc490d85f19ae2958",
+    "models\\Sichuan_Shunqing\\static\\flow_mask.npy": "ad4585fc07a788f83b4f4d91a8528ba4ec56a6cc912a08e4d6ea484c2a981c8d",
+    "models\\Sichuan_Shunqing\\static\\node_anchor_mask.npy": "eded6aba0651fca91758a69a3d398854ee8e487c5694536e3b6a806dadd871a2",
+    "models\\Sichuan_Shunqing\\static\\resistance.npy": "667ae0010239c4c7eb1a2f33436cb028d87a52653d7a25224e651ba915529d76",
+    "models\\Sichuan_Shunqing\\static\\road_lowering_mask.npy": "2072ab0dcba8df50636887b92d5e1e52f1f4fe9ea52f088736855d05568d4c39",
+    "models\\Sichuan_Shunqing\\static\\road_mask.npy": "6fe12dd4fee8bfbecfe632dde347e5d284bbe9e81a14c0c36ba8826af7dfaa2d",
+    "models\\Sichuan_Shunqing\\static\\smid_grid.npy": "92e913df84c7942fe0ac41c63ecdf0766ff0df05c8653011fff0a72e536ecc82",
+    "models\\Sichuan_Shunqing\\static\\terrain.npy": "6c40cd20abcfdb99cb49e6cabbe750d7feb5ced2685d11745755bd73de843e68",
+    "models\\Sichuan_Shunqing\\static\\valid_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "models\\Sichuan_Shunqing\\static\\config.json": "5ae529acbe69e733deb39026580adfdda95c6ede07e6e344686ea36e145a711b",
+    "models\\Sichuan_Shunqing\\static\\node_to_cell_mapping.csv": "8f6b505abf4532c043551e6c36d1584339aeebdb21560034ecacde0d8ddcc65e"
+  },
+  "event_file": "chicago_like_single_4h_40mm_5min.txt",
+  "max_provider_calls": 21,
+  "max_supplement_rounds": 2,
+  "history": [
+    {
+      "stage": "simulation",
+      "start_utc": "2026-10-13T02:44:20.936875+00:00"
+    },
+    {
+      "stage": "initial_diagnosis_verification_report",
+      "at": "2026-10-13T02:52:55.153864+00:00"
+    }
+  ],
+  "simulation_elapsed_seconds": 147.71900000004098,
+  "simulation_end_utc": "2026-10-13T02:46:48.652300+00:00",
+  "simulation_summary": {
+    "max_flooding_Ls": 20710.513671875,
+    "sampled_overflow_m3": 1016727.0741810589,
+    "max_surface_depth_m": 12.970226287841797
+  },
+  "evidence_command": [
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\.venv\\Scripts\\python.exe",
+    "-u",
+    "run_workflow.py",
+    "--model",
+    "Sichuan_Shunqing",
+    "--run-id",
+    "sq40_20261013_p1",
+    "--stage",
+    "evidence_building"
+  ],
+  "evidence_pid": 57260,
+  "evidence_elapsed_seconds": 135.03100000019185,
+  "evidence_overview": {
+    "event_count": 404,
+    "overflow_node_count": 87,
+    "event_scope_policy": "confluence_divergence_corridors_v1",
+    "node_count": 113,
+    "link_count": 131,
+    "storage_node_count": 0,
+    "facility_counts": {
+      "PUMPS": 0,
+      "ORIFICES": 0,
+      "WEIRS": 0,
+      "OUTLETS": 0
+    },
+    "facility_inventory_status": "available",
+    "native_status": {
+      "status": "available",
+      "units": {
+        "head": "m",
+        "flow": "L/s"
+      }
+    },
+    "surface_status": "available",
+    "evidence_count": 213657,
+    "metrics": {
+      "depth_above_section_reference_duration": 131,
+      "direct_source_composition": 404,
+      "event_context": 404,
+      "facilities_and_storage": 404,
+      "flooding_duration": 113,
+      "flow_direction_changes": 131,
+      "fullness_ge_0_8_duration": 131,
+      "fullness_ge_0_95_duration": 131,
+      "local_process_series": 404,
+      "local_structure": 404,
+      "max_depth": 104875,
+      "max_flooding_flow": 113,
+      "max_flow": 131,
+      "max_fullness": 131,
+      "max_link_depth": 131,
+      "max_node_depth": 113,
+      "overflow_event_count": 113,
+      "ponding_duration": 104875,
+      "rainfall_context": 1,
+      "surface_association": 404,
+      "total_flooding_volume": 113
+    }
+  },
+  "diagnosis_pid": 30000,
+  "calls_by_role": {
+    "diagnosis": 1
+  },
+  "task_id": "b7555bef02de4449acc3fd774c0c2f7e",
+  "request_characters": 72971274,
+  "task_state": "ready_for_diagnosis",
+  "revision": 0,
+  "error_type": "RuntimeError",
+  "error_message": "<html>\r\n<head><title>413 Request Entity Too Large</title></head>\r\n<body>\r\n<center><h1>413 Request Entity Too Large</h1></center>\r\n<hr><center>openresty</center>\r\n</body>\r\n</html>",
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 30, in main\nRuntimeError: <html>\r\n<head><title>413 Request Entity Too Large</title></head>\r\n<body>\r\n<center><h1>413 Request Entity Too Large</h1></center>\r\n<hr><center>openresty</center>\r\n</body>\r\n</html>\n",
+  "diagnosis_elapsed_seconds": 32.32799999997951,
+  "finished_at": "2026-10-13T02:53:12.459461+00:00"
+}

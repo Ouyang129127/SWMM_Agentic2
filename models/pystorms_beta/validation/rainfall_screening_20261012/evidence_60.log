@@ -1,0 +1,94 @@
+{
+  "ok": true,
+  "state": {
+    "schema_name": "swmm_ca2d_workflow_state",
+    "schema_version": "1.0",
+    "model_name": "pystorms_beta",
+    "run_id": "bs60_20261012_p1",
+    "state": "EVIDENCE_READY",
+    "completed_stages": [
+      "simulation",
+      "evidence_building"
+    ],
+    "next_allowed_stage": "initial_diagnosis",
+    "artifacts": {
+      "scenario_request": "scenario_request.json",
+      "run_summary": "summary.json",
+      "run_metadata": "run.yaml",
+      "swmm_node_flooding": "swmm/node_flooding.tsv",
+      "swmm_nodes": "swmm/nodes.tsv",
+      "swmm_links": "swmm/links.tsv",
+      "ca2d_surface_depth": "ca2d/surface_depth.tsv",
+      "evidence_package": "evidence/evidence_package.json"
+    },
+    "errors": [],
+    "updated_at": "2026-10-12T22:31:37",
+    "history": [
+      {
+        "stage": "evidence_building",
+        "target_state": "EVIDENCE_READY",
+        "completed_at": "2026-10-12T22:31:37",
+        "rerun": false
+      }
+    ]
+  },
+  "stage_results": [
+    {
+      "stage": "evidence_building",
+      "result": {
+        "model_name": "pystorms_beta",
+        "run_id": "bs60_20261012_p1",
+        "evidence_package": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\bs60_20261012_p1\\evidence\\evidence_package.json",
+        "schema_version": "1.1",
+        "event_count": 201,
+        "overflow_node_count": 17,
+        "event_scope_policy": "confluence_divergence_corridors_v1",
+        "node_count": 210,
+        "link_count": 211,
+        "storage_node_count": 3,
+        "facility_counts": {
+          "PUMPS": 1,
+          "ORIFICES": 3,
+          "WEIRS": 1,
+          "OUTLETS": 0
+        },
+        "facility_inventory_status": "available",
+        "native_status": {
+          "status": "available",
+          "units": {
+            "head": "m",
+            "flow": "L/s"
+          }
+        },
+        "surface_status": "available",
+        "evidence_count": 108720,
+        "metrics": {
+          "depth_above_section_reference_duration": 210,
+          "direct_source_composition": 201,
+          "event_context": 201,
+          "facilities_and_storage": 201,
+          "flooding_duration": 210,
+          "flow_direction_changes": 211,
+          "fullness_ge_0_8_duration": 210,
+          "fullness_ge_0_95_duration": 210,
+          "local_process_series": 201,
+          "local_structure": 201,
+          "max_depth": 52495,
+          "max_flooding_flow": 210,
+          "max_flow": 211,
+          "max_fullness": 210,
+          "max_link_depth": 211,
+          "max_node_depth": 210,
+          "overflow_event_count": 210,
+          "ponding_duration": 52495,
+          "rainfall_context": 1,
+          "surface_association": 201,
+          "total_flooding_volume": 210
+        }
+      }
+    }
+  ],
+  "next_action": "initial_diagnosis",
+  "awaiting_user_confirmation": true,
+  "message": "统一证据构建完成；下一步调用DiagnosisAgent(model_name, run_id)交付默认全场冒溢初步诊断，无需用户原问题。"
+}

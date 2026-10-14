@@ -1,0 +1,696 @@
+{
+  "status": "PASS_WITH_DISCLOSED_SURFACE_AND_RESOLUTION_LIMITS",
+  "checked_on": "2026-10-13",
+  "original_unchanged": true,
+  "hydraulic_and_hydrologic_source_data_unchanged": true,
+  "polygon_area_audit": [
+    {
+      "subcatchment_id": "1",
+      "difference_ha": -9.729069930131118e-06,
+      "coordinate_rounding_bound_ha": 0.0001875266020650387
+    },
+    {
+      "subcatchment_id": "2",
+      "difference_ha": -1.2198888413195164e-05,
+      "coordinate_rounding_bound_ha": 0.00026004248749130106
+    },
+    {
+      "subcatchment_id": "3",
+      "difference_ha": -3.3426982284368023e-06,
+      "coordinate_rounding_bound_ha": 0.00018331652116118223
+    },
+    {
+      "subcatchment_id": "4",
+      "difference_ha": 1.4440139951332753e-05,
+      "coordinate_rounding_bound_ha": 9.540084981873585e-05
+    },
+    {
+      "subcatchment_id": "5",
+      "difference_ha": 1.728094358099952e-05,
+      "coordinate_rounding_bound_ha": 9.953868723693779e-05
+    },
+    {
+      "subcatchment_id": "6",
+      "difference_ha": -1.3204618324991202e-05,
+      "coordinate_rounding_bound_ha": 9.326348756923963e-05
+    },
+    {
+      "subcatchment_id": "7",
+      "difference_ha": -6.933218607230174e-06,
+      "coordinate_rounding_bound_ha": 0.00017858036311460603
+    },
+    {
+      "subcatchment_id": "8",
+      "difference_ha": -2.808918782370995e-05,
+      "coordinate_rounding_bound_ha": 0.0001206635927769277
+    },
+    {
+      "subcatchment_id": "9",
+      "difference_ha": -2.2372162931105777e-05,
+      "coordinate_rounding_bound_ha": 0.00010872277780721003
+    },
+    {
+      "subcatchment_id": "10",
+      "difference_ha": -2.081281512289479e-05,
+      "coordinate_rounding_bound_ha": 0.00012923059376028408
+    },
+    {
+      "subcatchment_id": "11",
+      "difference_ha": 1.9740332696471796e-05,
+      "coordinate_rounding_bound_ha": 0.00020370149530650749
+    },
+    {
+      "subcatchment_id": "12",
+      "difference_ha": -3.319751067465404e-05,
+      "coordinate_rounding_bound_ha": 0.0001911453591935276
+    },
+    {
+      "subcatchment_id": "13",
+      "difference_ha": 4.321811225338479e-06,
+      "coordinate_rounding_bound_ha": 0.00018547184798844055
+    },
+    {
+      "subcatchment_id": "14",
+      "difference_ha": -3.8929775591611815e-05,
+      "coordinate_rounding_bound_ha": 0.00012122027784268883
+    },
+    {
+      "subcatchment_id": "15",
+      "difference_ha": -1.6157922146931014e-06,
+      "coordinate_rounding_bound_ha": 0.00016055526087595668
+    },
+    {
+      "subcatchment_id": "16",
+      "difference_ha": 5.782250561026103e-05,
+      "coordinate_rounding_bound_ha": 0.00015590166347414141
+    },
+    {
+      "subcatchment_id": "17",
+      "difference_ha": -3.820916504082561e-05,
+      "coordinate_rounding_bound_ha": 0.00018381832674116592
+    },
+    {
+      "subcatchment_id": "18",
+      "difference_ha": -1.2780465041828393e-05,
+      "coordinate_rounding_bound_ha": 0.00017515495150953987
+    },
+    {
+      "subcatchment_id": "19",
+      "difference_ha": -2.639475930266144e-05,
+      "coordinate_rounding_bound_ha": 0.00013776926211047313
+    },
+    {
+      "subcatchment_id": "20",
+      "difference_ha": 2.4987475597981756e-05,
+      "coordinate_rounding_bound_ha": 0.00020409960825125263
+    },
+    {
+      "subcatchment_id": "21",
+      "difference_ha": -2.0608107554664912e-05,
+      "coordinate_rounding_bound_ha": 0.00017098667946334624
+    },
+    {
+      "subcatchment_id": "22",
+      "difference_ha": 5.374374723032815e-06,
+      "coordinate_rounding_bound_ha": 0.00011158562130345176
+    },
+    {
+      "subcatchment_id": "23",
+      "difference_ha": 1.4695524377827951e-05,
+      "coordinate_rounding_bound_ha": 0.00020628447444477223
+    },
+    {
+      "subcatchment_id": "24",
+      "difference_ha": 3.2743086890718587e-06,
+      "coordinate_rounding_bound_ha": 0.00014449140428045385
+    },
+    {
+      "subcatchment_id": "25",
+      "difference_ha": -3.828725454013693e-06,
+      "coordinate_rounding_bound_ha": 0.00015399121145649562
+    },
+    {
+      "subcatchment_id": "26",
+      "difference_ha": 5.431590145832388e-05,
+      "coordinate_rounding_bound_ha": 0.00017631682700799224
+    },
+    {
+      "subcatchment_id": "27",
+      "difference_ha": 8.869627613705688e-06,
+      "coordinate_rounding_bound_ha": 0.00019434607060836537
+    },
+    {
+      "subcatchment_id": "28",
+      "difference_ha": 1.663407820018392e-05,
+      "coordinate_rounding_bound_ha": 0.0001885885670098159
+    },
+    {
+      "subcatchment_id": "29",
+      "difference_ha": -6.037202457065405e-06,
+      "coordinate_rounding_bound_ha": 0.00016038025661765324
+    },
+    {
+      "subcatchment_id": "30",
+      "difference_ha": 1.6491150027775348e-05,
+      "coordinate_rounding_bound_ha": 8.310471891503394e-05
+    },
+    {
+      "subcatchment_id": "31",
+      "difference_ha": 1.3961518945393436e-06,
+      "coordinate_rounding_bound_ha": 0.00013605956132178645
+    },
+    {
+      "subcatchment_id": "32",
+      "difference_ha": 3.906117470364734e-06,
+      "coordinate_rounding_bound_ha": 0.00020184738488409745
+    },
+    {
+      "subcatchment_id": "33",
+      "difference_ha": 1.4537906295686298e-05,
+      "coordinate_rounding_bound_ha": 0.0001873875548387866
+    },
+    {
+      "subcatchment_id": "34",
+      "difference_ha": 4.913189925659367e-05,
+      "coordinate_rounding_bound_ha": 0.00016024238515863448
+    },
+    {
+      "subcatchment_id": "35",
+      "difference_ha": -2.665904887066972e-06,
+      "coordinate_rounding_bound_ha": 0.00017790921614275183
+    },
+    {
+      "subcatchment_id": "36",
+      "difference_ha": 4.6396163696726944e-05,
+      "coordinate_rounding_bound_ha": 0.00019293657055626833
+    },
+    {
+      "subcatchment_id": "37",
+      "difference_ha": 2.122797135939436e-05,
+      "coordinate_rounding_bound_ha": 0.00014025307119300441
+    },
+    {
+      "subcatchment_id": "38",
+      "difference_ha": -4.899141522685113e-06,
+      "coordinate_rounding_bound_ha": 0.00018273087612912312
+    },
+    {
+      "subcatchment_id": "39",
+      "difference_ha": -1.2321000077974986e-05,
+      "coordinate_rounding_bound_ha": 0.00019911891447814352
+    },
+    {
+      "subcatchment_id": "40",
+      "difference_ha": 4.187847657988186e-06,
+      "coordinate_rounding_bound_ha": 0.0001397856195049316
+    },
+    {
+      "subcatchment_id": "41",
+      "difference_ha": -1.0795406080177372e-05,
+      "coordinate_rounding_bound_ha": 0.00012459301612882895
+    },
+    {
+      "subcatchment_id": "42",
+      "difference_ha": -2.297706908294117e-05,
+      "coordinate_rounding_bound_ha": 0.0001800976560902902
+    },
+    {
+      "subcatchment_id": "43",
+      "difference_ha": -1.8182438154212832e-05,
+      "coordinate_rounding_bound_ha": 0.00025847517107986217
+    },
+    {
+      "subcatchment_id": "44",
+      "difference_ha": 1.7146417512492462e-05,
+      "coordinate_rounding_bound_ha": 0.0001961907007503673
+    },
+    {
+      "subcatchment_id": "45",
+      "difference_ha": 2.9556480598103008e-05,
+      "coordinate_rounding_bound_ha": 0.0002478202363618114
+    },
+    {
+      "subcatchment_id": "46",
+      "difference_ha": -3.069437661906704e-05,
+      "coordinate_rounding_bound_ha": 0.00021442138560052285
+    },
+    {
+      "subcatchment_id": "47",
+      "difference_ha": 1.9805610236289795e-05,
+      "coordinate_rounding_bound_ha": 0.0003049646648845113
+    },
+    {
+      "subcatchment_id": "48",
+      "difference_ha": 3.0898459542072487e-06,
+      "coordinate_rounding_bound_ha": 0.00021791671190986279
+    },
+    {
+      "subcatchment_id": "49",
+      "difference_ha": 1.6944401608043336e-05,
+      "coordinate_rounding_bound_ha": 0.00023543161027887063
+    },
+    {
+      "subcatchment_id": "50",
+      "difference_ha": -1.0037868577228437e-05,
+      "coordinate_rounding_bound_ha": 0.00020322107247460703
+    },
+    {
+      "subcatchment_id": "51",
+      "difference_ha": 3.2060909237685564e-05,
+      "coordinate_rounding_bound_ha": 0.00014622048659528267
+    },
+    {
+      "subcatchment_id": "52",
+      "difference_ha": 6.47878889878939e-05,
+      "coordinate_rounding_bound_ha": 0.0002855127642228052
+    },
+    {
+      "subcatchment_id": "53",
+      "difference_ha": -3.63336565243344e-05,
+      "coordinate_rounding_bound_ha": 0.0002803842077517539
+    },
+    {
+      "subcatchment_id": "54",
+      "difference_ha": 1.2294996142969694e-05,
+      "coordinate_rounding_bound_ha": 0.0001366488583300343
+    },
+    {
+      "subcatchment_id": "55",
+      "difference_ha": -2.8038229686444538e-05,
+      "coordinate_rounding_bound_ha": 0.00025494005546182973
+    },
+    {
+      "subcatchment_id": "56",
+      "difference_ha": 2.549142848806696e-05,
+      "coordinate_rounding_bound_ha": 0.0002865267634757926
+    },
+    {
+      "subcatchment_id": "57",
+      "difference_ha": -6.804872100474313e-06,
+      "coordinate_rounding_bound_ha": 0.00026666261971955343
+    },
+    {
+      "subcatchment_id": "58",
+      "difference_ha": 6.290265414321539e-06,
+      "coordinate_rounding_bound_ha": 0.00010987044038710016
+    },
+    {
+      "subcatchment_id": "59",
+      "difference_ha": -1.5904247829823248e-05,
+      "coordinate_rounding_bound_ha": 9.930050205655346e-05
+    },
+    {
+      "subcatchment_id": "60",
+      "difference_ha": -3.8956091348296695e-05,
+      "coordinate_rounding_bound_ha": 0.0001724742452720967
+    },
+    {
+      "subcatchment_id": "61",
+      "difference_ha": 3.454348889420089e-05,
+      "coordinate_rounding_bound_ha": 0.00018105446976778578
+    },
+    {
+      "subcatchment_id": "62",
+      "difference_ha": 4.155729330079794e-05,
+      "coordinate_rounding_bound_ha": 0.000315175697470444
+    },
+    {
+      "subcatchment_id": "63",
+      "difference_ha": 1.6972220237221336e-05,
+      "coordinate_rounding_bound_ha": 0.0004625609050105398
+    },
+    {
+      "subcatchment_id": "64",
+      "difference_ha": -2.46071051179797e-05,
+      "coordinate_rounding_bound_ha": 0.00014333993599954974
+    },
+    {
+      "subcatchment_id": "65",
+      "difference_ha": -2.1809035743558525e-05,
+      "coordinate_rounding_bound_ha": 0.0002332837118206571
+    },
+    {
+      "subcatchment_id": "66",
+      "difference_ha": 5.566367173770459e-05,
+      "coordinate_rounding_bound_ha": 0.000166596476232761
+    },
+    {
+      "subcatchment_id": "67",
+      "difference_ha": -1.6554886883568543e-06,
+      "coordinate_rounding_bound_ha": 0.00017265460051790418
+    },
+    {
+      "subcatchment_id": "68",
+      "difference_ha": -3.274690580923334e-06,
+      "coordinate_rounding_bound_ha": 0.00010751749795961512
+    },
+    {
+      "subcatchment_id": "69",
+      "difference_ha": -2.8621012525320566e-05,
+      "coordinate_rounding_bound_ha": 0.00016129837324937445
+    },
+    {
+      "subcatchment_id": "70",
+      "difference_ha": -2.9271739904856986e-05,
+      "coordinate_rounding_bound_ha": 0.00025929002639276777
+    },
+    {
+      "subcatchment_id": "71",
+      "difference_ha": -6.110020391858484e-06,
+      "coordinate_rounding_bound_ha": 9.715162492219719e-05
+    },
+    {
+      "subcatchment_id": "72",
+      "difference_ha": -9.163100347819864e-06,
+      "coordinate_rounding_bound_ha": 9.934858027492244e-05
+    },
+    {
+      "subcatchment_id": "73",
+      "difference_ha": 2.7490430646537334e-05,
+      "coordinate_rounding_bound_ha": 0.00011426097230379242
+    },
+    {
+      "subcatchment_id": "74",
+      "difference_ha": 2.4716672918145832e-05,
+      "coordinate_rounding_bound_ha": 0.00013085748812376
+    },
+    {
+      "subcatchment_id": "75",
+      "difference_ha": 1.6977360690617616e-05,
+      "coordinate_rounding_bound_ha": 0.00011365783729261611
+    },
+    {
+      "subcatchment_id": "76",
+      "difference_ha": 4.1973389919292e-06,
+      "coordinate_rounding_bound_ha": 8.705183050470737e-05
+    },
+    {
+      "subcatchment_id": "77",
+      "difference_ha": -1.5038226791830311e-05,
+      "coordinate_rounding_bound_ha": 0.00010538703587867045
+    },
+    {
+      "subcatchment_id": "78",
+      "difference_ha": -1.5613151205684517e-05,
+      "coordinate_rounding_bound_ha": 9.418964496490568e-05
+    },
+    {
+      "subcatchment_id": "79",
+      "difference_ha": 2.8074398528588063e-05,
+      "coordinate_rounding_bound_ha": 0.00028687008169315614
+    },
+    {
+      "subcatchment_id": "80",
+      "difference_ha": 4.637878807045581e-05,
+      "coordinate_rounding_bound_ha": 0.00022436813294806463
+    },
+    {
+      "subcatchment_id": "81",
+      "difference_ha": 3.8683067415945516e-06,
+      "coordinate_rounding_bound_ha": 0.00019684960416057744
+    },
+    {
+      "subcatchment_id": "82",
+      "difference_ha": 2.4243727438033602e-05,
+      "coordinate_rounding_bound_ha": 0.0002955464385303523
+    },
+    {
+      "subcatchment_id": "83",
+      "difference_ha": -7.175376881107809e-06,
+      "coordinate_rounding_bound_ha": 0.00011129411645938685
+    },
+    {
+      "subcatchment_id": "84",
+      "difference_ha": 1.2489113522917705e-05,
+      "coordinate_rounding_bound_ha": 0.00011092622996111053
+    },
+    {
+      "subcatchment_id": "85",
+      "difference_ha": -1.8467352379758495e-05,
+      "coordinate_rounding_bound_ha": 8.585109014142482e-05
+    },
+    {
+      "subcatchment_id": "86",
+      "difference_ha": 2.7128940853771155e-06,
+      "coordinate_rounding_bound_ha": 0.00011465202465477244
+    },
+    {
+      "subcatchment_id": "87",
+      "difference_ha": -1.9237994646204015e-06,
+      "coordinate_rounding_bound_ha": 0.00010894173992735601
+    },
+    {
+      "subcatchment_id": "88",
+      "difference_ha": -2.3224393910226127e-06,
+      "coordinate_rounding_bound_ha": 9.355835757246983e-05
+    },
+    {
+      "subcatchment_id": "89",
+      "difference_ha": 1.147408465129729e-06,
+      "coordinate_rounding_bound_ha": 0.00012473320302203001
+    },
+    {
+      "subcatchment_id": "90",
+      "difference_ha": 4.4183961467325616e-07,
+      "coordinate_rounding_bound_ha": 4.6041200546542e-05
+    },
+    {
+      "subcatchment_id": "91",
+      "difference_ha": 6.772891318007623e-06,
+      "coordinate_rounding_bound_ha": 0.00018720882099734507
+    },
+    {
+      "subcatchment_id": "92",
+      "difference_ha": -3.2977172939041566e-06,
+      "coordinate_rounding_bound_ha": 0.0001048723809179363
+    },
+    {
+      "subcatchment_id": "93",
+      "difference_ha": -3.3645020486972044e-05,
+      "coordinate_rounding_bound_ha": 0.00025258025169521683
+    },
+    {
+      "subcatchment_id": "94",
+      "difference_ha": 3.736224423178669e-07,
+      "coordinate_rounding_bound_ha": 7.68954383549909e-05
+    },
+    {
+      "subcatchment_id": "95",
+      "difference_ha": 5.4286609953990705e-06,
+      "coordinate_rounding_bound_ha": 5.5852579561624115e-05
+    },
+    {
+      "subcatchment_id": "96",
+      "difference_ha": 1.5524808453903916e-05,
+      "coordinate_rounding_bound_ha": 0.0001056083821980246
+    },
+    {
+      "subcatchment_id": "97",
+      "difference_ha": -1.9219905667000603e-07,
+      "coordinate_rounding_bound_ha": 9.588158715188615e-05
+    },
+    {
+      "subcatchment_id": "98",
+      "difference_ha": -2.2206246811151686e-05,
+      "coordinate_rounding_bound_ha": 0.00010573814049618844
+    },
+    {
+      "subcatchment_id": "99",
+      "difference_ha": 4.545729204608051e-06,
+      "coordinate_rounding_bound_ha": 0.00018025689795437733
+    },
+    {
+      "subcatchment_id": "100",
+      "difference_ha": -1.6219683558915676e-05,
+      "coordinate_rounding_bound_ha": 0.00015585146795366235
+    },
+    {
+      "subcatchment_id": "101",
+      "difference_ha": -3.1904498634105494e-05,
+      "coordinate_rounding_bound_ha": 0.0004174882068284801
+    },
+    {
+      "subcatchment_id": "102",
+      "difference_ha": -2.1352176915456766e-07,
+      "coordinate_rounding_bound_ha": 0.00014627143652321431
+    },
+    {
+      "subcatchment_id": "103",
+      "difference_ha": -1.4904742307919605e-05,
+      "coordinate_rounding_bound_ha": 0.00016859532735191829
+    },
+    {
+      "subcatchment_id": "104",
+      "difference_ha": -2.7040947898626655e-05,
+      "coordinate_rounding_bound_ha": 0.00026778448751340624
+    },
+    {
+      "subcatchment_id": "105",
+      "difference_ha": -1.2850220938886991e-05,
+      "coordinate_rounding_bound_ha": 0.00010229093775184095
+    },
+    {
+      "subcatchment_id": "106",
+      "difference_ha": -6.977761543680572e-06,
+      "coordinate_rounding_bound_ha": 0.0001499547793234758
+    }
+  ],
+  "project_layout": {
+    "schema_name": "SWMM-2D project layout",
+    "schema_version": "models-readme-2026-07-18",
+    "validator": "check_swmm_2d_project",
+    "model_name": "Sichuan_Shunqing",
+    "model_root": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Sichuan_Shunqing",
+    "ready": true,
+    "problems": [],
+    "baseline_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Sichuan_Shunqing\\swmm\\scenarios\\baseline\\model.inp",
+    "static_model": {
+      "ok": true,
+      "model_dir": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Sichuan_Shunqing\\static",
+      "grid_shape": [
+        580,
+        364
+      ],
+      "cell_size": 20.0,
+      "mapped_nodes": 113,
+      "flow_cells": 99639
+    }
+  },
+  "prepared_inputs": [
+    {
+      "event": "chicago_like_single_4h_20mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_single_4h_40mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_single_4h_60mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_single_4h_80mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_single_4h_120mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_single_4h_160mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_double_4h_20mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_double_4h_40mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_double_4h_60mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_double_4h_80mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_double_4h_120mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_double_4h_160mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_triple_4h_20mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_triple_4h_40mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_triple_4h_60mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_triple_4h_80mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_triple_4h_120mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "chicago_like_triple_4h_160mm_5min.txt",
+      "simulation_end": "2020-07-16 00:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    },
+    {
+      "event": "source_20200715_hourly.txt",
+      "simulation_end": "2020-07-16 21:00:00",
+      "status": "INPUT_READY_NOT_RUN"
+    }
+  ],
+  "engine_initialization": [
+    {
+      "purpose": "screening_candidate",
+      "steps_executed": 0,
+      "status": "INITIALIZED_NO_TIME_STEPS"
+    },
+    {
+      "purpose": "shared_cross_model_candidate",
+      "steps_executed": 0,
+      "status": "INITIALIZED_NO_TIME_STEPS"
+    },
+    {
+      "purpose": "original_input_rainfall",
+      "steps_executed": 0,
+      "status": "INITIALIZED_NO_TIME_STEPS"
+    }
+  ],
+  "rainfall_runs_executed": 0,
+  "llm_calls": 0,
+  "diagnoses_executed": 0,
+  "static_shape": [
+    580,
+    364
+  ],
+  "cell_size_m": 20.0,
+  "mapped_nodes": 113,
+  "shared_cell_rim_conflicts": [],
+  "engine_initialization_warnings": [],
+  "artificial_injection": {
+    "duration_seconds": 600,
+    "flow_lps_per_junction": 2,
+    "input_volume_m3": 125.99999999999987,
+    "stored_volume_m3": 125.99998845700742,
+    "relative_mass_error": 9.161105121768477e-08,
+    "wet_cells": 7809,
+    "maximum_depth_m": 0.006434414070099592
+  },
+  "scope": "input/static acceptance only; not numerical validation of rainfall simulations or physical flood prediction",
+  "road_version": "pipe_aligned_continuous_roads_v2",
+  "road_upgrade_record": "validation/road_upgrade_20261013_v2/report.json"
+}

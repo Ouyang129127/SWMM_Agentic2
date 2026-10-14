@@ -2,7 +2,9 @@ import asyncio
 import json
 import re
 import uuid
+import hashlib
 from pathlib import Path
+from datetime import datetime
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
@@ -29,6 +31,8 @@ from workflow_agents.schemas import EVIDENCE_READY, NO_SURFACE_INFLOW, RUN_READY
 from workflow_agents.state import build_state, load_or_initialize_state, save_state
 from workflow_agents.investigation import advance_investigation
 from workflow_agents.investigation_flow import load_active_task
+from workflow_agents.web_session import WebWorkflow, ACTION_LABELS, TASK_ACTIONS
+from workflow_agents.web_presentation import details, error_summary, is_context_limit_error, chat_history_summary
 
 
 APP_ROOT = Path(__file__).resolve().parent
@@ -42,22 +46,26 @@ CHAT_TIMEOUT_SECONDS = 900
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1)
     session_id: str | None = None
+    flow_version: int | None = None
 
 
 class ChatResponse(BaseModel):
     session_id: str
     reply: str
     transcript: list[dict[str, str]]
+    workflow: dict[str, Any] = Field(default_factory=dict)
 
 
 class ChatSession:
     def __init__(self) -> None:
         self.transcript: list[dict[str, str]] = []
         self.lock = asyncio.Lock()
+        self.workflow = WebWorkflow()
 
 
 app = FastAPI(title="SWMM-Agentic2 Workflow Chat")
 sessions: dict[str, ChatSession] = {}
+run_locks: dict[tuple[str, str], asyncio.Lock] = {}
 WEB_LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 if MODELS_DIR.exists():
@@ -88,16 +96,22 @@ async def chat(request: ChatRequest) -> ChatResponse:
         path = session_log_path(session_id)
         if path.exists():
             restored.transcript = [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
+        flow_path = session_log_path(session_id).with_suffix('.state.json')
+        if flow_path.exists():
+            restored.workflow = WebWorkflow.from_dict(json.loads(flow_path.read_text(encoding='utf-8')))
         sessions[session_id] = restored
     session = sessions[session_id]
     user_message = repair_mojibake(request.message)
 
     async with session.lock:
+        if request.flow_version is not None and request.flow_version != session.workflow.version:
+            raise HTTPException(status_code=409, detail='流程状态已更新，本次未执行。请刷新页面后确认当前下一步。')
         session.transcript.append({"role": "user", "content": user_message})
         append_session_log(session_id, "user", user_message)
         try:
             reply = await asyncio.wait_for(
-                run_orchestrator_turn(session.transcript),
+                run_orchestrator_turn(session.transcript, session.workflow,
+                                      lambda: save_session_workflow(session_id, session.workflow)),
                 timeout=CHAT_TIMEOUT_SECONDS,
             )
         except TimeoutError:
@@ -114,7 +128,8 @@ async def chat(request: ChatRequest) -> ChatResponse:
                 )
                 session.transcript.append({"role": "assistant", "content": reply})
                 append_session_log(session_id, "assistant", reply)
-                return ChatResponse(session_id=session_id, reply=reply, transcript=session.transcript)
+                save_session_workflow(session_id, session.workflow)
+                return ChatResponse(session_id=session_id, reply=reply, transcript=session.transcript, workflow=session.workflow.to_dict())
             if is_llm_timeout_error(exc):
                 reply = (
                     "模型服务本轮响应超时，刚才这一轮没有成功执行，也没有产生可靠结果。"
@@ -123,21 +138,24 @@ async def chat(request: ChatRequest) -> ChatResponse:
                 )
                 session.transcript.append({"role": "assistant", "content": reply})
                 append_session_log(session_id, "assistant", reply)
-                return ChatResponse(session_id=session_id, reply=reply, transcript=session.transcript)
+                save_session_workflow(session_id, session.workflow)
+                return ChatResponse(session_id=session_id, reply=reply, transcript=session.transcript, workflow=session.workflow.to_dict())
             session.transcript.append({"role": "assistant", "content": f"Execution failed: {exc}"})
             append_session_log(session_id, "assistant", f"Execution failed: {exc}")
+            save_session_workflow(session_id, session.workflow)
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
         session.transcript.append({"role": "assistant", "content": reply})
         append_session_log(session_id, "assistant", reply)
-        return ChatResponse(session_id=session_id, reply=reply, transcript=session.transcript)
+        save_session_workflow(session_id, session.workflow)
+        return ChatResponse(session_id=session_id, reply=reply, transcript=session.transcript, workflow=session.workflow.to_dict())
 
 
 @app.get("/api/session/{session_id}", response_model=ChatResponse)
 async def get_session(session_id: str) -> ChatResponse:
     session = sessions.get(session_id)
     if session is not None:
-        return ChatResponse(session_id=session_id, reply="", transcript=session.transcript)
+        return ChatResponse(session_id=session_id, reply="", transcript=session.transcript, workflow=session.workflow.to_dict())
 
     log_path = session_log_path(session_id)
     if not log_path.exists():
@@ -148,7 +166,9 @@ async def get_session(session_id: str) -> ChatResponse:
             continue
         record = json.loads(line)
         transcript.append({"role": record["role"], "content": record["content"]})
-    return ChatResponse(session_id=session_id, reply="", transcript=transcript)
+    path = log_path.with_suffix('.state.json')
+    flow = WebWorkflow.from_dict(json.loads(path.read_text(encoding='utf-8'))) if path.exists() else WebWorkflow()
+    return ChatResponse(session_id=session_id, reply="", transcript=transcript, workflow=flow.to_dict())
 
 
 @app.delete("/api/session/{session_id}")
@@ -157,62 +177,314 @@ async def delete_session(session_id: str) -> dict[str, bool]:
     return {"ok": True}
 
 
-async def run_orchestrator_turn(transcript: list[dict[str, str]]) -> str:
-    latest = transcript[-1]["content"]
-    planning_only = is_planning_only_request(latest)
-    if not planning_only:
-        continue_result = await continue_workflow_from_state(latest, transcript)
-        if continue_result is not None:
-            return continue_result
-        if latest.strip(' ，。!?！？').lower() in {'下一步我该做什么', '好的，下一步我该做什么', '现在下一步是什么', '下一步是什么'}:
-            binding = investigation_binding(transcript)
-            if binding:
-                model_name, run_id, task_id = binding
-                state = load_active_task(model_name, run_id, task_id)
-                if state:
-                    state = await advance_investigation(model_name, run_id, 'status', state['task_id'])
-                    return format_investigation_result(state)
-        # Investigation tasks must not fall through to run-level deterministic
-        # shortcuts. The LLM orchestrator selects one role/action after approval.
-        recent = '\n'.join(item['content'] for item in transcript[-10:])
-        if ('"task_id"' in recent or 'EVIDENCE_READY' in recent or
-                any(marker in latest.lower() for marker in ('诊断', '主因', 'diagnosis', '核查', 'verification', '报告', 'report', '原因', '为什么'))):
-            return await run_web_orchestrator_agent_turn(build_task_prompt(transcript), planning_only=False)
-        deterministic_workflow = deterministic_workflow_stage_evidence(latest, transcript)
-        if deterministic_workflow is not None:
-            return deterministic_workflow
+async def run_orchestrator_turn(transcript: list[dict[str, str]], flow: WebWorkflow | None = None,
+                                checkpoint=None) -> str:
+    """Only the controller can execute a stage, and only on a fresh user approval."""
+    flow = flow if flow is not None else WebWorkflow()
+    latest = transcript[-1]['content']
+    compact = latest.strip(' ，。!?！？').lower()
+    if compact in {'暂停', '停止', '取消', 'pause', 'stop', 'cancel'}:
+        flow.status = 'paused'
+        flow.version += 1
+        return '流程已暂停，本轮未执行。回复“继续”时会先展示待执行步骤，重新等待确认。'
+    if compact in {'状态', '当前状态', '进度', '下一步我该做什么', '好的，下一步我该做什么',
+                   '现在下一步是什么', '下一步是什么', 'status'}:
+        if not flow.run_id and flow.status == 'idle':
+            adopt_legacy_binding(flow, transcript)
+        detail = ''
+        if flow.task_id:
+            state = await advance_investigation(flow.model_name, flow.run_id, 'status', flow.task_id)
+            detail = format_investigation_result(state, include_next=False) + '\n\n'
+        return detail + workflow_status_text(flow)
+    # A quoted run/model inventory is not a new execution request.
+    new_plan = contains_any(latest, ['设计', '流程', '一步一步', '逐步', '重新开始', '新任务',
+                                    '执行模拟', '运行模拟', '模拟计算', '开始模拟', '耦合模拟',
+                                    'run simulation', 'run model', 'simulate', 'workflow'])
+    if new_plan or (extract_rainfall_file(latest) and flow.status in {'idle', 'completed', 'paused'}):
+        flow.reset()
+        # Only an explicit user model choice supplies the model, never assistant inventories.
+        flow.model_name = latest_user_model(transcript)
+        flow.rainfall_file = extract_rainfall_file(latest)
+        flow.scenario_name = extract_scenario_name(latest) or 'baseline'
+        explicit_run = extract_workflow_run_id(latest)
+        if explicit_run:
+            bind_web_run(flow, flow.model_name, explicit_run)
+            refresh_web_workflow(flow)
+            flow.wait_for(flow.next_action)
+            return workflow_status_text(flow)
+        set_scenario_plan(flow)
+        return workflow_plan_text(flow)
+    selected_model = extract_model_name(latest)
+    if flow.run_id and selected_model and selected_model != flow.model_name:
+        flow.reset()
+        flow.model_name = selected_model
+        flow.rainfall_file = extract_rainfall_file(latest)
+        set_scenario_plan(flow)
+        return '已切换模型，旧运行与诊断任务不再用于本流程。\n\n' + workflow_plan_text(flow)
+    if flow.status in {'awaiting_inputs', 'awaiting_confirmation'} and flow.next_action == 'scenario':
+        model = extract_model_name(latest)
+        rainfall = extract_rainfall_file(latest)
+        scenario = extract_scenario_name(latest)
+        if model or rainfall or scenario:
+            if model and model != flow.model_name:
+                flow.rainfall_file = ''
+            flow.model_name = model or flow.model_name
+            flow.rainfall_file = rainfall or flow.rainfall_file
+            flow.scenario_name = scenario or flow.scenario_name
+            set_scenario_plan(flow)
+            return workflow_plan_text(flow)
+    if is_continue_confirmation(latest) or compact == 'a':
+        if flow.status == 'idle':
+            adopt_legacy_binding(flow, transcript)
+        if flow.status in {'paused', 'interrupted'}:
+            if is_context_limit_error(flow.last_error):
+                flow.status, flow.next_action = 'context_blocked', ''
+                return workflow_status_text(flow)
+            if flow.run_id:
+                refresh_web_workflow(flow)
+            flow.wait_for(flow.next_action)
+            return '已恢复当前状态，本轮未执行。请重新确认下面的步骤。\n\n' + workflow_status_text(flow)
+        if flow.status == 'awaiting_inputs':
+            return workflow_plan_text(flow)
+        if flow.status != 'awaiting_confirmation' or not flow.next_action:
+            return workflow_status_text(flow)
+        return await execute_web_step(flow, checkpoint)
+    # Bind a saved run only when the user names it, or migrate an existing chat once.
+    explicit_run = extract_workflow_run_id(latest)
+    if explicit_run:
+        flow.reset()
+        bind_web_run(flow, extract_model_name(latest), explicit_run)
+        refresh_web_workflow(flow)
+        flow.wait_for(flow.next_action)
+        return '已绑定指定运行，本轮未执行。\n\n' + workflow_status_text(flow)
+    if flow.status == 'idle' and contains_any(latest, ['诊断', '核查', '报告', '证据', '原因', '为什么']):
+        adopt_legacy_binding(flow, transcript)
+    if flow.run_id and contains_any(latest, ['诊断', '主因', '原因', '为什么', '分析', '调查']):
+        if flow.task_id:
+            # A changed question is a new task proposal, never an implicit diagnosis.
+            flow.question = latest
+            flow.task_id = ''
+            flow.state_token = web_state_token(flow)
+            flow.wait_for('prepare_diagnosis')
+            return '已记录新的调查问题；确认后只准备新诊断任务。\n\n' + workflow_status_text(flow)
+        return workflow_status_text(flow)
+    if flow.run_id and contains_any(latest, ['核查', '报告', '证据']):
+        return '请按当前状态依次推进。\n\n' + workflow_status_text(flow)
+    if not is_planning_only_request(latest) and not extract_rainfall_file(latest):
+        evidence = scenario_agent_evidence(latest)
+        if evidence is not None:
+            explanation = await explain_validation_evidence(latest, evidence)
+            return '本轮只查询模型／降雨资料。\n\n' + explanation
+    # No mutation tools are supplied to the model, including vague or unexpected requests.
+    return await run_web_orchestrator_agent_turn(build_task_prompt(transcript, flow), planning_only=True)
 
-        simulation_result = simulation_agent_evidence(latest, transcript)
-        if simulation_result is not None:
-            if "SWMM-2D project run rejected:" in simulation_result:
-                return "本轮模拟未启动：输入校验未通过。\n\n" + simulation_result
-            if "NO_SURFACE_INFLOW" in simulation_result:
-                return simulation_result
-            explanation = await explain_simulation_evidence(latest, simulation_result)
-            return (
-                "本轮已由 SWMM-Agentic2 的 `SimulationAgent` 处理标准化模拟请求，"
-                "使用固定模拟管线。\n\n"
-                + explanation
-            )
 
-        scenario_result = scenario_agent_evidence(latest)
-        if scenario_result is not None:
-            if "scenario_request" in scenario_result:
-                return (
-                    "本轮已由 SWMM-Agentic2 的 `ScenarioAgent` 准备情景请求，"
-                    "并写入 `scenario_request.json`；当前工作流可进入 `SimulationAgent`。\n\n"
-                    "**结构化情景结果**\n"
-                    f"```text\n{scenario_result}\n```"
-                )
-            explanation = await explain_validation_evidence(latest, scenario_result)
-            return (
-                "本轮已由 SWMM-Agentic2 的 `ScenarioAgent` 处理模型、情景或降雨事件组织请求，"
-                "没有进入旧的自由路由。\n\n"
-                + explanation
-            )
+def latest_user_model(transcript):
+    for item in reversed(transcript):
+        if item['role'] == 'user':
+            model = extract_model_name(item['content'])
+            if model:
+                return model
+    return ''
 
-    task = build_task_prompt(transcript)
-    return await run_web_orchestrator_agent_turn(task, planning_only=planning_only)
+
+def set_scenario_plan(flow):
+    flow.next_action = 'scenario'
+    flow.status = 'awaiting_confirmation' if flow.model_name and flow.rainfall_file else 'awaiting_inputs'
+    flow.version += 1
+
+
+def workflow_plan_text(flow):
+    text = ('本轮只制定计划，尚未执行。每次回复“继续”只推进一个动作：\n\n'
+            '1. 准备情景请求。\n2. 执行 SWMM-2D 模拟。\n3. 构建统一证据。\n'
+            '4. 准备诊断任务。\n5. 执行诊断。\n6. 核查引用。\n7. 生成并交付报告。\n\n')
+    if not flow.model_name:
+        return text + '请明确选择 models/ 下的模型项目；系统不会自动选择模型。'
+    if not flow.rainfall_file:
+        events = MODELS_DIR / flow.model_name / 'events'
+        files = [p.relative_to(MODELS_DIR / flow.model_name).as_posix() for p in sorted(events.rglob('*'))
+                 if p.is_file() and p.suffix.lower() in {'.txt', '.csv', '.dat', '.rain', '.prcp', '.precip', '.ts'}]
+        return text + f'当前模型：`{flow.model_name}`。请明确选择降雨文件：\n' + '\n'.join(f'- `{p}`' for p in files)
+    return text + workflow_status_text(flow)
+
+
+def workflow_status_text(flow):
+    labels = {'idle': '未开始', 'awaiting_inputs': '等待选择输入', 'awaiting_confirmation': '等待确认',
+              'running': '执行中', 'paused': '已暂停', 'interrupted': '步骤中断', 'completed': '已完成',
+              'context_blocked': '输入超限，等待缩小调查范围'}
+    lines = []
+    metadata = [f'流程状态：{labels.get(flow.status, flow.status)}。']
+    if flow.model_name:
+        metadata.append(f'模型：`{flow.model_name}`；情景：`{flow.scenario_name}`。')
+    if flow.rainfall_file:
+        metadata.append(f'降雨文件：`{flow.rainfall_file}`。')
+    if flow.run_id:
+        metadata.append(f'run_id: `{flow.run_id}`。')
+    if flow.task_id:
+        metadata.append(f'task_id: `{flow.task_id}`。')
+    if flow.status == 'context_blocked':
+        lines.append('输入证据超限，已停止重试。请指定节点／事件，建立范围更小的调查任务。')
+    elif flow.next_action:
+        lines.append('下一步：' + ACTION_LABELS[flow.next_action].split('：', 1)[-1] + '；回复“继续”确认。')
+    elif flow.status == 'completed':
+        lines.append('当前流程已完成；再次“继续”不会重跑诊断或模拟。')
+    else:
+        lines.append('当前没有待执行步骤，请先明确任务、模型与降雨文件，或指定已有 run_id。')
+    lines.append(details('运行信息', '\n'.join(metadata)))
+    return '\n\n'.join(lines)
+
+
+def bind_web_run(flow, model_name, run_id, task_id=''):
+    from workflow_agents.state import resolve_run_root
+    root = resolve_run_root(model_name or '__unspecified__', run_id)
+    if model_name and root.parents[1].name != model_name:
+        raise ValueError('指定模型与 run_id 不一致；未切换到其他模型。')
+    flow.model_name, flow.run_id, flow.task_id = root.parents[1].name, root.name, task_id
+
+
+def adopt_legacy_binding(flow, transcript):
+    binding = investigation_binding(transcript)
+    if binding:
+        bind_web_run(flow, *binding)
+        refresh_web_workflow(flow)
+        if flow.task_id and flow.next_action == 'diagnose':
+            state = load_active_task(flow.model_name, flow.run_id, flow.task_id)
+            attempt = state.get('last_attempt', {})
+            if attempt.get('status') == 'failed' and attempt.get('http_status') == 400:
+                # Older audit files did not save the provider error message.
+                for item in reversed(transcript):
+                    if item['role'] == 'assistant' and flow.task_id in item['content']:
+                        if is_context_limit_error(item['content']):
+                            flow.last_error = next((line for line in item['content'].splitlines() if is_context_limit_error(line)), '')
+                            flow.status, flow.next_action = 'context_blocked', ''
+                        break
+        flow.wait_for(flow.next_action)
+
+
+def web_state_token(flow):
+    root = MODELS_DIR / flow.model_name / 'runs' / flow.run_id
+    paths = [root / 'workflow_state.json', root / 'diagnosis_tasks' / 'active_task.json']
+    if flow.task_id:
+        paths.append(root / 'diagnosis_tasks' / flow.task_id / 'task.json')
+    digest = hashlib.sha256()
+    for path in paths:
+        digest.update(path.name.encode('utf-8'))
+        digest.update(path.read_bytes() if path.exists() else b'absent')
+    return digest.hexdigest()
+
+
+def refresh_web_workflow(flow):
+    root, run = load_or_initialize_state(flow.model_name, flow.run_id)
+    if root.parents[1].name != flow.model_name:
+        raise ValueError('当前绑定的模型／运行不一致。')
+    if run['state'] == EVIDENCE_READY:
+        state = load_active_task(flow.model_name, flow.run_id, flow.task_id)
+        if state:
+            flow.task_id = state['task_id']
+            flow.next_action = TASK_ACTIONS.get(state['state'], '')
+            if state['state'] in {'preliminary_delivered', 'awaiting_evidence_confirmation'}:
+                display = state.get('display_report', {})
+                if display.get('status') == 'failed':
+                    flow.next_action = 'display_report'
+            attempt = state.get('last_attempt', {})
+            if attempt.get('status') == 'failed' and is_context_limit_error(attempt.get('error_message', '')):
+                flow.last_error = attempt['error_message']
+                flow.status, flow.next_action = 'context_blocked', ''
+        else:
+            flow.next_action = 'prepare_diagnosis'
+    else:
+        flow.next_action = {SCENARIO_READY: 'simulation', RUN_READY: 'evidence_building',
+                            NO_SURFACE_INFLOW: 'evidence_building'}.get(run['state'], '')
+        if not flow.next_action:
+            raise ValueError('当前运行未就绪，不能推进；请检查工作流错误或创建新情景。')
+    flow.state_token = web_state_token(flow)
+
+
+async def execute_web_step(flow, checkpoint=None):
+    # A second browser/session cannot spend an approval against a changed run.
+    key = (flow.model_name, flow.run_id) if flow.run_id else (flow.model_name, flow.rainfall_file)
+    lock = run_locks.setdefault(key, asyncio.Lock())
+    async with lock:
+        return await _execute_web_step(flow, checkpoint)
+
+
+async def _execute_web_step(flow, checkpoint=None):
+    action = flow.next_action
+    if flow.run_id and web_state_token(flow) != flow.state_token:
+        refresh_web_workflow(flow)
+        flow.wait_for(flow.next_action)
+        return '保存状态已变化，本轮未执行；已重新读取进度，请确认当前下一步。\n\n' + workflow_status_text(flow)
+    flow.status = 'running'
+    if checkpoint:
+        checkpoint()
+    try:
+        if action == 'scenario':
+            result = prepare_scenario_request(model_name=flow.model_name, rainfall_file=flow.rainfall_file,
+                scenario_name=flow.scenario_name,
+                run_id=f"{Path(flow.rainfall_file).stem}__{flow.scenario_name}__{datetime.now():%Y%m%d_%H%M%S}_{uuid.uuid4().hex[:8]}")
+            flow.run_id = result['scenario_request']['run_id']
+            detail = '情景请求已准备，尚未执行模拟。'
+        elif action == 'simulation':
+            root, state = load_or_initialize_state(flow.model_name, flow.run_id)
+            if state['state'] != SCENARIO_READY:
+                raise ValueError('模拟不是当前允许的步骤。')
+            detail = run_simulation_from_scenario_request(load_scenario_request(flow.model_name, flow.run_id))
+            _, after = load_or_initialize_state(flow.model_name, flow.run_id)
+            if after['state'] not in {RUN_READY, NO_SURFACE_INFLOW}:
+                raise ValueError('模拟未成功完成；请检查执行结果：' + detail)
+            summary = json.loads((root / 'summary.json').read_text(encoding='utf-8')) if (root / 'summary.json').exists() else {}
+            ca2d = summary.get('ca2d', {})
+            brief = '模拟已完成。'
+            if ca2d.get('max_depth_m') is not None:
+                brief += f"CA2D 最大水深：{ca2d['max_depth_m']} m。"
+            if after['state'] == NO_SURFACE_INFLOW:
+                brief += '本次无正节点溢流，二维边界入流为零。'
+            detail = brief + '\n\n' + details('完整模拟结果', detail)
+        elif action == 'evidence_building':
+            detail = run_workflow_stage(model_name=flow.model_name, run_id=flow.run_id, target_stage='evidence_building')
+            root, after = load_or_initialize_state(flow.model_name, flow.run_id)
+            if after['state'] != EVIDENCE_READY:
+                raise ValueError('统一证据构建未成功：' + detail)
+            from workflow_agents.evidence_package import load_package
+            overview = load_package(root)['overview']
+            brief = (f"统一证据已构建：{overview.get('event_count', '未知')} 个冒溢事件，"
+                     f"{overview.get('overflow_node_count', '未知')} 个冒溢节点；尚未执行诊断。")
+            detail = brief + '\n\n' + details('完整证据构建结果', detail)
+        elif action == 'prepare_diagnosis':
+            result = await advance_investigation(flow.model_name, flow.run_id, 'prepare', question=flow.question)
+            flow.task_id = result['task_id']
+            detail = '诊断任务与可见证据已准备，尚未调用诊断模型。'
+        elif action == 'diagnose':
+            from workflow_agents.investigation_flow import diagnose_with_repair
+            result = await diagnose_with_repair(flow.model_name, flow.run_id, flow.task_id)
+            detail = format_investigation_result(result, include_next=False)
+        elif action in {'verify', 'report', 'evidence', 'display_report'}:
+            result = await advance_investigation(flow.model_name, flow.run_id, action, flow.task_id)
+            detail = format_investigation_result(result, include_next=False)
+        else:
+            raise ValueError('没有合法的待执行步骤。')
+        refresh_web_workflow(flow)
+        flow.last_error = result.get('execution_error', '') if action == 'diagnose' else ''
+        if action == 'prepare_diagnosis':
+            # A follow-up preparation replaces the prior task binding explicitly.
+            flow.question = ''
+        flow.wait_for(flow.next_action)
+        if is_context_limit_error(flow.last_error):
+            flow.status = 'context_blocked'
+            flow.next_action = ''
+        return f"本轮只执行：{ACTION_LABELS[action].split('：', 1)[-1]}。\n\n{detail}\n\n" + workflow_status_text(flow)
+    except Exception as exc:
+        # A failed/rejected stage never grants permission for the next stage.
+        flow.last_error = str(exc)
+        flow.status = 'awaiting_confirmation'
+        flow.version += 1
+        if is_context_limit_error(exc):
+            flow.status, flow.next_action = 'context_blocked', ''
+        return '本轮步骤未完成：' + error_summary(exc) + '\n\n未执行后续步骤。\n\n' + workflow_status_text(flow) + '\n\n' + details('完整错误信息', str(exc))
+    except BaseException:
+        flow.status = 'interrupted'
+        flow.version += 1
+        raise
 
 
 def investigation_binding(transcript: list[dict[str, str]]) -> tuple[str, str, str] | None:
@@ -238,101 +510,101 @@ def investigation_binding(transcript: list[dict[str, str]]) -> tuple[str, str, s
     return root.parents[1].name, root.name, task_id
 
 
-def format_investigation_result(state: dict[str, Any]) -> str:
+def format_investigation_result(state: dict[str, Any], include_next: bool = True) -> str:
     current = state['state']
-    lines = [f"诊断任务 `{state['task_id']}`；当前状态：`{current}`。"]
-    if state.get('execution_error'):
-        lines.append('本次修正未通过，已保留原任务、失败响应和反馈：' + state['execution_error'])
-        lines.append('下一步：继续修正此任务，无需重跑模拟或重建诊断任务。')
-    elif current == 'awaiting_evidence_confirmation':
-        lines.append('初步诊断已交付。下一步：回复“继续”，按下列请求查询已有证据或从本次保存结果提取／计算，再更新诊断、核查和报告。')
-    elif current == 'preliminary_delivered':
-        lines.append('初步诊断流程已完成。')
-        if state.get('evidence_closure') == 'capability_gaps':
-            lines.append('当前请求没有新增证据；未满足的变量、时窗或方法已保留为证据缺口，不再重复运行诊断。下一步可调整请求，或针对保存数据能力以外的缺口确定其他调查方法。')
-        else:
-            lines.append('下一步可针对报告提出具体问题；再次“继续”会展示已有结果。')
+    labels = {'ready_for_diagnosis': '诊断证据已就绪', 'revision_requested': '引用核查未通过，等待修正诊断',
+              'ready_for_verification': '诊断已完成，尚未核查', 'ready_for_report': '引用核查通过，尚未生成报告',
+              'awaiting_evidence_confirmation': '初步诊断已交付，等待确认补证', 'preliminary_delivered': '初步诊断流程已完成'}
+    lines = []
+    extra = []
+    attempt = state.get('last_attempt', {})
+    failure = state.get('execution_error') or (attempt.get('error_message') if attempt.get('status') == 'failed' else '')
+    if failure:
+        lines.append('本次诊断未完成：' + error_summary(failure))
+        extra.append(details('完整错误信息', failure))
     else:
-        actions = {'ready_for_diagnosis': '诊断', 'revision_requested': '按反馈修正诊断',
-                   'ready_for_verification': '核查引用', 'ready_for_report': '交付报告'}
-        lines.append('下一步：' + actions.get(current, '检查当前任务状态') + '。')
+        lines.append('结果：' + labels.get(current, current) + '。')
+        overview = state.get('evidence_overview', {})
+        if 'event_count' in overview:
+            lines.append(f"范围：{overview['event_count']} 个冒溢事件，{overview.get('overflow_node_count', '未知')} 个冒溢节点。")
+        # Never show a previous revision's conclusion as the current result.
+        diagnosis = state.get('diagnosis', {})
+        if diagnosis.get('revision') == state.get('revision') and current in {'ready_for_verification', 'ready_for_report', 'awaiting_evidence_confirmation', 'preliminary_delivered'}:
+            finding = diagnosis.get('run_overview', {}).get('text')
+            if finding:
+                if len(finding) > 220:
+                    sentences = re.split(r'(?<=[。！？])', finding)
+                    preview = ''.join(sentences[:2])
+                    if len(preview) > 220:
+                        preview = preview[:220] + '…'
+                    lines.append('要点摘要：' + preview)
+                    extra.append(details('完整诊断要点', finding))
+                else:
+                    lines.append('要点：' + finding)
     if state.get('evidence_plan'):
         labels = {'available': '可补充', 'already_visible': '已经读取', 'no_match': '请求对象／时段无匹配项', 'unavailable': '当前保存数据或提取方法不能满足'}
-        lines.append('\n补证处理结果：')
+        counts = {status: sum(item['status'] == status for item in state['evidence_plan']) for status in labels}
+        lines.append('补证：' + '；'.join(f'{labels[s]} {n} 项' for s, n in counts.items() if n) + '。')
+        requests = []
         for item in state['evidence_plan']:
             req = item['request']
-            lines.append(f"- {labels[item['status']]}：{req.get('reason', '')}")
+            requests.append(f"- {labels[item['status']]}：{req.get('reason', '')}")
             if item.get('execution') == 'saved_result_extract':
                 resolved = item.get('resolved_request', {})
-                lines.append('  方法：本次保存结果提取／计算；' + resolved.get('scope_note', ''))
+                requests.append('方法：本次保存结果提取／计算；' + resolved.get('scope_note', ''))
                 for scope in resolved.get('scopes', []):
                     objects = scope['nodes'] + scope['links'] + scope['cells']
-                    lines.append(f"  {scope['event_id'] or '无事件限定'}：{', '.join(objects)}；{scope['time_start'] or '保存起点'} 至 {scope['time_end'] or '保存终点'}。")
+                    requests.append(f"{scope['event_id'] or '无事件限定'}：{', '.join(objects)}；{scope['time_start'] or '保存起点'} 至 {scope['time_end'] or '保存终点'}。")
             if item.get('reason'):
-                lines.append('  能力边界：' + item['reason'])
-    if state.get('report_revision') == state.get('revision') and state.get('report'):
-        lines.append('\n' + state['report'])
-        lines.append(f"\n报告文件：`{state['report_file']}`")
+                requests.append('能力边界：' + item['reason'])
+        extra.append(details('补证目的、对象与时段（确认前可展开核对）', '\n\n'.join(requests)))
+    if state.get('report_revision') == state.get('revision') and state.get('report_file'):
+        label = '查看此前交付的文字报告' if current in {'ready_for_diagnosis', 'revision_requested'} else '查看完整文字报告'
+        lines.append(model_file_link(state['report_file'], label))
     display = state.get('display_report', {})
     if display.get('status') == 'completed' and display.get('revision') == state.get('revision'):
-        from urllib.parse import quote
-        path = Path(display['html_file']).resolve()
-        try:
-            relative = path.relative_to(MODELS_DIR.resolve()).as_posix()
-            lines.append(f'\n[打开 HTML 诊断报告](/models/{quote(relative, safe="/")})')
-        except ValueError:
-            lines.append(f"\nHTML 报告文件：`{path}`")
+        label = '查看此前交付的 HTML 报告' if current in {'ready_for_diagnosis', 'revision_requested'} else '打开 HTML 诊断报告'
+        lines.append(model_file_link(display['html_file'], label))
     elif display.get('status') == 'failed':
-        lines.append('\nHTML 报告生成失败，已保留诊断与内部报告：' + display.get('error', '请检查生成记录后重试。'))
-    return '\n\n'.join(lines)
+        lines.append('HTML 报告未生成，已保留完整文字报告。')
+        extra.append(details('报告生成错误', display.get('error', '请检查生成记录后重试。')))
+    if include_next and not is_context_limit_error(failure):
+        action = TASK_ACTIONS.get(current)
+        if action:
+            lines.append('下一步：' + ACTION_LABELS[action].split('：', 1)[-1] + '；回复“继续”确认。')
+    extra.append(details('诊断任务信息', f"task_id: `{state['task_id']}`；状态：`{current}`；版本：{state.get('revision', 0)}。"))
+    return '\n\n'.join(lines + extra)
+
+
+def model_file_link(filename: str, label: str) -> str:
+    from urllib.parse import quote
+    path = Path(filename).resolve()
+    try:
+        relative = path.relative_to(MODELS_DIR.resolve()).as_posix()
+        return f'[{label}](/models/{quote(relative, safe="/")})'
+    except ValueError:
+        return f'{label}：`{path}`'
 
 
 async def continue_workflow_from_state(message: str, transcript: list[dict[str, str]]) -> str | None:
-    """Continue exactly the next allowed workflow stage after a user confirmation."""
+    """Compatibility entry point; never call composite initial/continue actions."""
     prior = transcript[-2]['content'] if len(transcript) > 1 else ''
     approve_option = message.strip().lower() == 'a' and 'EvidenceBuilderAgent' in prior and 'awaiting_evidence_confirmation' in prior
     if not is_continue_confirmation(message) and not approve_option:
         return None
     try:
-        binding = investigation_binding(transcript)
-        if not binding:
+        flow = WebWorkflow()
+        adopt_legacy_binding(flow, transcript)
+        if not flow.run_id:
             return None
-        model_name, run_id, task_id = binding
-        run_root, state = load_or_initialize_state(model_name, run_id)
     except Exception as exc:
         return (
             "我识别到你想继续工作流，但读取当前 workflow state 失败。\n\n"
             f"```text\n{exc}\n```"
         )
-    # The directory location is authoritative.  A prior user turn can mention
-    # another model, while this run ID may uniquely belong to a different one.
-    model_name = run_root.parents[1].name
-
-    current_state = state.get("state")
-    if current_state == SCENARIO_READY:
-        try:
-            scenario_request = load_scenario_request(model_name, run_id)
-            result = run_simulation_from_scenario_request(scenario_request, rerun=False)
-        except Exception as exc:
-            return (
-                "当前状态是 `SCENARIO_READY`，下一步应由 `SimulationAgent` 执行，但模拟阶段失败。\n\n"
-                f"```text\n{exc}\n```"
-            )
-        return (
-            "收到“继续”。我读取了 `workflow_state.json`，当前状态为 `SCENARIO_READY`，"
-            "所以本轮只执行下一合法阶段：`SimulationAgent -> RUN_READY`。\n\n"
-            "**结构化模拟结果**\n"
-            f"```text\n{result}\n```"
-        )
-
-    if current_state in {RUN_READY, NO_SURFACE_INFLOW}:
-        result = run_workflow_stage(model_name=model_name, run_id=run_id, target_stage='evidence_building')
-        return '本轮只执行证据构建：\n' + result
-    if current_state == EVIDENCE_READY:
-        result = await advance_investigation(model_name, run_id, 'continue', task_id)
-        return format_investigation_result(result)
-
-    return None
+    if flow.next_action:
+        return await execute_web_step(flow)
+    return workflow_status_text(flow)
 
 
 def deterministic_workflow_stage_evidence(message: str, transcript: list[dict[str, str]]) -> str | None:
@@ -627,16 +899,15 @@ def extract_run_id(text: str) -> str:
 
 def extract_workflow_run_id(text: str) -> str:
     patterns = [
-        r"['\"]?run_id['\"]?\s*[:=：]\s*['\"]?([A-Za-z0-9_.-]+)",
-        r"(?:运行ID|运行编号|输出编号)\s*[:=：]\s*['\"]?([A-Za-z0-9_.-]+)",
+        r"[`'\"]?run_id[`'\"]?\s*[:=：]\s*[`'\"]?([A-Za-z0-9_.-]+)",
+        r"(?:运行ID|运行编号|输出编号)\s*[:=：]\s*[`'\"]?([A-Za-z0-9_.-]+)",
         r"\b([A-Za-z0-9_]+__[A-Za-z0-9_.-]+__\d{8}_\d{6})\b",
         r"\b(agentic2_[A-Za-z0-9_.-]+)\b",
         r"\b(my_[A-Za-z0-9_.-]+)\b",
     ]
-    matches: list[str] = []
-    for pattern in patterns:
-        matches.extend(re.findall(pattern, text, flags=re.IGNORECASE))
-    return matches[-1] if matches else extract_run_id(text)
+    matches = [(match.end(), -priority, match.group(1)) for priority, pattern in enumerate(patterns)
+               for match in re.finditer(pattern, text, flags=re.IGNORECASE)]
+    return max(matches)[2] if matches else extract_run_id(text)
 
 
 def extract_scenario_name(text: str) -> str:
@@ -683,24 +954,25 @@ def re_search_model_path(text: str) -> str:
     return ""
 
 
-def build_task_prompt(transcript: list[dict[str, str]]) -> str:
+def build_task_prompt(transcript: list[dict[str, str]], flow: WebWorkflow | None = None) -> str:
     conversation = "\n".join(
-        f"{item['role']}: {item['content']}" for item in transcript[-12:]
+        f"{item['role']}: {chat_history_summary(item['content']) if item['role'] == 'assistant' else item['content']}" for item in transcript[-12:]
     )
     latest = transcript[-1]["content"]
     model_inventory = build_model_inventory_context()
     live_context = ''
     try:
-        binding = investigation_binding(transcript)
+        binding = ((flow.model_name, flow.run_id, flow.task_id) if flow.run_id else None) if flow is not None else investigation_binding(transcript)
         if binding:
             model_name, run_id, task_id = binding
             state = load_active_task(model_name, run_id, task_id)
             if state:
                 fields = ('task_id', 'model_name', 'run_id', 'state', 'revision', 'report_revision',
-                          'report_file', 'display_report', 'display_report_file', 'pending_evidence_requests', 'evidence_plan', 'evidence_closure', 'last_attempt')
+                          'report_file', 'display_report_file', 'pending_evidence_requests', 'evidence_closure')
                 live_context = 'Persisted active task state:\n' + json.dumps({k: state[k] for k in fields if k in state}, ensure_ascii=False)
     except (ValueError, FileNotFoundError) as exc:
         live_context = 'Persisted task binding could not be resolved: ' + str(exc)
+    approval_context = ('Application approval state (authoritative):\n' + json.dumps(flow.to_dict(), ensure_ascii=False)) if flow is not None else ''
     return (
         "You are continuing a human-in-the-loop SWMM-Agentic2 workflow-stage web chat.\n"
         "The active architecture is StatefulOrchestrator plus workflow-stage agents: "
@@ -709,6 +981,7 @@ def build_task_prompt(transcript: list[dict[str, str]]) -> str:
         "Never assume data/example.inp exists or use it as a default model.\n"
         f"{model_inventory}\n\n"
         f"{live_context}\n\n"
+        f"{approval_context}\n\n"
         "Use the transcript to preserve the current plan and next-step state.\n"
         "If the latest user message is a confirmation, continue with exactly the next step.\n"
         "If there is no clear next step in the transcript, ask the user to confirm the next step instead of guessing.\n"
@@ -752,6 +1025,13 @@ def build_model_inventory_context() -> str:
 def session_log_path(session_id: str) -> Path:
     safe_id = "".join(ch for ch in session_id if ch.isalnum() or ch in "-_")[:80]
     return WEB_LOG_DIR / f"{safe_id}.jsonl"
+
+
+def save_session_workflow(session_id: str, flow: WebWorkflow) -> None:
+    path = session_log_path(session_id).with_suffix('.state.json')
+    temporary = path.with_suffix('.tmp')
+    temporary.write_text(json.dumps(flow.to_dict(), ensure_ascii=False, indent=2), encoding='utf-8')
+    temporary.replace(path)
 
 
 def append_session_log(session_id: str, role: str, content: str) -> None:

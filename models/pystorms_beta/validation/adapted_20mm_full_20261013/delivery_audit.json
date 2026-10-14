@@ -1,0 +1,99 @@
+{
+  "status": "passed",
+  "execution_status": "completed",
+  "revision": 2,
+  "supplement_rounds": 1,
+  "completion_calls": 5,
+  "calls_by_role": {
+    "diagnosis": 2,
+    "report": 3
+  },
+  "stop_reason": "no_new_evidence",
+  "evidence_count": 107568,
+  "visible_evidence_count": 79,
+  "event_count": 9,
+  "verification_summary": {
+    "total_claims": 77,
+    "references_verified": 77,
+    "references_missing": 0,
+    "no_references": 0,
+    "reference_failure_rate": 0.0
+  },
+  "report_quality_checks": {
+    "status": "passed",
+    "sections": 6,
+    "events": 9,
+    "embedded_images": 15,
+    "all_images_verified": true,
+    "numeric_policy": "supplied_fact_tokens",
+    "causal_policy": "current_diagnosis_statuses",
+    "verification_scope": "structure, source identity and references; not causal certification"
+  },
+  "protected_inputs_unchanged": true,
+  "source_hashes_verified": true,
+  "html_sha256_verified": true,
+  "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\display_reports\\r2\\20261013_110813_18ab121e\\模拟诊断报告.html",
+  "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\preliminary_report_r2.md",
+  "started_at": "2026-10-13T02:56:05.556916+00:00",
+  "finished_at": "2026-10-13T03:11:01.819268+00:00",
+  "attempts": [
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\diagnosis_attempt_d5f23a0ef65e46c0915de7ffc96c0766.json",
+      "status": "completed",
+      "phase": "validated",
+      "usage": {
+        "prompt_tokens": 284895,
+        "completion_tokens": 30744
+      },
+      "error": null,
+      "error_type": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\diagnosis_attempt_f98c564587c2471d829c1349db5d63b6.json",
+      "status": "completed",
+      "phase": "validated",
+      "usage": {
+        "prompt_tokens": 360078,
+        "completion_tokens": 25352
+      },
+      "error": null,
+      "error_type": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\display_reports\\r1\\20261013_110409_7569203d\\narrative_attempt_1.json",
+      "status": "passed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 56384,
+        "completion_tokens": 16734
+      },
+      "error": null,
+      "error_type": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\display_reports\\r2\\20261013_110813_18ab121e\\narrative_attempt_1.json",
+      "status": "failed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 57025,
+        "completion_tokens": 15095
+      },
+      "error": "Use each complete fact token as a standalone clause separated by punctuation; remove repeated labels in: 本次模拟的最大地表水深出现在[[F0013]]。达到1厘米的一般积水峰值出现在[[F0014]]。达到15厘米的关注区域峰值出现在[[F0020]]。这些积水主要分布在道路、绿地和建筑物周边；道路达到1厘米的最大同时面积出现在[[F0017]]。绿地达到1厘米的最大同时面积出现在[[F0018]]。建筑物周边达到1厘米的最大同时面积出现在[[F0019]]。",
+      "error_type": null
+    },
+    {
+      "file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\display_reports\\r2\\20261013_110813_18ab121e\\narrative_attempt_2.json",
+      "status": "passed",
+      "phase": null,
+      "usage": {
+        "prompt_tokens": 60534,
+        "completion_tokens": 15093
+      },
+      "error": null,
+      "error_type": null
+    }
+  ],
+  "expert_diagnostic_accuracy": "NOT_EVALUATED",
+  "semantic_unsupported_rate": "NOT_EVALUATED",
+  "causal_validity_checked": false
+}

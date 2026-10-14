@@ -1,0 +1,171 @@
+{
+  "status": "completed_with_gaps",
+  "run_id": "ba20_7h_20261014",
+  "model_name": "pystorms_beta",
+  "scenario_name": "adapted_s1_wsqrt",
+  "event_file": "chicago_like_single_4h_20mm_5min.txt",
+  "started_at": "2026-10-14T02:03:59.130822+00:00",
+  "pid": 7996,
+  "provider_calls": 7,
+  "calls_by_role": {
+    "diagnosis": 3,
+    "report": 4
+  },
+  "supplement_rounds": 2,
+  "history": [
+    {
+      "stage": "scenario",
+      "at": "2026-10-14T02:03:59.730703+00:00"
+    },
+    {
+      "stage": "simulation",
+      "at": "2026-10-14T02:03:59.734900+00:00"
+    },
+    {
+      "stage": "simulation_handoff",
+      "at": "2026-10-14T02:04:24.924811+00:00"
+    },
+    {
+      "stage": "evidence",
+      "at": "2026-10-14T02:04:24.928323+00:00"
+    },
+    {
+      "stage": "initial_diagnosis_verification_report",
+      "at": "2026-10-14T02:05:20.505479+00:00"
+    },
+    {
+      "stage": "supplement_round_1",
+      "at": "2026-10-14T02:10:36.163105+00:00"
+    },
+    {
+      "stage": "supplement_round_2",
+      "at": "2026-10-14T02:13:50.805642+00:00"
+    }
+  ],
+  "causal_validity_checked": false,
+  "comparison_run_id": "ba20_20261013_p1",
+  "expected_simulation_hours": 7,
+  "timing_policy": {
+    "swmm_save_interval_minutes": 1.0,
+    "boundary_interval_minutes": 5.0,
+    "ca2d_save_interval_minutes": 5.0,
+    "post_rainfall_hours": 3.0,
+    "boundary_method": "interval_mean",
+    "rainfall_time_convention": "interval_start",
+    "rationale": "User-confirmed policy on 2026-10-14: rainfall end plus 3 h; a 4 h event gives a 7 h simulation window. Tide coverage does not determine simulation duration; complete drainage is not assumed."
+  },
+  "timing_policy_sha256": "193e9af81a3ad8108d48617d7ea28e073c16359a9dc4291797b735e2e9d8f062",
+  "comparison_artifact_hashes_before": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\summary.json": "836648eabf3518d7cfe3a5d88ec220cc6c4a2f567c40989f33e72668706fdca4",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\swmm\\model.out": "c23f09c27cd3c8b5e469afdc84d58700d1ceffdacf145aebf8837ad07c6e894b",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\task.json": "eb2169e30b3951abc946ffebc0ead0f8474fe344be75ebf2a62da7f6e6dd92e7",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\diagnosis.json": "1b8f23ae04ab3225ee08f5e4205fc4c6f68c8ff3a92efebbef394c051fee72c3",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_20261013_p1\\diagnosis_tasks\\1cd7377d4a9f4c26b85366154fe38c1a\\verification.json": "d815e453ca2b91cd64c24a4464a0b626e508b91aff4d94c803a443f8cfb6d7f5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\swmm\\scenarios\\adapted_s1_wsqrt\\model.inp": "7a2d473eeeae9026a67d62515f79b140e5734d693ef6b051b801126f6ca3a737"
+  },
+  "protected_input_hashes_before": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\beta.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\raw\\beta_original.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\swmm\\scenarios\\baseline\\model.inp": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\bs40_20261012_p1\\swmm\\model_with_event.inp": "9bb90bf220f5cf474b52538e61bdf1491f35fa557b5694ba9908b619aefd3512",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model_slope1_40mm.inp": "5ac2647b76495106f6b9d84b05235d45768457b460984c9e5dafeec968e3e2a5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\events\\chicago_like_single_4h_40mm_5min.txt": "68fdb55ff0485dd8edf0a93dc881108a06d91d5a688657d59fa826c612ee2be4"
+  },
+  "scenario_inp_sha256": "7a2d473eeeae9026a67d62515f79b140e5734d693ef6b051b801126f6ca3a737",
+  "stage": "supplement_round_2",
+  "simulation_summary": {
+    "max_flooding_Ls": 215.0108642578125,
+    "sampled_overflow_volume_m3": 273.3259458504,
+    "max_surface_depth_m": 0.3263024687767029
+  },
+  "actual_window_verified": true,
+  "simulation_handoff": {
+    "previous_state": "SCENARIO_READY",
+    "target_state": "RUN_READY"
+  },
+  "task_id": "1284826ce19c457bbabc26916a11a6d3",
+  "stop_reason": "supplement_round_limit",
+  "task_state": "awaiting_evidence_confirmation",
+  "revision": 3,
+  "execution_error": null,
+  "display_report": {
+    "status": "completed",
+    "version": "report_agent_v1.10_surface_basis_palette",
+    "task_id": "1284826ce19c457bbabc26916a11a6d3",
+    "revision": 3,
+    "generated_at": "2026-10-14T10:15:22+08:00",
+    "output_dir": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f",
+    "producer_hashes": {
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\labels.py": "25919da33bca7a6a9a45d2fd02bbe449ab1edc0640d9ab63d04081149486aa00",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\materials.py": "be625eae3e02185a4e7c3a7aeb45e8843cbb0c17ebfeafc25f342447a2a03576",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\narrative.py": "b4e3b8a9e1a529bea53a4de5d12c02d37841eebcf13abb1b9afd3f05547959da",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\pipeline.py": "ead1dba6f5f7e32b1fa40975377b2a5f8e55b77be138783d4d8a0e456bedb765",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\plots.py": "7a6fae3f623d0a831ebaa2a60dee32ee737ec19619f87f84c3a8810dd74cac49",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\rain.py": "4646da2977078eb522bb4b3a35550d43215012ee2b1dfccbb99a2a7b58ea7098",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\render.py": "6dea1ff28c8ed6224a2431f26624e73160687c0afaa01f7485747ccddda6de39",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\scene.py": "6f2981bbe557efe771b5ed7d9b50a05b678a3dc76657588406e3888acf557c32",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\surface.py": "5ca04f7587f33cc38a0c2a2895b9e740f793cefa273e4f789bbcad37ac9c362e",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\__init__.py": "a07b16162cb63bff11432e1fd037013486c005f482d2009794c00351ebc0a84b",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\causes_overview_v1.md": "19c697310b2625f4f73d3d07594e5118d8c469e76fa77503dd6766469fca80c5",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_lateral_v1.json": "a692a416dd777d373c106cf9a1b530dc63e2601329a349f8fb99bfc02c795017",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_outflow_v1.json": "21c9e63395179014797ff57704a2cd2ee6b4fecafccd281680ec608bc8c757bb",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_P7_v1.json": "93a26bb32689b8d1db9125ab178248231728c263566173ac397a430d6d05387d",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_example_v1.json": "e05a60f76a3b0dec127418ca9318afde3f06b9922426958944b278a38bec65f2",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_rewrite_v1.md": "a94877f3517a808960c874c61b1d84cdfd18cb9b0fb03f8109e0b35cd8419321",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\event_rewrite_v2.md": "fcb2f0fb0d03f250ac6220b133d3f22653fb1c55e8a166ee48546a3385f58570",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\intro_rewrite_v1.md": "6ebe417ecccbb69f665308fbe204cc63518f88c8739805eccb1d5aca199b5797",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\rain_fixed_v1.md": "656ed4d0b9e821ff89539347cce0123c48829a6402ecfe5b5ed34f91d570c653",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\rain_template_v1.json": "5fb68b732f3e076c45b347b76a1ed782ad462294ee3b47145d0a7391e20899b4",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\scene_fixed_v1.md": "e846ca050dd872bcc944a06a33935bad6584fa62659e89245104bb981057fee5",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\scene_template_v1.json": "503f3f162bde0e75cbf2f6688de4b331d1e02e60966b3a51585f0dbf6ea6b061",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\surface_basis_v1.json": "96dc29f8162b974c098cbbb4d4c441978adb5477bff54ebda3edcad967816b7c",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\workflow_agents\\reporting\\prompts\\surface_basis_v1.md": "84795fbfbd9bd45312c5b7f3fc92435da8c16998ecf3fbb7401d80ecac2adf05",
+      "E:\\SWMM_Agentic\\SWMM-Agentic2\\llm.py": "53ca78dd081305c3bc5f39a010477ddef6f3c0791064e2799ac248855272b2c8"
+    },
+    "html_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f\\模拟诊断报告.html",
+    "html_sha256": "a0095c6b32419e26cb6023166cd1a96309d87cd035b233be172425332bf537c2",
+    "materials_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f\\report_materials.json",
+    "quality_checks": {
+      "status": "passed",
+      "sections": 6,
+      "events": 9,
+      "embedded_images": 15,
+      "all_images_verified": true,
+      "numeric_policy": "supplied_fact_tokens",
+      "causal_policy": "current_diagnosis_statuses",
+      "verification_scope": "structure, source identity and references; not causal certification"
+    },
+    "elapsed_seconds": 198.219
+  },
+  "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\ba20_7h_20261014\\diagnosis_tasks\\1284826ce19c457bbabc26916a11a6d3\\display_reports\\r3\\20261014_101522_bda86c5f\\模拟诊断报告.html",
+  "evidence_closure": "actionable",
+  "pending_evidence_requests": true,
+  "unresolved_evidence_requests": [
+    {
+      "request": {
+        "tool": "unavailable",
+        "object_type": "node",
+        "object_id": "ST2",
+        "reason": "设施动作（泵、孔口、堰操作记录）不在现有 JSON 保存数据中；需要运行日志或重新模拟输出控制记录，以评估 M5。"
+      },
+      "status": "unavailable",
+      "matching_evidence_ids": [],
+      "new_evidence_ids": []
+    },
+    {
+      "request": {
+        "tool": "unavailable",
+        "object_type": "run",
+        "object_id": "ba20_7h_20261014",
+        "reason": "地表水回流/淹没范围证据未构建（surface_association=not_built），需要地表几何映射或示踪数据，以判断冒溢后淹没路径和是否回流管网。"
+      },
+      "status": "unavailable",
+      "matching_evidence_ids": [],
+      "new_evidence_ids": []
+    }
+  ],
+  "protected_inputs_unchanged": true,
+  "finished_at": "2026-10-14T02:18:40.453493+00:00",
+  "comparison_artifacts_unchanged": true,
+  "timing_policy_unchanged": true
+}

@@ -1,0 +1,15 @@
+{
+  "status": "completed",
+  "stage": "SWMM_only",
+  "provider_calls": 0,
+  "CA2D_run": false,
+  "pid": 41424,
+  "initial_rss_bytes": null,
+  "start_utc": "2026-10-12T15:08:15.709155+00:00",
+  "hard_timeout_seconds": 1800,
+  "call": "simulation_timing.export_native_reports(inp_path=model_slope1_widthsqrtA_40mm.inp, output_dir=swmm, mapped_ids=all_210_nodes, interval_minutes=1)",
+  "control": "slope_screening_20261012",
+  "elapsed_seconds": 4.297000000020489,
+  "end_utc": "2026-10-12T15:08:19.999885+00:00",
+  "protected_input_hashes_unchanged": true
+}

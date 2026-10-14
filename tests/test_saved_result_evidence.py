@@ -165,21 +165,24 @@ class SavedResultTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(repeated['revision'], 1)
         completion.assert_not_called()
 
-    async def test_web_continue_executes_saved_result_supplement_and_delivers_revision(self):
+    async def test_web_continue_only_supplements_without_diagnosis_or_report(self):
         import web_app
         from workflow_agents.state import EVIDENCE_READY
-        first = await advance_investigation('m', 'r', 'initial', complete=AsyncMock(side_effect=lambda p: answer(p, [self.request()])))
+        with patch('workflow_agents.reporting.pipeline.attach_display_report', new_callable=AsyncMock):
+            first = await advance_investigation('m', 'r', 'initial', complete=AsyncMock(side_effect=lambda p: answer(p, [self.request()])))
         # Exercise the web's durable task routing, not a mocked evidence result.
         with patch('web_app.load_or_initialize_state', return_value=(self.root, {'state': EVIDENCE_READY})), \
              patch('workflow_agents.state.resolve_run_root', return_value=self.root), \
-             patch('workflow_agents.investigation.configured_completion', new=AsyncMock(side_effect=lambda prompt, audit=None: answer(prompt))):
+             patch('workflow_agents.investigation.configured_completion', new_callable=AsyncMock) as completion:
             transcript = [{'role': 'assistant', 'content': f'model_name=m run_id=r task_id={first["task_id"]} awaiting_evidence_confirmation'},
                           {'role': 'user', 'content': '继续'}]
             reply = await web_app.continue_workflow_from_state('继续', transcript)
-        self.assertIn('综合机制判断', reply)
+        completion.assert_not_awaited()
+        self.assertIn('本轮只执行', reply)
         folder = self.root / 'diagnosis_tasks' / first['task_id']
         stored = json.loads((folder / 'task.json').read_text(encoding='utf-8'))
-        self.assertEqual(stored['revision'], 2)
+        self.assertEqual(stored['revision'], 1)
+        self.assertEqual(stored['state'], 'ready_for_diagnosis')
         self.assertEqual(len(stored['supplements']), 1)
 
     def test_native_volume_changes_no_simulation_and_source_change_rejected(self):

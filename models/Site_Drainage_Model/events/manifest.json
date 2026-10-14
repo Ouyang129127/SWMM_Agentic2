@@ -1,0 +1,68 @@
+[
+  {
+    "scenario": "cenario_01",
+    "timeseries": "TS1",
+    "event_file": "events/cenario_01_TS1.txt",
+    "records": 2
+  },
+  {
+    "scenario": "cenario_02",
+    "timeseries": "TS2",
+    "event_file": "events/cenario_02_TS2.txt",
+    "records": 4
+  },
+  {
+    "scenario": "cenario_03",
+    "timeseries": "TS3",
+    "event_file": "events/cenario_03_TS3.txt",
+    "records": 10
+  },
+  {
+    "scenario": "cenario_04",
+    "timeseries": "TS4",
+    "event_file": "events/cenario_04_TS4.txt",
+    "records": 13
+  },
+  {
+    "scenario": "cenario_05",
+    "timeseries": "TS5",
+    "event_file": "events/cenario_05_TS5.txt",
+    "records": 18
+  },
+  {
+    "scenario": "cenario_06",
+    "timeseries": "TS6",
+    "event_file": "events/cenario_06_TS6.txt",
+    "records": 24
+  },
+  {
+    "scenario": "cenario_07",
+    "timeseries": "TS7",
+    "event_file": "events/cenario_07_TS7.txt",
+    "records": 36
+  },
+  {
+    "scenario": "cenario_08",
+    "timeseries": "TS7",
+    "event_file": "events/cenario_08_TS7.txt",
+    "records": 36
+  },
+  {
+    "scenario": "cenario_09",
+    "timeseries": "TS3",
+    "event_file": "events/cenario_09_TS3.txt",
+    "records": 10
+  },
+  {
+    "scenario": "cenario_10",
+    "timeseries": "TS5",
+    "event_file": "events/cenario_10_TS5.txt",
+    "records": 18
+  },
+  {
+    "scenario": "cenario_11",
+    "timeseries": "TS6",
+    "event_file": "events/cenario_11_TS6.txt",
+    "records": 24
+  }
+]

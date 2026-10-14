@@ -1,0 +1,153 @@
+{
+  "purpose": "user_approved_20_40_60mm_nine_case_matrix",
+  "created_date": "2026-10-14",
+  "scenario": "adapted_s1_wsqrt",
+  "post_rainfall_hours": 3,
+  "events": [
+    {
+      "shape": "single",
+      "depth_mm": 20,
+      "event_file": "chicago_like_single_4h_20mm_5min.txt",
+      "event_sha256": "a378a2850a7941f3d480dda18f68e78740283dfba33999a1d9e2dbbbb7fcec50",
+      "total_rainfall_mm": 20,
+      "peak_mm_h": 36.682,
+      "peak_timestamps": [
+        "2016-10-08 01:35:00"
+      ],
+      "peak_count": 1,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "single",
+      "depth_mm": 40,
+      "event_file": "chicago_like_single_4h_40mm_5min.txt",
+      "event_sha256": "68fdb55ff0485dd8edf0a93dc881108a06d91d5a688657d59fa826c612ee2be4",
+      "total_rainfall_mm": 40,
+      "peak_mm_h": 73.367,
+      "peak_timestamps": [
+        "2016-10-08 01:35:00"
+      ],
+      "peak_count": 1,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "single",
+      "depth_mm": 60,
+      "event_file": "chicago_like_single_4h_60mm_5min.txt",
+      "event_sha256": "bb08de4c24fbd34e471aaeca4221ae8d7e30d53de89b4e6c7881f1411ab723f3",
+      "total_rainfall_mm": 60,
+      "peak_mm_h": 110.047,
+      "peak_timestamps": [
+        "2016-10-08 01:35:00"
+      ],
+      "peak_count": 1,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "double",
+      "depth_mm": 20,
+      "event_file": "chicago_like_double_4h_20mm_5min.txt",
+      "event_sha256": "c7579c8b3332a9df6836f3dcb3fc97dfd9904ff96a8c6e29a3fe562a2c188eda",
+      "total_rainfall_mm": 20,
+      "peak_mm_h": 23.537,
+      "peak_timestamps": [
+        "2016-10-08 00:40:00",
+        "2016-10-08 02:50:00"
+      ],
+      "peak_count": 2,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "double",
+      "depth_mm": 40,
+      "event_file": "chicago_like_double_4h_40mm_5min.txt",
+      "event_sha256": "f0779aa7732fddb8231b5bbeb928d0b1ed959591d3fe5843886973b0b78b1d9c",
+      "total_rainfall_mm": 40,
+      "peak_mm_h": 47.077,
+      "peak_timestamps": [
+        "2016-10-08 00:40:00",
+        "2016-10-08 02:50:00"
+      ],
+      "peak_count": 2,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "double",
+      "depth_mm": 60,
+      "event_file": "chicago_like_double_4h_60mm_5min.txt",
+      "event_sha256": "39da9d440f91d90d7d14751f1451b508705598972b70b7e8368892aab9ab4b66",
+      "total_rainfall_mm": 60,
+      "peak_mm_h": 70.622,
+      "peak_timestamps": [
+        "2016-10-08 00:40:00",
+        "2016-10-08 02:50:00"
+      ],
+      "peak_count": 2,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "triple",
+      "depth_mm": 20,
+      "event_file": "chicago_like_triple_4h_20mm_5min.txt",
+      "event_sha256": "80c0db0bae40c4ae4af4c06e953e25a4101dcd7b165d098e365ad97b1d203811",
+      "total_rainfall_mm": 20,
+      "peak_mm_h": 24.437,
+      "peak_timestamps": [
+        "2016-10-08 00:25:00",
+        "2016-10-08 01:50:00",
+        "2016-10-08 03:15:00"
+      ],
+      "peak_count": 3,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "triple",
+      "depth_mm": 40,
+      "event_file": "chicago_like_triple_4h_40mm_5min.txt",
+      "event_sha256": "f0bf6d0eb07f9c4f1642137e9cd00e5dae526b6de6deed706b42073225af7cf9",
+      "total_rainfall_mm": 40,
+      "peak_mm_h": 48.875,
+      "peak_timestamps": [
+        "2016-10-08 00:25:00",
+        "2016-10-08 01:50:00",
+        "2016-10-08 03:15:00"
+      ],
+      "peak_count": 3,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    },
+    {
+      "shape": "triple",
+      "depth_mm": 60,
+      "event_file": "chicago_like_triple_4h_60mm_5min.txt",
+      "event_sha256": "3ff6eefe41b2c4c0711112314a483950210fb50e9cdb8cd64fb7d15768020ae3",
+      "total_rainfall_mm": 60,
+      "peak_mm_h": 73.325,
+      "peak_timestamps": [
+        "2016-10-08 00:25:00",
+        "2016-10-08 01:50:00",
+        "2016-10-08 03:15:00"
+      ],
+      "peak_count": 3,
+      "rain_end": "2016-10-08 04:00:00",
+      "simulation_end": "2016-10-08 07:00:00",
+      "validation": "passed"
+    }
+  ],
+  "original_heavy_event_manifest_preserved": true
+}

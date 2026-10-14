@@ -258,6 +258,18 @@ def _replace_swmm_event_inputs(
     timing: Optional[dict] = None,
 ) -> Dict[str, object]:
     lines = _read_lines(source_inp)
+    # The generic entry point defaults to rain1, but public single-gage
+    # benchmarks can use another name. Reuse that gage so subcatchments
+    # receive the new event instead of adding an unused rain1 gage.
+    gage_bounds = _find_section_bounds(lines, "RAINGAGES")
+    source_gages = []
+    if gage_bounds:
+        for line in lines[gage_bounds[0] + 1:gage_bounds[1]]:
+            parts = line.split(";", 1)[0].split()
+            if parts:
+                source_gages.append(parts[0])
+    if rain_gage_name == "rain1" and "rain1" not in source_gages and len(source_gages) == 1:
+        rain_gage_name = source_gages[0]
     start_dt = rainfall_entries[0][0]
     end_dt = rainfall_entries[-1][0]
     interval = _infer_rainfall_interval(rainfall_entries)
@@ -312,7 +324,16 @@ def _replace_swmm_event_inputs(
         contents = [line for line in contents if not line.strip().split() or line.strip().split()[0].upper() not in {"NODES", "LINKS"}]
         lines = _insert_or_replace_section(lines, "REPORT", contents + ["NODES ALL\n", "LINKS ALL\n"])
 
-    ts_lines = [";;Name           Date       Time       Value\n", ";;-------------- ---------- ---------- ----------\n"]
+    # Replace only the selected rainfall series. Other series can drive
+    # downstream water levels or inflows and must survive event preparation.
+    ts_bounds = _find_section_bounds(lines, "TIMESERIES")
+    preserved_series = []
+    if ts_bounds:
+        for line in lines[ts_bounds[0] + 1:ts_bounds[1]]:
+            parts = line.split(";", 1)[0].split()
+            if parts and parts[0].casefold() != timeseries_name.casefold():
+                preserved_series.append(line if line.endswith("\n") else line + "\n")
+    ts_lines = [";;Name           Date       Time       Value\n", ";;-------------- ---------- ---------- ----------\n"] + preserved_series
     for dt_value, value in event_entries:
         ts_lines.append(
             f"{timeseries_name.ljust(16)} {dt_value.strftime('%m/%d/%Y')} "
@@ -373,88 +394,6 @@ def _load_mapped_node_ids(mapping_path: Path) -> set[str]:
         if not reader.fieldnames or "node_id" not in reader.fieldnames:
             return set()
         return {str(row["node_id"]).strip() for row in reader if row.get("node_id")}
-
-
-def _run_swmm_and_export_flooding(
-    inp_path: Path,
-    swmm_output_dir: Path,
-    node_mapping_path: Path,
-    save_interval_minutes: float,
-    native_reports: bool = False,
-) -> Dict[str, object]:
-    if native_reports:
-        return export_native_reports(inp_path, swmm_output_dir, _load_mapped_node_ids(node_mapping_path), save_interval_minutes)
-    from pyswmm import Links, Nodes, Simulation
-
-    swmm_output_dir.mkdir(parents=True, exist_ok=True)
-    report_path = swmm_output_dir / "model.rpt"
-    binary_output_path = swmm_output_dir / "model.out"
-    flooding_path = swmm_output_dir / "node_flooding.tsv"
-    nodes_path = swmm_output_dir / "nodes.tsv"
-    links_path = swmm_output_dir / "links.tsv"
-
-    mapped_node_ids = _load_mapped_node_ids(node_mapping_path)
-    total_steps = 0
-    saved_steps = 0
-    flooding_record_count = 0
-    max_flooding_lps = 0.0
-    max_depth_m = 0.0
-    link_count = 0
-
-    with flooding_path.open("w", encoding="utf-8", newline="") as flooding_f, nodes_path.open(
-        "w", encoding="utf-8", newline=""
-    ) as nodes_f, links_path.open("w", encoding="utf-8", newline="") as links_f:
-        flooding_f.write("node_id\tdate\ttime\tflow_Ls\n")
-        nodes_f.write("node_id\tdepth_m\tflooding_Ls\tdate\ttime\n")
-        links_f.write("link_id\tflow_Ls\tdepth_m\tdate\ttime\n")
-
-        with Simulation(str(inp_path), str(report_path), str(binary_output_path)) as sim:
-            nodes = {node.nodeid: node for node in Nodes(sim)}
-            links = {link.linkid: link for link in Links(sim)}
-            link_count = len(links)
-            last_save_time = sim.start_time - timedelta(minutes=save_interval_minutes)
-
-            for _ in sim:
-                total_steps += 1
-                current_time = sim.current_time.replace(second=0, microsecond=0)
-                if (current_time - last_save_time) < timedelta(minutes=save_interval_minutes):
-                    continue
-
-                saved_steps += 1
-                date_text = current_time.strftime("%Y-%m-%d")
-                time_text = current_time.strftime("%H:%M:%S")
-                for node_id, node in nodes.items():
-                    flooding_lps = float(getattr(node, "flooding", 0.0) or 0.0)
-                    depth_m = float(getattr(node, "depth", 0.0) or 0.0)
-                    max_flooding_lps = max(max_flooding_lps, flooding_lps)
-                    max_depth_m = max(max_depth_m, depth_m)
-                    nodes_f.write(f"{node_id}\t{depth_m:.6f}\t{flooding_lps:.6f}\t{date_text}\t{time_text}\n")
-                    if not mapped_node_ids or node_id in mapped_node_ids:
-                        flooding_f.write(f"{node_id}\t{date_text}\t{time_text}\t{flooding_lps:.6f}\n")
-                        flooding_record_count += 1
-
-                for link_id, link in links.items():
-                    flow_lps = float(getattr(link, "flow", 0.0) or 0.0)
-                    depth_m = float(getattr(link, "depth", 0.0) or 0.0)
-                    links_f.write(f"{link_id}\t{flow_lps:.6f}\t{depth_m:.6f}\t{date_text}\t{time_text}\n")
-
-                last_save_time = current_time
-
-    return {
-        "modified_inp": str(inp_path),
-        "report_file": str(report_path),
-        "binary_output_file": str(binary_output_path),
-        "flooding_file": str(flooding_path),
-        "nodes_file": str(nodes_path),
-        "links_file": str(links_path),
-        "total_steps": total_steps,
-        "saved_steps": saved_steps,
-        "node_count": len(mapped_node_ids) if mapped_node_ids else None,
-        "link_count": link_count,
-        "flooding_records": flooding_record_count,
-        "max_flooding_Ls": max_flooding_lps,
-        "max_node_depth_m": max_depth_m,
-    }
 
 
 def is_runnable_inp(
@@ -790,6 +729,13 @@ def run_swmm_2d_project_from_rainfall(
     if not rainfall_file:
         return "Rainfall event file is required. Use list_rainfall_events first if you need to discover available event files."
 
+    # Current rainfall runs require an explicit policy and always use native
+    # report timestamps. Reject missing policies before creating run artifacts.
+    timing = load_timing(model_root, required=True)
+    swmm_save_interval_minutes = float(timing["swmm_save_interval_minutes"])
+    boundary_interval_minutes = float(timing["boundary_interval_minutes"])
+    ca2d_save_interval_minutes = float(timing["ca2d_save_interval_minutes"])
+
     static_model = model_root / "static"
     static_status = check_static_model(static_model)
     if not static_status["ok"]:
@@ -835,11 +781,6 @@ def run_swmm_2d_project_from_rainfall(
     event_copy = run_root / "rainfall_event.txt"
     shutil.copy2(rainfall_path, event_copy)
     modified_inp = swmm_output_dir / "model_with_event.inp"
-    timing = load_timing(model_root)
-    if timing:
-        swmm_save_interval_minutes = float(timing["swmm_save_interval_minutes"])
-        boundary_interval_minutes = float(timing["boundary_interval_minutes"])
-        ca2d_save_interval_minutes = float(timing["ca2d_save_interval_minutes"])
     rainfall_summary = _replace_swmm_event_inputs(
         source_inp=scenario_inp,
         target_inp=modified_inp,
@@ -850,12 +791,11 @@ def run_swmm_2d_project_from_rainfall(
     )
 
     node_mapping = static_model / "node_to_cell_mapping.csv"
-    swmm_result = _run_swmm_and_export_flooding(
+    swmm_result = export_native_reports(
         inp_path=modified_inp,
-        swmm_output_dir=swmm_output_dir,
-        node_mapping_path=node_mapping,
-        save_interval_minutes=swmm_save_interval_minutes,
-        native_reports=bool(timing),
+        output_dir=swmm_output_dir,
+        mapped_ids=_load_mapped_node_ids(node_mapping),
+        interval_minutes=swmm_save_interval_minutes,
     )
 
     ca2d_result = run_ca2d_simulation(

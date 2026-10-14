@@ -1,0 +1,789 @@
+{
+  "method": "positive saved sample contiguous segments; zero threshold",
+  "events": [
+    {
+      "node_id": "J100",
+      "start": "2016-10-08 01:31:00",
+      "last_positive_time": "2016-10-08 01:57:00",
+      "positive_sample_count": 27,
+      "peak_Ls": 126.194382,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J101",
+      "start": "2016-10-08 01:32:00",
+      "last_positive_time": "2016-10-08 01:53:00",
+      "positive_sample_count": 22,
+      "peak_Ls": 233.434296,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J102",
+      "start": "2016-10-08 01:31:00",
+      "last_positive_time": "2016-10-08 02:00:00",
+      "positive_sample_count": 30,
+      "peak_Ls": 524.187561,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J103",
+      "start": "2016-10-08 01:34:00",
+      "last_positive_time": "2016-10-08 01:47:00",
+      "positive_sample_count": 14,
+      "peak_Ls": 112.675415,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J104",
+      "start": "2016-10-08 01:36:00",
+      "last_positive_time": "2016-10-08 01:44:00",
+      "positive_sample_count": 9,
+      "peak_Ls": 58.3251266,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J106",
+      "start": "2016-10-08 01:36:00",
+      "last_positive_time": "2016-10-08 01:45:00",
+      "positive_sample_count": 10,
+      "peak_Ls": 79.781311,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J145",
+      "start": "2016-10-08 23:06:00",
+      "last_positive_time": "2016-10-08 23:06:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 5796.92041,
+      "peak_time": "2016-10-08 23:06:00"
+    },
+    {
+      "node_id": "J160",
+      "start": "2016-10-08 01:38:00",
+      "last_positive_time": "2016-10-08 01:38:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 20.0316448,
+      "peak_time": "2016-10-08 01:38:00"
+    },
+    {
+      "node_id": "J160",
+      "start": "2016-10-08 01:40:00",
+      "last_positive_time": "2016-10-08 01:40:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 0.0122500677,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J18",
+      "start": "2016-10-08 01:38:00",
+      "last_positive_time": "2016-10-08 01:40:00",
+      "positive_sample_count": 3,
+      "peak_Ls": 40.0543671,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J198",
+      "start": "2016-10-08 01:38:00",
+      "last_positive_time": "2016-10-08 01:38:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 3.73468494,
+      "peak_time": "2016-10-08 01:38:00"
+    },
+    {
+      "node_id": "J198",
+      "start": "2016-10-08 01:40:00",
+      "last_positive_time": "2016-10-08 01:40:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 4.8587079,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J20",
+      "start": "2016-10-08 01:38:00",
+      "last_positive_time": "2016-10-08 01:43:00",
+      "positive_sample_count": 6,
+      "peak_Ls": 104.8554,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 02:37:00",
+      "last_positive_time": "2016-10-08 02:47:00",
+      "positive_sample_count": 11,
+      "peak_Ls": 170.981537,
+      "peak_time": "2016-10-08 02:39:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 02:49:00",
+      "last_positive_time": "2016-10-08 02:50:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 60.4839745,
+      "peak_time": "2016-10-08 02:50:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 02:52:00",
+      "last_positive_time": "2016-10-08 02:52:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 51.1719742,
+      "peak_time": "2016-10-08 02:52:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 02:54:00",
+      "last_positive_time": "2016-10-08 02:55:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 55.9104118,
+      "peak_time": "2016-10-08 02:54:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 02:59:00",
+      "last_positive_time": "2016-10-08 03:00:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 45.6698647,
+      "peak_time": "2016-10-08 03:00:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 03:02:00",
+      "last_positive_time": "2016-10-08 03:02:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 38.1172981,
+      "peak_time": "2016-10-08 03:02:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 03:07:00",
+      "last_positive_time": "2016-10-08 03:10:00",
+      "positive_sample_count": 4,
+      "peak_Ls": 27.8984203,
+      "peak_time": "2016-10-08 03:10:00"
+    },
+    {
+      "node_id": "J33",
+      "start": "2016-10-08 03:21:00",
+      "last_positive_time": "2016-10-08 03:22:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 23.2920227,
+      "peak_time": "2016-10-08 03:21:00"
+    },
+    {
+      "node_id": "J4",
+      "start": "2016-10-08 01:30:00",
+      "last_positive_time": "2016-10-08 02:02:00",
+      "positive_sample_count": 33,
+      "peak_Ls": 275.903046,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J5",
+      "start": "2016-10-08 01:36:00",
+      "last_positive_time": "2016-10-08 01:43:00",
+      "positive_sample_count": 8,
+      "peak_Ls": 61.6480827,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J54",
+      "start": "2016-10-08 01:40:00",
+      "last_positive_time": "2016-10-08 01:45:00",
+      "positive_sample_count": 6,
+      "peak_Ls": 21.3884068,
+      "peak_time": "2016-10-08 01:43:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:37:00",
+      "last_positive_time": "2016-10-08 01:37:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 28.1783772,
+      "peak_time": "2016-10-08 01:37:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:39:00",
+      "last_positive_time": "2016-10-08 01:39:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 26.5792179,
+      "peak_time": "2016-10-08 01:39:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:41:00",
+      "last_positive_time": "2016-10-08 01:41:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 68.4590378,
+      "peak_time": "2016-10-08 01:41:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:45:00",
+      "last_positive_time": "2016-10-08 01:45:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 119.745483,
+      "peak_time": "2016-10-08 01:45:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:47:00",
+      "last_positive_time": "2016-10-08 01:48:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 94.0605469,
+      "peak_time": "2016-10-08 01:48:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:50:00",
+      "last_positive_time": "2016-10-08 01:50:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 92.140686,
+      "peak_time": "2016-10-08 01:50:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:52:00",
+      "last_positive_time": "2016-10-08 01:52:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 59.0415306,
+      "peak_time": "2016-10-08 01:52:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 01:55:00",
+      "last_positive_time": "2016-10-08 01:56:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 128.41037,
+      "peak_time": "2016-10-08 01:55:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:00:00",
+      "last_positive_time": "2016-10-08 02:01:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 101.773735,
+      "peak_time": "2016-10-08 02:01:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:04:00",
+      "last_positive_time": "2016-10-08 02:08:00",
+      "positive_sample_count": 5,
+      "peak_Ls": 111.320511,
+      "peak_time": "2016-10-08 02:05:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:10:00",
+      "last_positive_time": "2016-10-08 02:13:00",
+      "positive_sample_count": 4,
+      "peak_Ls": 107.366241,
+      "peak_time": "2016-10-08 02:11:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:15:00",
+      "last_positive_time": "2016-10-08 02:15:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 159.163849,
+      "peak_time": "2016-10-08 02:15:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:17:00",
+      "last_positive_time": "2016-10-08 02:24:00",
+      "positive_sample_count": 8,
+      "peak_Ls": 166.041519,
+      "peak_time": "2016-10-08 02:22:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:27:00",
+      "last_positive_time": "2016-10-08 02:30:00",
+      "positive_sample_count": 4,
+      "peak_Ls": 119.402565,
+      "peak_time": "2016-10-08 02:30:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:32:00",
+      "last_positive_time": "2016-10-08 02:32:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 55.9270058,
+      "peak_time": "2016-10-08 02:32:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:36:00",
+      "last_positive_time": "2016-10-08 02:36:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 27.8864975,
+      "peak_time": "2016-10-08 02:36:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:38:00",
+      "last_positive_time": "2016-10-08 02:42:00",
+      "positive_sample_count": 5,
+      "peak_Ls": 118.547546,
+      "peak_time": "2016-10-08 02:39:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:46:00",
+      "last_positive_time": "2016-10-08 02:48:00",
+      "positive_sample_count": 3,
+      "peak_Ls": 79.7710419,
+      "peak_time": "2016-10-08 02:48:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:50:00",
+      "last_positive_time": "2016-10-08 02:50:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 120.23175,
+      "peak_time": "2016-10-08 02:50:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 02:53:00",
+      "last_positive_time": "2016-10-08 02:59:00",
+      "positive_sample_count": 7,
+      "peak_Ls": 88.5690994,
+      "peak_time": "2016-10-08 02:55:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:01:00",
+      "last_positive_time": "2016-10-08 03:01:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 25.817379,
+      "peak_time": "2016-10-08 03:01:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:04:00",
+      "last_positive_time": "2016-10-08 03:05:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 52.1520195,
+      "peak_time": "2016-10-08 03:05:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:08:00",
+      "last_positive_time": "2016-10-08 03:09:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 76.0117416,
+      "peak_time": "2016-10-08 03:08:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:11:00",
+      "last_positive_time": "2016-10-08 03:11:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 43.265007,
+      "peak_time": "2016-10-08 03:11:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:13:00",
+      "last_positive_time": "2016-10-08 03:13:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 16.0745716,
+      "peak_time": "2016-10-08 03:13:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:15:00",
+      "last_positive_time": "2016-10-08 03:17:00",
+      "positive_sample_count": 3,
+      "peak_Ls": 89.9138565,
+      "peak_time": "2016-10-08 03:15:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:21:00",
+      "last_positive_time": "2016-10-08 03:21:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 96.1807327,
+      "peak_time": "2016-10-08 03:21:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:23:00",
+      "last_positive_time": "2016-10-08 03:23:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 15.0125885,
+      "peak_time": "2016-10-08 03:23:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:25:00",
+      "last_positive_time": "2016-10-08 03:28:00",
+      "positive_sample_count": 4,
+      "peak_Ls": 50.778141,
+      "peak_time": "2016-10-08 03:28:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:30:00",
+      "last_positive_time": "2016-10-08 03:32:00",
+      "positive_sample_count": 3,
+      "peak_Ls": 92.7230759,
+      "peak_time": "2016-10-08 03:30:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:37:00",
+      "last_positive_time": "2016-10-08 03:37:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 48.3519249,
+      "peak_time": "2016-10-08 03:37:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:39:00",
+      "last_positive_time": "2016-10-08 03:39:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 28.3182144,
+      "peak_time": "2016-10-08 03:39:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:41:00",
+      "last_positive_time": "2016-10-08 03:41:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 98.4543915,
+      "peak_time": "2016-10-08 03:41:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:45:00",
+      "last_positive_time": "2016-10-08 03:47:00",
+      "positive_sample_count": 3,
+      "peak_Ls": 128.174652,
+      "peak_time": "2016-10-08 03:46:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:50:00",
+      "last_positive_time": "2016-10-08 03:51:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 106.704544,
+      "peak_time": "2016-10-08 03:51:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:54:00",
+      "last_positive_time": "2016-10-08 03:54:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 39.845768,
+      "peak_time": "2016-10-08 03:54:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 03:57:00",
+      "last_positive_time": "2016-10-08 03:58:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 70.863121,
+      "peak_time": "2016-10-08 03:57:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 04:01:00",
+      "last_positive_time": "2016-10-08 04:02:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 104.288841,
+      "peak_time": "2016-10-08 04:02:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 04:07:00",
+      "last_positive_time": "2016-10-08 04:08:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 97.6900864,
+      "peak_time": "2016-10-08 04:07:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 04:10:00",
+      "last_positive_time": "2016-10-08 04:11:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 61.092411,
+      "peak_time": "2016-10-08 04:11:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 04:13:00",
+      "last_positive_time": "2016-10-08 04:14:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 46.5097885,
+      "peak_time": "2016-10-08 04:13:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 04:17:00",
+      "last_positive_time": "2016-10-08 04:17:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 62.2663422,
+      "peak_time": "2016-10-08 04:17:00"
+    },
+    {
+      "node_id": "J56",
+      "start": "2016-10-08 04:21:00",
+      "last_positive_time": "2016-10-08 04:21:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 62.0359459,
+      "peak_time": "2016-10-08 04:21:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 01:41:00",
+      "last_positive_time": "2016-10-08 01:41:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 12.3105555,
+      "peak_time": "2016-10-08 01:41:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 01:48:00",
+      "last_positive_time": "2016-10-08 01:48:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 71.2851944,
+      "peak_time": "2016-10-08 01:48:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 02:05:00",
+      "last_positive_time": "2016-10-08 02:05:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 41.2212715,
+      "peak_time": "2016-10-08 02:05:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 02:22:00",
+      "last_positive_time": "2016-10-08 02:22:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 8.61006546,
+      "peak_time": "2016-10-08 02:22:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 02:40:00",
+      "last_positive_time": "2016-10-08 02:40:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 65.6063461,
+      "peak_time": "2016-10-08 02:40:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 02:54:00",
+      "last_positive_time": "2016-10-08 02:54:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 58.9776917,
+      "peak_time": "2016-10-08 02:54:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 02:56:00",
+      "last_positive_time": "2016-10-08 02:56:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 34.2965889,
+      "peak_time": "2016-10-08 02:56:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 02:59:00",
+      "last_positive_time": "2016-10-08 02:59:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 11.4738722,
+      "peak_time": "2016-10-08 02:59:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 03:21:00",
+      "last_positive_time": "2016-10-08 03:21:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 28.7719879,
+      "peak_time": "2016-10-08 03:21:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 03:31:00",
+      "last_positive_time": "2016-10-08 03:31:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 24.8904114,
+      "peak_time": "2016-10-08 03:31:00"
+    },
+    {
+      "node_id": "J57",
+      "start": "2016-10-08 04:08:00",
+      "last_positive_time": "2016-10-08 04:08:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 34.933815,
+      "peak_time": "2016-10-08 04:08:00"
+    },
+    {
+      "node_id": "J6",
+      "start": "2016-10-08 01:40:00",
+      "last_positive_time": "2016-10-08 01:40:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 0.00505532371,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J7",
+      "start": "2016-10-08 01:31:00",
+      "last_positive_time": "2016-10-08 01:31:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 0.0682165548,
+      "peak_time": "2016-10-08 01:31:00"
+    },
+    {
+      "node_id": "J7",
+      "start": "2016-10-08 01:33:00",
+      "last_positive_time": "2016-10-08 01:46:00",
+      "positive_sample_count": 14,
+      "peak_Ls": 45.8519173,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 01:45:00",
+      "last_positive_time": "2016-10-08 01:45:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 50.1892128,
+      "peak_time": "2016-10-08 01:45:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 01:50:00",
+      "last_positive_time": "2016-10-08 01:50:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 32.9626045,
+      "peak_time": "2016-10-08 01:50:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 02:04:00",
+      "last_positive_time": "2016-10-08 02:04:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 15.0166874,
+      "peak_time": "2016-10-08 02:04:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 02:07:00",
+      "last_positive_time": "2016-10-08 02:07:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 131.686539,
+      "peak_time": "2016-10-08 02:07:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 02:12:00",
+      "last_positive_time": "2016-10-08 02:13:00",
+      "positive_sample_count": 2,
+      "peak_Ls": 73.5430908,
+      "peak_time": "2016-10-08 02:13:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 02:23:00",
+      "last_positive_time": "2016-10-08 02:23:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 81.6511688,
+      "peak_time": "2016-10-08 02:23:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 02:30:00",
+      "last_positive_time": "2016-10-08 02:30:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 53.5718727,
+      "peak_time": "2016-10-08 02:30:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 02:32:00",
+      "last_positive_time": "2016-10-08 02:32:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 94.9142914,
+      "peak_time": "2016-10-08 02:32:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 03:01:00",
+      "last_positive_time": "2016-10-08 03:01:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 78.2587433,
+      "peak_time": "2016-10-08 03:01:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 03:11:00",
+      "last_positive_time": "2016-10-08 03:11:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 90.9017563,
+      "peak_time": "2016-10-08 03:11:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 03:17:00",
+      "last_positive_time": "2016-10-08 03:17:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 96.9578247,
+      "peak_time": "2016-10-08 03:17:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 03:23:00",
+      "last_positive_time": "2016-10-08 03:23:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 78.6203232,
+      "peak_time": "2016-10-08 03:23:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 03:25:00",
+      "last_positive_time": "2016-10-08 03:25:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 82.8837357,
+      "peak_time": "2016-10-08 03:25:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 03:27:00",
+      "last_positive_time": "2016-10-08 03:27:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 29.4911175,
+      "peak_time": "2016-10-08 03:27:00"
+    },
+    {
+      "node_id": "J74",
+      "start": "2016-10-08 04:10:00",
+      "last_positive_time": "2016-10-08 04:10:00",
+      "positive_sample_count": 1,
+      "peak_Ls": 83.0855179,
+      "peak_time": "2016-10-08 04:10:00"
+    },
+    {
+      "node_id": "J8",
+      "start": "2016-10-08 01:27:00",
+      "last_positive_time": "2016-10-08 02:13:00",
+      "positive_sample_count": 47,
+      "peak_Ls": 337.668274,
+      "peak_time": "2016-10-08 01:40:00"
+    },
+    {
+      "node_id": "J9",
+      "start": "2016-10-08 01:32:00",
+      "last_positive_time": "2016-10-08 01:51:00",
+      "positive_sample_count": 20,
+      "peak_Ls": 144.636765,
+      "peak_time": "2016-10-08 01:40:00"
+    }
+  ]
+}

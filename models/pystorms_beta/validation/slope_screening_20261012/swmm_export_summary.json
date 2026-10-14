@@ -1,0 +1,19 @@
+{
+  "flooding_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\node_flooding.tsv",
+  "nodes_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\nodes.tsv",
+  "links_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\links.tsv",
+  "modified_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model_slope1_40mm.inp",
+  "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model.rpt",
+  "binary_output_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model.out",
+  "total_steps": 51483,
+  "saved_steps": 1441,
+  "node_count": 210,
+  "link_count": 211,
+  "flooding_records": 302610,
+  "max_flooding_Ls": 0.0,
+  "max_node_depth_m": 2.5423245429992676,
+  "save_interval_minutes": 1,
+  "simulation_start": "2016-10-08 00:00:00",
+  "simulation_end": "2016-10-09 00:00:00",
+  "sampling_method": "native_report_with_initial_and_final_states"
+}

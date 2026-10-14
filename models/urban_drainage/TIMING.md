@@ -33,7 +33,7 @@
 
 - 本模型 `swmm/scenarios/` 下 13 个工作 INP 的 REPORT_STEP 已设为 00:01:00；原始资料 `raw/` 未改动。
 - 从降雨执行项目时，运行副本会按事件动态设置终点。直接在外部 SWMM 软件打开工作 INP，仍需自行选择事件并设置对应终点。
-- 公共实现通过本模型的配置启用新路径；其他模型没有该配置，仍沿用原有运行路径。旧运行结果不重算、不覆盖。
+- 2026-09-20 初版通过本模型配置启用原生导出。2026-10-11 已移除模拟过程中采样导出的旧实现；新的降雨运行必须有模型自己的 `simulation_timing.json`，缺失时在计算前报错。`Site_Drainage_Model` 已加入配置。旧运行结果保留。
 - 修改前备份：`E:\SWMM_Agentic\backups\urban_drainage_timing_20260920_100905`，含整个模型、tools.py、ca2d.py、workflow_agents/evidence_builder.py 以及 SHA256 清单。
 - 恢复时：先停止运行，使用备份覆盖对应原文件；如需完全回退，另移除本次新增的 simulation_timing.py、模型 simulation_timing.json、TIMING.md 和测试文件。恢复公共代码会同时撤回公共代码后续修改，操作前应再次备份。
 

@@ -1,0 +1,28 @@
+{
+  "routing_continuity_error_percent": 0.139,
+  "runoff_continuity_error_percent": -0.221,
+  "native_flooding_volume_m3_rounded": 1016599.0,
+  "native_external_outflow_m3_rounded": 83666.0,
+  "native_initial_storage_m3_rounded": 0.0,
+  "native_final_storage_m3_rounded": 10570.0,
+  "actual_overflow_nodes_from_samples": 87,
+  "max_flooding_Ls": 20710.5137,
+  "peak_flood_node": "jd65",
+  "peak_flood_time": "2020-07-15 01:40:00",
+  "warnings": [],
+  "engine_errors": [],
+  "most_frequent_nonconverging_nodes": [
+    "Node psk1 (4.80%)",
+    "Node psk2 (4.80%)",
+    "Node psk3 (4.80%)",
+    "Node psk4 (4.80%)",
+    "Node psk5 (4.80%)"
+  ],
+  "sampled_surface_inflow_m3": 1016727.0741810589,
+  "sampling_difference_percent": 0.012598298941757236,
+  "max_surface_depth_m": 12.970226287841797,
+  "surface_final_volume_m3": 1016726.5,
+  "coupling_interval_resample_error_m3": 1.5133991837501526e-08,
+  "swmm_timestamps": 1441,
+  "surface_timestamps": 289
+}

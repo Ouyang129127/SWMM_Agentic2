@@ -10,7 +10,7 @@ import pandas as pd
 
 import ca2d
 from simulation_timing import load_timing
-from tools import _replace_swmm_event_inputs
+from tools import _replace_swmm_event_inputs, run_swmm_2d_project_from_rainfall
 from workflow_agents.evidence_builder import _interval_duration, _interval_volume
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -83,8 +83,38 @@ class TimingTests(unittest.TestCase):
         self.assertEqual(_interval_duration(times, pd.Series([False, False, True])), 0)
         self.assertAlmostEqual(_interval_volume(pd.DataFrame({"DateTime": times, "flow_Ls": [1000, 1000, 1000]})), 420)
 
-    def test_other_models_are_not_opted_in(self):
+    def test_missing_policy_remains_optional_for_saved_file_imports(self):
         self.assertEqual(load_timing(ROOT / "models/songhua_swmm_2d"), {})
+
+    def test_rainfall_run_rejects_missing_policy_before_creating_outputs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            model = Path(tmp) / "unconfigured_model"
+            model.mkdir()
+            with patch('tools._resolve_model_root', return_value=model), \
+                 patch('tools.export_native_reports') as export:
+                with self.assertRaisesRegex(FileNotFoundError, 'simulation_timing.json'):
+                    run_swmm_2d_project_from_rainfall(
+                        model_name=model.name, rainfall_file='events/rain.txt', run_id='new_run')
+            self.assertFalse((model / 'runs').exists())
+            export.assert_not_called()
+
+    def test_site_policy_covers_rain_and_recovery_without_changing_routing(self):
+        model = ROOT / 'models/Site_Drainage_Model'
+        policy = load_timing(model, required=True)
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / 'model.inp'
+            entries = [(datetime(2024, 1, 1), 10),
+                       (datetime(2024, 1, 1, 0, 5), 10),
+                       (datetime(2024, 1, 1, 0, 10), 0)]
+            source = model / 'swmm/scenarios/baseline/model.inp'
+            result = _replace_swmm_event_inputs(source, target, entries, timing=policy)
+            self.assertEqual(result['rainfall_end'], '2024-01-01 00:10:00')
+            self.assertEqual(result['simulation_end'], '2024-01-01 03:10:00')
+            from workflow_agents.event_packages import parse_run_input
+            before = parse_run_input(source)['options']
+            after = parse_run_input(target)['options']
+            self.assertEqual(after['REPORT_STEP'], '00:01:00')
+            self.assertEqual(after['ROUTING_STEP'], before['ROUTING_STEP'])
 
 
 if __name__ == "__main__":

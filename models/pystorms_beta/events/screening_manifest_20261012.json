@@ -1,0 +1,45 @@
+{
+  "purpose": "exploratory_rainfall_screening_not_formal_case_matrix",
+  "created_date": "2026-10-12",
+  "timezone": "Asia/Shanghai",
+  "source_event": "chicago_like_single_4h_80mm_5min.txt",
+  "source_sha256": "7322cb37ffe0cb4b0e3a4e737be4bd6fdb41004647e1bf828537f73dcd2641a6",
+  "shape": "single",
+  "scenario": "baseline",
+  "intensity_unit": "mm/h",
+  "time_convention": "interval_start",
+  "rounding": "3 decimal; integer residual correction at peak",
+  "provider_calls_planned": 0,
+  "cases": [
+    {
+      "depth_mm": 20,
+      "event_file": "chicago_like_single_4h_20mm_5min.txt",
+      "event_sha256": "a378a2850a7941f3d480dda18f68e78740283dfba33999a1d9e2dbbbb7fcec50",
+      "record_count": 49,
+      "total_mm": 19.999999999999996,
+      "peak_mm_h": 36.682,
+      "peak_time": "2016-10-08 01:35:00",
+      "run_id": "bs20_20261012_p1"
+    },
+    {
+      "depth_mm": 40,
+      "event_file": "chicago_like_single_4h_40mm_5min.txt",
+      "event_sha256": "68fdb55ff0485dd8edf0a93dc881108a06d91d5a688657d59fa826c612ee2be4",
+      "record_count": 49,
+      "total_mm": 40.00000000000001,
+      "peak_mm_h": 73.367,
+      "peak_time": "2016-10-08 01:35:00",
+      "run_id": "bs40_20261012_p1"
+    },
+    {
+      "depth_mm": 60,
+      "event_file": "chicago_like_single_4h_60mm_5min.txt",
+      "event_sha256": "bb08de4c24fbd34e471aaeca4221ae8d7e30d53de89b4e6c7881f1411ab723f3",
+      "record_count": 49,
+      "total_mm": 60.00000000000001,
+      "peak_mm_h": 110.047,
+      "peak_time": "2016-10-08 01:35:00",
+      "run_id": "bs60_20261012_p1"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "cell_size": 20.0,
+  "grid_shape": [
+    580,
+    364
+  ],
+  "bounds": [
+    0,
+    0,
+    7280.0,
+    11600.0
+  ],
+  "crs": null,
+  "spatial_units": "metre",
+  "coordinate_transform": {
+    "operation": "translation_only",
+    "scale": 1.0,
+    "source_origin": [
+      11806800.0,
+      3602020.0
+    ],
+    "formula": "local_xy = source_xy - source_origin",
+    "crs": null,
+    "coordinate_units_basis": "metres inferred from pipe endpoint distance and hydraulic length agreement",
+    "source_map_units": "None",
+    "georeference_status": "CRS not provided; no EPSG asserted"
+  },
+  "source_inp": "swmm/scenarios/baseline/model.inp",
+  "source_elevation_units": "metre (LPS SWMM)",
+  "n_nodes": 113,
+  "n_mapped_nodes": 113,
+  "n_valid_cells": 104875,
+  "n_flow_cells": 99639,
+  "n_building_cells": 5236,
+  "n_road_cells": 3808,
+  "n_buildings": 843,
+  "n_streets": 131,
+  "domain_area_ha": 4195.0,
+  "rainfall_catchment_area_ha": 3996.508775604993,
+  "node_mapping_distance_max": 13.00832041493419,
+  "shared_cell_rim_conflicts": 0,
+  "domain_method": "union of original subcatchment polygon cell centres, hypothetical corridors and node neighborhoods; 40 m square-grid dilation",
+  "terrain_method": "8-nearest IDW from 105 model junction rims; mapped junction cells anchored; not surveyed DEM",
+  "road_method": "hypothetical 20 m corridors along pipe endpoints, lowered by 0.10 m except rim anchors",
+  "building_method": "deterministic 40-60 m synthetic obstacle blocks raised by 15 m and excluded from flow",
+  "assumption_status": "regional technical-validation surface; not a real-city flood prediction",
+  "resolution_scope": "20 m grid cannot validate narrow street/individual-building inundation; no resolution-convergence test yet",
+  "surface_boundary": "closed invalid-domain perimeter, with inactive outermost raster ring",
+  "coupling": "one-way node overflow injection only; no surface-to-sewer exchange, no direct surface rainfall",
+  "infiltration_evaporation_on_surface": false,
+  "building_raise_m": 15,
+  "road_lowering_m": 0.1,
+  "land_conveyance_coefficient": 0.62,
+  "road_conveyance_coefficient": 0.9
+}

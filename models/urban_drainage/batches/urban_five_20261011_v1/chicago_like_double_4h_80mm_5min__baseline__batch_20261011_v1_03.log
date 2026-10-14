@@ -1,0 +1,4 @@
+{"event": "chicago_like_double_4h_80mm_5min.txt", "stage": "scenario"}
+{"event": "chicago_like_double_4h_80mm_5min.txt", "stage": "simulation"}
+{"event": "chicago_like_double_4h_80mm_5min.txt", "stage": "evidence"}
+{"stage": "evidence", "error_type": "RuntimeError"}

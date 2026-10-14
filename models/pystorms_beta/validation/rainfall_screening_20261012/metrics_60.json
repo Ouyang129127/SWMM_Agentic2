@@ -1,0 +1,144 @@
+{
+  "depth_mm": 60,
+  "run_id": "bs60_20261012_p1",
+  "event_count": 201,
+  "overflow_nodes": 17,
+  "evidence_rows": 108720,
+  "visible_records": 1222,
+  "request_characters": 11556453,
+  "estimated_tokens_using_80mm_ratio": 4466122,
+  "token_estimate_status": "inference_from_80mm_provider_count_not_measured; not a guarantee of acceptance",
+  "provider_context_limit_observed_in_80mm": 1048576,
+  "provider_calls": 0,
+  "task_id": "f73769e672c34c7baecf0d60b2c03a4e",
+  "diagnosis_status": "not_requested_offline_preflight_only",
+  "evidence_groups": {
+    "event_context": {
+      "rows": 201,
+      "serialized_characters": 184177
+    },
+    "local_structure": {
+      "rows": 201,
+      "serialized_characters": 2761715
+    },
+    "local_process_series": {
+      "rows": 201,
+      "serialized_characters": 7766609
+    },
+    "direct_source_composition": {
+      "rows": 201,
+      "serialized_characters": 347330
+    },
+    "facilities_and_storage": {
+      "rows": 201,
+      "serialized_characters": 184357
+    },
+    "surface_association": {
+      "rows": 201,
+      "serialized_characters": 71367
+    },
+    "rainfall_context": {
+      "rows": 1,
+      "serialized_characters": 1171
+    },
+    "summary:cell:max_depth": {
+      "rows": 1,
+      "serialized_characters": 1451
+    },
+    "summary:cell:ponding_duration": {
+      "rows": 1,
+      "serialized_characters": 1520
+    },
+    "summary:link:depth_above_section_reference_duration": {
+      "rows": 1,
+      "serialized_characters": 1562
+    },
+    "summary:link:flow_direction_changes": {
+      "rows": 1,
+      "serialized_characters": 1506
+    },
+    "summary:link:fullness_ge_0_8_duration": {
+      "rows": 1,
+      "serialized_characters": 1522
+    },
+    "summary:link:fullness_ge_0_95_duration": {
+      "rows": 1,
+      "serialized_characters": 1525
+    },
+    "summary:link:max_flow": {
+      "rows": 1,
+      "serialized_characters": 1454
+    },
+    "summary:link:max_fullness": {
+      "rows": 1,
+      "serialized_characters": 1540
+    },
+    "summary:link:max_link_depth": {
+      "rows": 1,
+      "serialized_characters": 1454
+    },
+    "summary:node:flooding_duration": {
+      "rows": 1,
+      "serialized_characters": 1485
+    },
+    "summary:node:max_flooding_flow": {
+      "rows": 1,
+      "serialized_characters": 1469
+    },
+    "summary:node:max_node_depth": {
+      "rows": 1,
+      "serialized_characters": 1454
+    },
+    "summary:node:overflow_event_count": {
+      "rows": 1,
+      "serialized_characters": 1492
+    },
+    "summary:node:total_flooding_volume": {
+      "rows": 1,
+      "serialized_characters": 1513
+    },
+    "overflow_event_overview": {
+      "rows": 1,
+      "serialized_characters": 17860
+    }
+  },
+  "component_characters": {
+    "task": 277,
+    "visible_evidence": 11356756,
+    "evidence_selection": 10550,
+    "evidence_overview": 938,
+    "inventory": 1074,
+    "observations": 120,
+    "previous_diagnosis": 4,
+    "verification_feedback": 4,
+    "evidence_binding": 32033,
+    "diagnosis_contract_version": 21,
+    "event_manifest": 149807
+  },
+  "routing_continuity_error_percent": -2.674,
+  "runoff_continuity_error_percent": -0.003,
+  "native_flooding_volume_m3_rounded": 6023.0,
+  "sampled_surface_input_volume_m3": 5960.782196271826,
+  "sampling_volume_difference_percent": -1.0330035485335176,
+  "max_surface_depth_m": 1.6972534656524658,
+  "max_flooding_Ls": 8569.453125,
+  "peak_flood_node": "J155",
+  "peak_flood_time": "2016-10-08 22:55:00",
+  "first_overflow_time": "2016-10-08 01:37:00",
+  "last_overflow_time": "2016-10-08 22:55:00",
+  "overflow_nodes_crosscheck": 17,
+  "overflow_after_rain_end_sample_rows": 211,
+  "native_initial_stored_volume_m3_rounded": 176.0,
+  "native_final_stored_volume_m3_rounded": 28974.0,
+  "native_external_outflow_m3_rounded": 5157.0,
+  "warnings": [
+    "WARNING 04: minimum elevation drop used for Conduit C33",
+    "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+    "WARNING 02: maximum depth increased for Node J120"
+  ],
+  "engine_errors": [],
+  "input_copy_sha256": "bb08de4c24fbd34e471aaeca4221ae8d7e30d53de89b4e6c7881f1411ab723f3",
+  "swmm_output_timestamps": 1441,
+  "ca2d_output_timestamps": 289,
+  "ca2d_final_volume_m3": 5960.779296875
+}

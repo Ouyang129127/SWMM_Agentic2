@@ -1,0 +1,21 @@
+{
+  "run_id": "sq40_3h_20261014_p1",
+  "task_id": "ca85ff7b250244f49d53033d7522f5fd",
+  "event_count": 114,
+  "overflow_nodes": 87,
+  "visible_records": 700,
+  "request_characters": 36289088,
+  "component_characters": {
+    "task": 283,
+    "visible_evidence": 36174001,
+    "evidence_selection": 7417,
+    "evidence_overview": 940,
+    "inventory": 1076,
+    "observations": 119,
+    "previous_diagnosis": 4,
+    "verification_feedback": 4,
+    "evidence_binding": 18461,
+    "diagnosis_contract_version": 21,
+    "event_manifest": 86546
+  }
+}

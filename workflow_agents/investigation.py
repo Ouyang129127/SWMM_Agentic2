@@ -368,7 +368,8 @@ async def advance_investigation(model_name, run_id, action='prepare', task_id=''
                 audit(phase='validation', parsed_response=result)
                 _validate_response(result, visible, state)
             except Exception as exc:
-                failure = {'error_type': type(exc).__name__, 'phase': audit_data['phase']}
+                failure = {'error_type': type(exc).__name__, 'phase': audit_data['phase'],
+                           'error_message': str(exc)}
                 if audit_data['phase'] in {'validation', 'parsing'}:
                     failure['validation_error'] = str(exc)
                 status_code = getattr(exc, 'status_code', None)

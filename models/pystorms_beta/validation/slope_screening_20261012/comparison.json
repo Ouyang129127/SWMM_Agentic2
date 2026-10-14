@@ -1,0 +1,88 @@
+{
+  "purpose": "single_parameter_slope_test_not_full_workflow",
+  "cases": [
+    {
+      "slope_percent": 100,
+      "rainfall_total_mm_reported": 40.0,
+      "runoff_continuity_error_percent": -0.002,
+      "routing_continuity_error_percent": -1.313,
+      "native_wet_weather_inflow_m3_rounded": 24405.0,
+      "native_runoff_depth_mm": 18.561,
+      "subcatchment_final_surface_storage_mm": 0.627,
+      "native_flooding_loss_m3_rounded": 748.0,
+      "sampled_flooding_volume_trapezoid_m3": 1161.9801653081997,
+      "sample_vs_native_flooding_difference_percent": 55.34494188612295,
+      "overflow_nodes": 7,
+      "sampled_overflow_segments": 68,
+      "single_positive_sample_segments": 36,
+      "peak_runoff_Ls": 4027.030029296875,
+      "peak_runoff_time": "2016-10-08 01:45:00",
+      "runoff_at_rain_end_4h_Ls": 875.82861328125,
+      "runoff_at_simulation_end_24h_Ls": 2.100043535232544,
+      "sampled_runoff_after_rain_end_m3_trapezoid": 4852.962013142109,
+      "max_saved_node_flooding_Ls": 6077.21436,
+      "max_saved_node_flooding_node": "J146",
+      "max_saved_node_flooding_time": "2016-10-08 20:27:00",
+      "native_initial_network_storage_m3_rounded": 176.0,
+      "native_final_network_storage_m3_rounded": 24114.0,
+      "native_external_outflow_m3_rounded": 41.0,
+      "native_percent_steps_not_converging": 33.91,
+      "most_frequent_nonconverging_nodes": [
+        "Node OUT0 (33.91%)",
+        "Node J74 (20.01%)",
+        "Node J57 (19.83%)",
+        "Node J76 (17.95%)",
+        "Node J14 (15.50%)"
+      ],
+      "warnings": [
+        "WARNING 04: minimum elevation drop used for Conduit C33",
+        "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+        "WARNING 02: maximum depth increased for Node J120"
+      ],
+      "engine_errors": [],
+      "native_output_sha256": "0651d84b93621ca8e040c7fcd5c272bc77cabd5c60356e87c3343f5d0af34588"
+    },
+    {
+      "slope_percent": 1,
+      "rainfall_total_mm_reported": 40.0,
+      "runoff_continuity_error_percent": -0.003,
+      "routing_continuity_error_percent": -0.051,
+      "native_wet_weather_inflow_m3_rounded": 20787.0,
+      "native_runoff_depth_mm": 15.81,
+      "subcatchment_final_surface_storage_mm": 3.302,
+      "native_flooding_loss_m3_rounded": 0.0,
+      "sampled_flooding_volume_trapezoid_m3": 0.0,
+      "sample_vs_native_flooding_difference_percent": null,
+      "overflow_nodes": 0,
+      "sampled_overflow_segments": 0,
+      "single_positive_sample_segments": 0,
+      "peak_runoff_Ls": 963.067626953125,
+      "peak_runoff_time": "2016-10-08 02:15:00",
+      "runoff_at_rain_end_4h_Ls": 758.829345703125,
+      "runoff_at_simulation_end_24h_Ls": 45.28433609008789,
+      "sampled_runoff_after_rain_end_m3_trapezoid": 12969.889077644348,
+      "max_saved_node_flooding_Ls": 0.0,
+      "max_saved_node_flooding_node": null,
+      "max_saved_node_flooding_time": null,
+      "native_initial_network_storage_m3_rounded": 176.0,
+      "native_final_network_storage_m3_rounded": 20914.0,
+      "native_external_outflow_m3_rounded": 59.0,
+      "native_percent_steps_not_converging": 4.45,
+      "most_frequent_nonconverging_nodes": [
+        "Node OUT0 (4.45%)",
+        "Node J13 (3.04%)",
+        "Node J57 (0.76%)",
+        "Node J56 (0.70%)",
+        "Node J18 (0.10%)"
+      ],
+      "warnings": [
+        "WARNING 04: minimum elevation drop used for Conduit C33",
+        "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+        "WARNING 02: maximum depth increased for Node J120"
+      ],
+      "engine_errors": [],
+      "native_output_sha256": "ab37c03350c63fc4eee9394f72690fa94cd97675667f4e20a01ba315355ccea9"
+    }
+  ],
+  "note": "Native cumulative volumes are rounded RPT values. Saved-series integrals are not engine internal water budgets; late integral starts at 04:01, excludes 04:00-04:01 interval."
+}

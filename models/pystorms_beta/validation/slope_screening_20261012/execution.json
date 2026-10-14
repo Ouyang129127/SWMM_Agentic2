@@ -1,0 +1,14 @@
+{
+  "status": "completed",
+  "stage": "SWMM_only",
+  "provider_calls": 0,
+  "CA2D_run": false,
+  "pid": 56024,
+  "start_utc": "2026-10-12T14:53:20.251195+00:00",
+  "hard_timeout_seconds": 1800,
+  "call": "simulation_timing.export_native_reports(inp_path=model_slope1_40mm.inp, output_dir=swmm, mapped_ids=all_210_nodes, interval_minutes=1)",
+  "control_run_id": "bs40_20261012_p1",
+  "elapsed_seconds": 3.9689999998081475,
+  "end_utc": "2026-10-12T14:53:24.225311+00:00",
+  "protected_input_hashes_unchanged": true
+}

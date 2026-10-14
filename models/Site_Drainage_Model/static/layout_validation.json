@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "test_type": "synthetic injection, not a rainfall-event simulation",
+  "duration_seconds": 600.0,
+  "internal_dt_seconds": 5.0,
+  "injected_flow_lps_per_node": 10.0,
+  "mapped_nodes": 12,
+  "n_buildings": 56,
+  "n_road_cells": 2569,
+  "min_building_node_distance_m": 10.390665040391378,
+  "input_volume_m3": 72.00000000000003,
+  "stored_volume_m3": 71.99999279692301,
+  "relative_mass_error": 1.0004273636670603e-07,
+  "water_in_buildings_m3": 0.0,
+  "wet_cells": 2107,
+  "max_depth_m": 0.16439951956272125,
+  "checks": [
+    "elevation offsets",
+    "disjoint roads and buildings",
+    "flow/valid/domain masks",
+    "cell identifiers and CSVs",
+    "grid extent",
+    "node coordinates and clearance",
+    "mapping copy",
+    "solver loading and display layers",
+    "diffusion and mass conservation"
+  ]
+}

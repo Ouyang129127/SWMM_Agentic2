@@ -1,0 +1,56 @@
+{
+  "status": "completed",
+  "run_id": "chicago_like_triple_4h_80mm_5min__baseline__batch_20261011_v1_05",
+  "event_file": "chicago_like_triple_4h_80mm_5min.txt",
+  "started_at": "2026-10-11T02:19:46.266412+00:00",
+  "pid": 32716,
+  "supplement_rounds": 0,
+  "provider_calls": 1,
+  "calls_by_role": {
+    "report": 1
+  },
+  "history": [
+    {
+      "stage": "validate_saved_simulation",
+      "at": "2026-10-11T02:19:46.266412+00:00"
+    },
+    {
+      "stage": "simulation_handoff",
+      "at": "2026-10-11T02:19:46.324929+00:00"
+    },
+    {
+      "stage": "evidence",
+      "at": "2026-10-11T02:19:46.332475+00:00"
+    },
+    {
+      "stage": "initial_diagnosis_verification_report",
+      "at": "2026-10-11T02:20:04.703441+00:00"
+    }
+  ],
+  "simulation_reused": true,
+  "simulation_executed": false,
+  "stage": "initial_diagnosis_verification_report",
+  "simulation_summary": {
+    "max_flooding_Ls": 0.0,
+    "sampled_overflow_volume_m3": 0.0,
+    "max_surface_depth_m": 0.0
+  },
+  "simulation_handoff": {
+    "previous_state": "SCENARIO_READY",
+    "target_state": "RUN_READY"
+  },
+  "task_id": "23a14e7fecf3445b8da919066e889ace",
+  "stop_reason": "no_new_evidence",
+  "task_state": "preliminary_delivered",
+  "revision": 1,
+  "event_count": 0,
+  "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\runs\\chicago_like_triple_4h_80mm_5min__baseline__batch_20261011_v1_05\\diagnosis_tasks\\23a14e7fecf3445b8da919066e889ace\\display_reports\\r1\\20261011_102005_b6a89492\\模拟诊断报告.html",
+  "evidence_closure": "no_requests",
+  "pending_evidence_requests": false,
+  "unresolved_evidence_requests": [],
+  "causal_validity_checked": false,
+  "finished_at": "2026-10-11T02:20:24.728639+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 60.0,
+  "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\batches\\urban_five_20261011_recovery_v2\\chicago_like_triple_4h_80mm_5min__baseline__batch_20261011_v1_05.log"
+}

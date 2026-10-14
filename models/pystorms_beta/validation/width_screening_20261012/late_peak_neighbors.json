@@ -1,0 +1,156 @@
+{
+  "node_saved_neighbors": [
+    {
+      "node_id": "J145",
+      "depth_m": 0.397719502,
+      "flooding_Ls": 0.0,
+      "date": "2016-10-08",
+      "time": "23:03:00"
+    },
+    {
+      "node_id": "J145",
+      "depth_m": 0.383536935,
+      "flooding_Ls": 0.0,
+      "date": "2016-10-08",
+      "time": "23:04:00"
+    },
+    {
+      "node_id": "J145",
+      "depth_m": 0.393211961,
+      "flooding_Ls": 0.0,
+      "date": "2016-10-08",
+      "time": "23:05:00"
+    },
+    {
+      "node_id": "J145",
+      "depth_m": 1.2460258,
+      "flooding_Ls": 5796.92041,
+      "date": "2016-10-08",
+      "time": "23:06:00"
+    },
+    {
+      "node_id": "J145",
+      "depth_m": 0.413702279,
+      "flooding_Ls": 0.0,
+      "date": "2016-10-08",
+      "time": "23:07:00"
+    },
+    {
+      "node_id": "J145",
+      "depth_m": 0.350589544,
+      "flooding_Ls": 0.0,
+      "date": "2016-10-08",
+      "time": "23:08:00"
+    },
+    {
+      "node_id": "J145",
+      "depth_m": 0.38488096,
+      "flooding_Ls": 0.0,
+      "date": "2016-10-08",
+      "time": "23:09:00"
+    }
+  ],
+  "node_native_inflow_head_neighbors": [
+    {
+      "timestamp": "2016-10-08 23:03:00",
+      "total_inflow_Ls": 35.29494094848633,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 0.40381550788879395
+    },
+    {
+      "timestamp": "2016-10-08 23:04:00",
+      "total_inflow_Ls": 30.543569564819336,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 0.3896329402923584
+    },
+    {
+      "timestamp": "2016-10-08 23:05:00",
+      "total_inflow_Ls": 5.90186882019043,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 0.3993079662322998
+    },
+    {
+      "timestamp": "2016-10-08 23:06:00",
+      "total_inflow_Ls": 7989.36474609375,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 1.2521218061447144
+    },
+    {
+      "timestamp": "2016-10-08 23:07:00",
+      "total_inflow_Ls": 76.31578826904297,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 0.4197982847690582
+    },
+    {
+      "timestamp": "2016-10-08 23:08:00",
+      "total_inflow_Ls": 143.12432861328125,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 0.3566855490207672
+    },
+    {
+      "timestamp": "2016-10-08 23:09:00",
+      "total_inflow_Ls": 15.174489974975586,
+      "lateral_inflow_Ls": 0.0,
+      "head_m": 0.3909769654273987
+    }
+  ],
+  "system_native_neighbors": [
+    {
+      "timestamp": "2016-10-08 23:03:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 0.0,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23590.4746
+    },
+    {
+      "timestamp": "2016-10-08 23:04:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 0.0,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23590.1934
+    },
+    {
+      "timestamp": "2016-10-08 23:05:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 0.0,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23590.7207
+    },
+    {
+      "timestamp": "2016-10-08 23:06:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 5796.92041,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23635.1523
+    },
+    {
+      "timestamp": "2016-10-08 23:07:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 0.0,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23618.6445
+    },
+    {
+      "timestamp": "2016-10-08 23:08:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 0.0,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23617.2051
+    },
+    {
+      "timestamp": "2016-10-08 23:09:00",
+      "runoff_Ls": 0.0,
+      "flood_Ls": 0.0,
+      "outfall_Ls": 0.0,
+      "rainfall_mm_h": 0.0,
+      "stored_m3": 23616.8691
+    }
+  ],
+  "interpretation": "Observed late isolated saved peak; no proof of numerical artifact or tidal causation."
+}

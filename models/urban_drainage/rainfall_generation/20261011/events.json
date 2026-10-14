@@ -1,0 +1,179 @@
+{
+  "created_date": "2026-10-11",
+  "method": "uniform scaling of existing 80 mm Chicago-like synthetic rainfall, preserving timing and dry intervals",
+  "model": "urban_drainage",
+  "unit": "mm/h",
+  "timestamp_convention": "interval_start",
+  "interval_minutes": 5,
+  "duration_minutes": 240,
+  "rainfall_start": "2024-01-01 00:00:00",
+  "rainfall_end": "2024-01-01 04:00:00",
+  "suggested_post_rainfall_hours": 3,
+  "local_idf_calibration": false,
+  "return_period_years": null,
+  "rounding": "Round scaled intensities to 0.001 mm/h using half-up rounding; correct the global-peak intensity by the rounding residual to enforce exact target depth.",
+  "original_sources_preserved": [
+    {
+      "file": "events/chicago_like_double_4h_160mm_5min.txt",
+      "sha256": "e8940438003273d09331059cc9582a09a3aeaa33e41598e227aa1612d8fffce4"
+    },
+    {
+      "file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "sha256": "e9c96ec2bb82a1873c01f4fbe13275583514597d0763d6095b83e73f811e88bf"
+    },
+    {
+      "file": "events/chicago_like_single_4h_120mm_5min.txt",
+      "sha256": "54dc45f65384d45815cd2e23b548f562c4770a0f9591c31e8bdb6f7f635b7f50"
+    },
+    {
+      "file": "events/chicago_like_single_4h_60mm_5min.txt",
+      "sha256": "2acbd76c3ce19b19586c91a8df2ae4795a4c9be8f615620964fb76f04b27e3e7"
+    },
+    {
+      "file": "events/chicago_like_single_4h_80mm_5min.txt",
+      "sha256": "3c40fb31a847e64379566d4f263c2c27b623ac199ae10ceb9e36a5feedd22c8a"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "sha256": "073dc313524d8913e8908e3b9273e6a44abab69da41c4716fe1b28fbfa9a4281"
+    }
+  ],
+  "events": [
+    {
+      "file": "events/chicago_like_single_4h_160mm_5min.txt",
+      "shape": "single",
+      "target_total_rainfall_mm": 160,
+      "source_file": "events/chicago_like_single_4h_80mm_5min.txt",
+      "source_sha256": "3c40fb31a847e64379566d4f263c2c27b623ac199ae10ceb9e36a5feedd22c8a",
+      "scale_factor": 2,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 240,
+      "max_intensity_mm_h": 293.464,
+      "total_rainfall_mm": 160,
+      "peak_count": 1,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 01:35:00",
+          "end": "2024-01-01 01:40:00",
+          "intensity_mm_h": 293.464
+        }
+      ],
+      "rounding_total_correction_mm_h": 0,
+      "correction_timestamp": "2024-01-01 01:35:00",
+      "max_deviation_from_exact_scaling_mm_h": 0
+    },
+    {
+      "file": "events/chicago_like_double_4h_120mm_5min.txt",
+      "shape": "double",
+      "target_total_rainfall_mm": 120,
+      "source_file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "source_sha256": "e9c96ec2bb82a1873c01f4fbe13275583514597d0763d6095b83e73f811e88bf",
+      "scale_factor": 1.5,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 220,
+      "max_intensity_mm_h": 141.25,
+      "total_rainfall_mm": 120,
+      "peak_count": 2,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 00:40:00",
+          "end": "2024-01-01 00:45:00",
+          "intensity_mm_h": 115.575
+        },
+        {
+          "start": "2024-01-01 02:50:00",
+          "end": "2024-01-01 02:55:00",
+          "intensity_mm_h": 141.25
+        }
+      ],
+      "rounding_total_correction_mm_h": -0.01,
+      "correction_timestamp": "2024-01-01 02:50:00",
+      "max_deviation_from_exact_scaling_mm_h": 0.0095
+    },
+    {
+      "file": "events/chicago_like_triple_4h_120mm_5min.txt",
+      "shape": "triple",
+      "target_total_rainfall_mm": 120,
+      "source_file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "source_sha256": "073dc313524d8913e8908e3b9273e6a44abab69da41c4716fe1b28fbfa9a4281",
+      "scale_factor": 1.5,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 210,
+      "max_intensity_mm_h": 146.648,
+      "total_rainfall_mm": 120,
+      "peak_count": 3,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 00:25:00",
+          "end": "2024-01-01 00:30:00",
+          "intensity_mm_h": 81.479
+        },
+        {
+          "start": "2024-01-01 01:50:00",
+          "end": "2024-01-01 01:55:00",
+          "intensity_mm_h": 146.648
+        },
+        {
+          "start": "2024-01-01 03:15:00",
+          "end": "2024-01-01 03:20:00",
+          "intensity_mm_h": 97.773
+        }
+      ],
+      "rounding_total_correction_mm_h": -0.012,
+      "correction_timestamp": "2024-01-01 01:50:00",
+      "max_deviation_from_exact_scaling_mm_h": 0.0115
+    },
+    {
+      "file": "events/chicago_like_triple_4h_160mm_5min.txt",
+      "shape": "triple",
+      "target_total_rainfall_mm": 160,
+      "source_file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "source_sha256": "073dc313524d8913e8908e3b9273e6a44abab69da41c4716fe1b28fbfa9a4281",
+      "scale_factor": 2,
+      "rainfall_intervals": 48,
+      "rows_with_terminal_zero": 49,
+      "wet_minutes": 210,
+      "max_intensity_mm_h": 195.546,
+      "total_rainfall_mm": 160,
+      "peak_count": 3,
+      "peak_intervals": [
+        {
+          "start": "2024-01-01 00:25:00",
+          "end": "2024-01-01 00:30:00",
+          "intensity_mm_h": 108.638
+        },
+        {
+          "start": "2024-01-01 01:50:00",
+          "end": "2024-01-01 01:55:00",
+          "intensity_mm_h": 195.546
+        },
+        {
+          "start": "2024-01-01 03:15:00",
+          "end": "2024-01-01 03:20:00",
+          "intensity_mm_h": 130.364
+        }
+      ],
+      "rounding_total_correction_mm_h": 0,
+      "correction_timestamp": "2024-01-01 01:50:00",
+      "max_deviation_from_exact_scaling_mm_h": 0
+    }
+  ],
+  "nine_scene_matrix": {
+    "shapes": [
+      "single",
+      "double",
+      "triple"
+    ],
+    "total_depths_mm": [
+      80,
+      120,
+      160
+    ],
+    "additional_low_rainfall_control": "events/chicago_like_single_4h_60mm_5min.txt"
+  },
+  "simulation_executed": false,
+  "llm_called": false
+}

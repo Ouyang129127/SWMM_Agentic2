@@ -327,6 +327,30 @@
       padding: 0;
     }
 
+    .chat-details {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chat-details > summary {
+      cursor: pointer;
+      color: var(--accent-strong);
+      padding: 4px 0;
+    }
+
+    .chat-details[open] {
+      color: var(--ink);
+    }
+
+    .bubble a {
+      color: var(--accent-strong);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
     .composer {
       border-top: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.94);
@@ -526,7 +550,21 @@
     const reset = document.getElementById("reset");
     const statusEl = document.getElementById("status");
     let sessionId = localStorage.getItem("swmm_agentic_session_id") || "";
+    let flowVersion = null;
     const CHAT_TIMEOUT_MS = 15 * 60 * 1000;
+
+    function showWorkflow(workflow = {}) {
+      flowVersion = workflow.version ?? null;
+      const labels = {
+        scenario: "准备情景", simulation: "执行模拟", evidence_building: "构建证据",
+        prepare_diagnosis: "准备诊断任务", diagnose: "执行诊断", verify: "核查引用",
+        report: "生成报告", evidence: "补证", display_report: "重试 HTML 报告"
+      };
+      const next = labels[workflow.next_action];
+      statusEl.textContent = next ? "等待确认 | 下一步：" + next :
+        workflow.status === "completed" ? "当前流程已完成" :
+        workflow.status === "context_blocked" ? "输入证据超限，请缩小调查范围" : "就绪";
+    }
 
     function addMessage(role, text) {
       const wrap = document.createElement("div");
@@ -538,7 +576,7 @@
 
       const bubble = document.createElement("div");
       bubble.className = "bubble";
-      bubble.innerHTML = role === "assistant" ? renderMarkdown(text) : escapeHtml(text);
+      bubble.innerHTML = role === "assistant" ? renderChatReply(text) : escapeHtml(text);
 
       wrap.appendChild(roleEl);
       wrap.appendChild(bubble);
@@ -557,17 +595,30 @@
 
     function renderInlineMarkdown(value) {
       return escapeHtml(value)
+        .replace(/\[([^\]]+)\]\((\/models\/[^)\s"<>]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
         .replace(/`([^`]+)`/g, "<code>$1</code>")
         .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
     }
 
+    function renderChatReply(value) {
+      const text = String(value);
+      if (!text.includes(":::details ") && text.length > 1800) {
+        const firstLine = text.split("\n").find((line) => line.trim()) || "";
+        const preview = firstLine.length > 240 ? firstLine.slice(0, 240) + "…" : firstLine;
+        return renderMarkdown(preview) + '<details class="chat-details"><summary>这条历史回复较长，展开查看完整内容</summary>' + renderMarkdown(text) + '</details>';
+      }
+      return renderMarkdown(text);
+    }
+
     function renderMarkdown(value) {
       const normalized = normalizeReportText(value);
-      const lines = normalized.replace(/\\r\\n/g, "\\n").split("\\n");
+      const lines = normalized.replace(/\r\n/g, "\n").split("\n");
       const html = [];
       let inCode = false;
       let codeLines = [];
       let listType = null;
+      let detailLines = null;
+      let detailTitle = "";
 
       function closeList() {
         if (listType) {
@@ -578,13 +629,28 @@
 
       function closeCode() {
         if (inCode) {
-          html.push("<pre><code>" + escapeHtml(codeLines.join("\\n")) + "</code></pre>");
+          html.push("<pre><code>" + escapeHtml(codeLines.join("\n")) + "</code></pre>");
           codeLines = [];
           inCode = false;
         }
       }
 
       for (const line of lines) {
+        if (detailLines !== null) {
+          if (line.trim() === ":::") {
+            html.push('<details class="chat-details"><summary>' + escapeHtml(detailTitle) + '</summary>' + renderMarkdown(detailLines.join("\n")) + '</details>');
+            detailLines = null;
+          } else {
+            detailLines.push(line);
+          }
+          continue;
+        }
+        if (!inCode && line.startsWith(":::details ")) {
+          closeList();
+          detailTitle = line.slice(":::details ".length);
+          detailLines = [];
+          continue;
+        }
         if (line.trim().startsWith("```")) {
           if (inCode) {
             closeCode();
@@ -644,12 +710,15 @@
 
       closeCode();
       closeList();
-      return html.join("\\n");
+      if (detailLines !== null) {
+        html.push('<details class="chat-details"><summary>' + escapeHtml(detailTitle) + '</summary>' + renderMarkdown(detailLines.join("\n")) + '</details>');
+      }
+      return html.join("\n");
     }
 
     function normalizeReportText(value) {
       return String(value)
-        .replace(/\\r\\n/g, "\\n")
+        .replace(/\r\n/g, "\n")
         .replace(/^(#{1,4})(\S)/gm, "$1 $2")
         .replace(/^(\d+[.)])(\S)/gm, "$1 $2")
         .replace(/^[-*](\S)/gm, "- $1")
@@ -658,11 +727,12 @@
     }
 
     async function submitMessage(text) {
-      if (!text.trim()) return;
+      if (!text.trim() || send.disabled) return;
       addMessage("user", text);
       input.value = "";
       input.style.height = "";
       send.disabled = true;
+      reset.disabled = true;
       const startedAt = Date.now();
       const statusTimer = window.setInterval(() => {
         const seconds = Math.floor((Date.now() - startedAt) / 1000);
@@ -676,7 +746,7 @@
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session_id: sessionId, message: text }),
+          body: JSON.stringify({ session_id: sessionId, message: text, flow_version: flowVersion }),
           signal: controller.signal
         });
         const data = await response.json();
@@ -686,17 +756,24 @@
         sessionId = data.session_id;
         localStorage.setItem("swmm_agentic_session_id", sessionId);
         addMessage("assistant", data.reply || "(\u65e0\u56de\u590d)");
-        statusEl.textContent = "\u7b49\u5f85\u60a8\u7684\u786e\u8ba4 | session: " + sessionId.slice(0, 8);
+        showWorkflow(data.workflow);
       } catch (err) {
         const message = err.name === "AbortError"
           ? "Request timed out after 15 minutes. Input has been restored. If a long simulation was started, check the latest models/<model_name>/runs/ output folder."
           : "Request failed: " + err.message;
         addMessage("assistant", message);
         statusEl.textContent = "Error";
+        input.value = text;
+        // A server error may still have saved a failed/interrupted step.
+        if (sessionId) {
+          const stateResponse = await fetch("/api/session/" + encodeURIComponent(sessionId)).catch(() => null);
+          if (stateResponse?.ok) showWorkflow((await stateResponse.json()).workflow);
+        }
       } finally {
         window.clearInterval(statusTimer);
         window.clearTimeout(timeoutId);
         send.disabled = false;
+        reset.disabled = false;
         input.focus();
       }
     }
@@ -718,6 +795,7 @@
         await fetch("/api/session/" + encodeURIComponent(sessionId), { method: "DELETE" });
       }
       sessionId = "";
+      flowVersion = null;
       localStorage.removeItem("swmm_agentic_session_id");
       messages.innerHTML = "";
       addMessage("assistant", "\u65b0\u4f1a\u8bdd\u5df2\u5f00\u59cb\u3002\u8bf7\u8f93\u5165\u4efb\u52a1\uff0c\u6211\u4f1a\u5148\u7ed9\u51fa\u5206\u6b65\u8ba1\u5212\uff0c\u5e76\u7b49\u5f85\u60a8\u786e\u8ba4\u3002");
@@ -732,6 +810,31 @@
       });
     });
 
+    async function restoreSession() {
+      if (!sessionId) return;
+      send.disabled = true;
+      reset.disabled = true;
+      try {
+        const response = await fetch("/api/session/" + encodeURIComponent(sessionId));
+        if (response.status === 404) {
+          sessionId = "";
+          localStorage.removeItem("swmm_agentic_session_id");
+          return;
+        }
+        if (!response.ok) throw new Error("会话读取失败");
+        const data = await response.json();
+        messages.innerHTML = "";
+        data.transcript.forEach((item) => addMessage(item.role, item.content));
+        showWorkflow(data.workflow);
+      } catch (err) {
+        statusEl.textContent = "会话恢复失败，请刷新重试";
+      } finally {
+        send.disabled = false;
+        reset.disabled = false;
+      }
+    }
+
+    restoreSession();
     input.focus();
   </script>
 </body>

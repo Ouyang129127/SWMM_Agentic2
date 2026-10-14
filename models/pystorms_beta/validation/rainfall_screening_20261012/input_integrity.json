@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "depth_mm": 20,
+      "changed_sections_against_existing_80mm": [
+        "TIMESERIES"
+      ],
+      "all_nonrain_time_series_identical": true,
+      "source_scenario_unchanged_since_launch": true,
+      "source_scenario_sha256": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+      "output_inp_sha256": "ea05c4d5edf7fb65edf1fa683d88d25de573690179f0c41909e746564f80beea"
+    },
+    {
+      "depth_mm": 40,
+      "changed_sections_against_existing_80mm": [
+        "TIMESERIES"
+      ],
+      "all_nonrain_time_series_identical": true,
+      "source_scenario_unchanged_since_launch": true,
+      "source_scenario_sha256": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+      "output_inp_sha256": "9bb90bf220f5cf474b52538e61bdf1491f35fa557b5694ba9908b619aefd3512"
+    },
+    {
+      "depth_mm": 60,
+      "changed_sections_against_existing_80mm": [
+        "TIMESERIES"
+      ],
+      "all_nonrain_time_series_identical": true,
+      "source_scenario_unchanged_since_launch": true,
+      "source_scenario_sha256": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+      "output_inp_sha256": "bd8bede6cd57459efa355616d0711d6b60914107deba3741626cd3ea70d71729"
+    }
+  ],
+  "original_model_hashes": {
+    "models\\pystorms_beta\\beta.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "models\\pystorms_beta\\raw\\beta_original.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da"
+  }
+}

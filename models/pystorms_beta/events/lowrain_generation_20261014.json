@@ -1,0 +1,85 @@
+{
+  "created_date": "2026-10-14",
+  "timezone": "Asia/Shanghai",
+  "events": [
+    {
+      "shape": "double",
+      "depth_mm": 20,
+      "file": "events/chicago_like_double_4h_20mm_5min.txt",
+      "source_file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "source_sha256": "d9455a70e59319d7583a4064b0bda593de6eb9eae8b24286ca8d1d17c1b11385",
+      "scale_factor": "0.25",
+      "rounding": "0.001 mm/h, ROUND_HALF_UP",
+      "peak_correction_mm_h": "-0.006",
+      "correction_timestamp": "2016-10-08 02:50:00",
+      "peak_count": 2,
+      "total_rainfall_mm": 20
+    },
+    {
+      "shape": "double",
+      "depth_mm": 40,
+      "file": "events/chicago_like_double_4h_40mm_5min.txt",
+      "source_file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "source_sha256": "d9455a70e59319d7583a4064b0bda593de6eb9eae8b24286ca8d1d17c1b11385",
+      "scale_factor": "0.5",
+      "rounding": "0.001 mm/h, ROUND_HALF_UP",
+      "peak_correction_mm_h": "-0.010",
+      "correction_timestamp": "2016-10-08 02:50:00",
+      "peak_count": 2,
+      "total_rainfall_mm": 40
+    },
+    {
+      "shape": "double",
+      "depth_mm": 60,
+      "file": "events/chicago_like_double_4h_60mm_5min.txt",
+      "source_file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "source_sha256": "d9455a70e59319d7583a4064b0bda593de6eb9eae8b24286ca8d1d17c1b11385",
+      "scale_factor": "0.75",
+      "rounding": "0.001 mm/h, ROUND_HALF_UP",
+      "peak_correction_mm_h": "-0.008",
+      "correction_timestamp": "2016-10-08 02:50:00",
+      "peak_count": 2,
+      "total_rainfall_mm": 60
+    },
+    {
+      "shape": "triple",
+      "depth_mm": 20,
+      "file": "events/chicago_like_triple_4h_20mm_5min.txt",
+      "source_file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "source_sha256": "a3cf7b521be93f7e747439b13d84e2dc6e680d2a85e6b27d6009454d8ba94a47",
+      "scale_factor": "0.25",
+      "rounding": "0.001 mm/h, ROUND_HALF_UP",
+      "peak_correction_mm_h": "-0.006",
+      "correction_timestamp": "2016-10-08 01:50:00",
+      "peak_count": 3,
+      "total_rainfall_mm": 20
+    },
+    {
+      "shape": "triple",
+      "depth_mm": 40,
+      "file": "events/chicago_like_triple_4h_40mm_5min.txt",
+      "source_file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "source_sha256": "a3cf7b521be93f7e747439b13d84e2dc6e680d2a85e6b27d6009454d8ba94a47",
+      "scale_factor": "0.5",
+      "rounding": "0.001 mm/h, ROUND_HALF_UP",
+      "peak_correction_mm_h": "-0.012",
+      "correction_timestamp": "2016-10-08 01:50:00",
+      "peak_count": 3,
+      "total_rainfall_mm": 40
+    },
+    {
+      "shape": "triple",
+      "depth_mm": 60,
+      "file": "events/chicago_like_triple_4h_60mm_5min.txt",
+      "source_file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "source_sha256": "a3cf7b521be93f7e747439b13d84e2dc6e680d2a85e6b27d6009454d8ba94a47",
+      "scale_factor": "0.75",
+      "rounding": "0.001 mm/h, ROUND_HALF_UP",
+      "peak_correction_mm_h": "-0.005",
+      "correction_timestamp": "2016-10-08 01:50:00",
+      "peak_count": 3,
+      "total_rainfall_mm": 60
+    }
+  ],
+  "original_files_unchanged": true
+}

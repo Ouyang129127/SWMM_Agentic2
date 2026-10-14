@@ -1,0 +1,38 @@
+name: pystorms_beta
+type: swmm_2d
+description: Pystorms beta with full CFS-to-LPS conversion and a disclosed constructed CA2D surface.
+source_repository: https://github.com/kLabUM/pystorms
+source_path: pystorms/networks/beta.inp
+case_class: adapted_public_benchmark_with_synthetic_surface
+license_status: source_project_GPL_3_0_review_before_redistribution
+paths:
+  raw: raw
+  static: static
+  swmm: swmm
+  mapping: mapping
+  events: events
+  runs: runs
+default_scenario: baseline
+scenarios:
+  baseline:
+    swmm_inp: swmm/scenarios/baseline/model.inp
+    boundary: original_base_30_stage_with_explicit_one_hour_endpoint_hold
+  free_outfall:
+    swmm_inp: swmm/scenarios/free_outfall/model.inp
+    boundary: idealized_free_outfall_flap_gate_retained
+  tide_base00:
+    swmm_inp: swmm/scenarios/tide_base00/model.inp
+    boundary: base_tide_without_added_sea_level_rise_NOT_without_tide
+rain_gage_name: RG1
+ca2d:
+  static_model: static
+  node_to_cell_mapping: static/node_to_cell_mapping.csv
+  source_config: static/config.json
+  default_dt_seconds: 10.0
+  default_boundary_interval_minutes: 5.0
+  default_save_interval_minutes: 5.0
+notes:
+  - Surface is synthetic; anonymous coordinates are length-informed scaled, not georeferenced.
+  - Original 1-foot catchment widths, 100-percent slopes and pump settings are preserved in equivalent units.
+  - Fullness-derived link evidence currently covers circular pipes only; other shapes need explicit limits.
+  - No SWMM event, coupled storm or LLM diagnosis has been run by this preparation.

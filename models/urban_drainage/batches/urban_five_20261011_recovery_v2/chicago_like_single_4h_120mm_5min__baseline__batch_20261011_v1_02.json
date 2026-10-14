@@ -1,0 +1,49 @@
+{
+  "status": "failed",
+  "run_id": "chicago_like_single_4h_120mm_5min__baseline__batch_20261011_v1_02",
+  "event_file": "chicago_like_single_4h_120mm_5min.txt",
+  "started_at": "2026-10-11T02:08:45.047658+00:00",
+  "pid": 50272,
+  "supplement_rounds": 0,
+  "provider_calls": 2,
+  "calls_by_role": {
+    "diagnosis": 2
+  },
+  "history": [
+    {
+      "stage": "validate_saved_simulation",
+      "at": "2026-10-11T02:08:45.047658+00:00"
+    },
+    {
+      "stage": "simulation_handoff",
+      "at": "2026-10-11T02:08:45.107906+00:00"
+    },
+    {
+      "stage": "evidence",
+      "at": "2026-10-11T02:08:45.113599+00:00"
+    },
+    {
+      "stage": "initial_diagnosis_verification_report",
+      "at": "2026-10-11T02:09:04.367448+00:00"
+    }
+  ],
+  "simulation_reused": true,
+  "simulation_executed": false,
+  "stage": "initial_diagnosis_verification_report",
+  "simulation_summary": {
+    "max_flooding_Ls": 152.7071533203125,
+    "sampled_overflow_volume_m3": 269.74036038972,
+    "max_surface_depth_m": 0.6935355067253113
+  },
+  "simulation_handoff": {
+    "previous_state": "SCENARIO_READY",
+    "target_state": "RUN_READY"
+  },
+  "task_id": "6a2fbf4c62c8495989008005dbb14157",
+  "stop_reason": "execution_failed",
+  "error_type": "RuntimeError",
+  "finished_at": "2026-10-11T02:12:33.269214+00:00",
+  "exit_code": 1,
+  "elapsed_seconds": 240.016,
+  "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\urban_drainage\\batches\\urban_five_20261011_recovery_v2\\chicago_like_single_4h_120mm_5min__baseline__batch_20261011_v1_02.log"
+}

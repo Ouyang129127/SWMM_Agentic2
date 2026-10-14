@@ -1,0 +1,32 @@
+name: Sichuan_Shunqing
+type: swmm_2d
+description: Shunqing LPS dynamic-wave network with a constructed regional CA2D surface.
+case_class: user_supplied_network_with_constructed_surface
+source_provenance: user_local_INP; source author/title marker DSDAConvertToSwmmTools EcoVista
+license_status: unverified; confirm before redistributing source data
+paths:
+  raw: raw
+  static: static
+  swmm: swmm
+  mapping: mapping
+  events: events
+  runs: runs
+default_scenario: baseline
+scenarios:
+  baseline:
+    swmm_inp: swmm/scenarios/baseline/model.inp
+    boundary: original_eight_free_outfalls
+rain_gage_name: RainGage
+ca2d:
+  static_model: static
+  node_to_cell_mapping: static/node_to_cell_mapping.csv
+  source_config: static/config.json
+  default_dt_seconds: 10.0
+  default_boundary_interval_minutes: 5.0
+  default_save_interval_minutes: 5.0
+notes:
+  - Original LPS hydraulic and hydrologic parameters are unchanged; display coordinates translated only.
+  - Source CRS is unspecified; coordinate metric scale is supported by pipe lengths, not an EPSG claim.
+  - Twenty-metre surface is constructed, not surveyed DEM; corridors and obstacle blocks are hypothetical.
+  - Candidate event library is not a frozen formal evaluation matrix.
+  - No coupled rainfall run, LLM diagnosis or report is performed during preparation.

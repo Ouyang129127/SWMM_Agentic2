@@ -42,21 +42,22 @@ class FlowTests(unittest.IsolatedAsyncioTestCase):
         return messages + [{'role': 'user', 'content': latest}]
 
     async def initial(self, requests=None):
-        return await advance_investigation('m', 'r', 'initial',
-                    complete=AsyncMock(side_effect=lambda p: answer(p, requests)))
+        with patch('workflow_agents.reporting.pipeline.attach_display_report', new_callable=AsyncMock):
+            return await advance_investigation('m', 'r', 'initial',
+                        complete=AsyncMock(side_effect=lambda p: answer(p, requests)))
 
-    async def test_continue_executes_initial_instead_of_text_only_even_after_long_chat(self):
+    async def test_continue_only_prepares_initial_even_after_long_chat(self):
         complete = AsyncMock(side_effect=lambda prompt, audit=None: answer(prompt))
         with patch('workflow_agents.investigation.configured_completion', complete), \
              patch('web_app.run_web_orchestrator_agent_turn', new_callable=AsyncMock) as llm:
             reply = await web_app.run_orchestrator_turn(self.transcript(old=True))
         llm.assert_not_called()
-        complete.assert_awaited_once()
+        complete.assert_not_awaited()
         state = load_active_task('m', 'r')
-        self.assertEqual(state['state'], 'preliminary_delivered')
-        self.assertIn('N1:E001', reply)
+        self.assertEqual(state['state'], 'ready_for_diagnosis')
+        self.assertIn('尚未调用诊断模型', reply)
         self.assertIn(state['task_id'], reply)
-        self.assertEqual([h['action'] for h in state['history']], ['prepare', 'diagnose', 'verify', 'report'])
+        self.assertEqual([h['action'] for h in state['history']], ['prepare'])
 
     async def test_report_does_not_overwrite_concurrent_task_change(self):
         state=await self.initial()
@@ -174,7 +175,7 @@ class FlowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(current['last_evidence_added_ids'], [])
         self.assertEqual(current['revision'], 1)
         self.assertIn('当前保存数据或提取方法不能满足', reply)
-        self.assertIn('初步诊断流程已完成', repeated)
+        self.assertIn('当前流程已完成', repeated)
         self.assertEqual(len(list((self.root/'diagnosis_tasks').glob('*/task.json'))), 1)
 
     async def test_initial_is_idempotent_and_frozen_snapshot_is_checked_on_terminal_resume(self):

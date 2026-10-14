@@ -1,0 +1,35 @@
+{
+  "old_run_id": "ba20_20261013_p1",
+  "new_run_id": "ba20_7h_20261014",
+  "changes": "rainfall end plus 20 h -> rainfall end plus 3 h; no other model/rainfall settings changed",
+  "old": {
+    "swmm_saved_times": 1441,
+    "ca2d_saved_times": 289,
+    "surface_records": 15171055,
+    "surface_depth_bytes": 467244225,
+    "request_characters_first_diagnosis": 742347,
+    "routing_continuity_pct": -9.314,
+    "steps_not_converging_pct": 4.28
+  },
+  "new": {
+    "swmm_saved_times": 421,
+    "ca2d_saved_times": 85,
+    "surface_records": 4462075,
+    "surface_depth_bytes": 137431055,
+    "request_characters_first_diagnosis": 742339,
+    "routing_continuity_pct": 0.293,
+    "steps_not_converging_pct": 8.72
+  },
+  "overflow_saved_volume_same": true,
+  "max_surface_depth_same": true,
+  "swmm_table_prefix_match_before_07_00": true,
+  "terminal_sample_differences": {
+    "time": "2016-10-08 07:00:00",
+    "nodes_changed_rows": 169,
+    "maximum_depth_difference_m": 0.01463806599999995,
+    "links_changed_rows": 202,
+    "maximum_flow_difference_Ls": 7.123275000000007,
+    "maximum_link_depth_difference_m": 1.7554000000030712e-05
+  },
+  "comparison_scope": "Saved table numeric comparison, not independent hydraulic or causal validation"
+}

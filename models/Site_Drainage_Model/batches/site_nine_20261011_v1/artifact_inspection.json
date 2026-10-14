@@ -1,0 +1,887 @@
+{
+  "batch_id": "site_nine_20261011_v1",
+  "analysis_date": "2026-10-11",
+  "causal_validity_checked": false,
+  "frozen_file_count": 85,
+  "all_frozen_files_unchanged": true,
+  "frozen_file_checks": {
+    "ca2d.py": true,
+    "llm.py": true,
+    "models/Site_Drainage_Model/events/chicago_like_double_4h_120mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_double_4h_160mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_double_4h_80mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_single_4h_120mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_single_4h_160mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_single_4h_80mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_triple_4h_120mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_triple_4h_160mm_5min.txt": true,
+    "models/Site_Drainage_Model/events/chicago_like_triple_4h_80mm_5min.txt": true,
+    "models/Site_Drainage_Model/model.yaml": true,
+    "models/Site_Drainage_Model/simulation_timing.json": true,
+    "models/Site_Drainage_Model/static/backdrop_layout_reference.png": true,
+    "models/Site_Drainage_Model/static/build_summary.md": true,
+    "models/Site_Drainage_Model/static/building_mask.npy": true,
+    "models/Site_Drainage_Model/static/ca2d_elevation_3d.png": true,
+    "models/Site_Drainage_Model/static/ca2d_layout_preview.png": true,
+    "models/Site_Drainage_Model/static/ca2d_smoke_test.png": true,
+    "models/Site_Drainage_Model/static/ca2d_static_preview.png": true,
+    "models/Site_Drainage_Model/static/cell_id_grid.npy": true,
+    "models/Site_Drainage_Model/static/cells.csv": true,
+    "models/Site_Drainage_Model/static/config.json": true,
+    "models/Site_Drainage_Model/static/domain_mask.npy": true,
+    "models/Site_Drainage_Model/static/elevation.npy": true,
+    "models/Site_Drainage_Model/static/flow_mask.npy": true,
+    "models/Site_Drainage_Model/static/layout_validation.json": true,
+    "models/Site_Drainage_Model/static/node_to_cell_mapping.csv": true,
+    "models/Site_Drainage_Model/static/resistance.npy": true,
+    "models/Site_Drainage_Model/static/road_mask.npy": true,
+    "models/Site_Drainage_Model/static/smid_grid.npy": true,
+    "models/Site_Drainage_Model/static/synthetic_buildings.csv": true,
+    "models/Site_Drainage_Model/static/synthetic_streets.csv": true,
+    "models/Site_Drainage_Model/static/terrain.npy": true,
+    "models/Site_Drainage_Model/static/valid_mask.npy": true,
+    "models/Site_Drainage_Model/swmm/scenarios/baseline/model.inp": true,
+    "scripts/run_site_drainage_batch_20261011.py": true,
+    "simulation_timing.py": true,
+    "tests/test_site_nine_batch.py": true,
+    "tools.py": true,
+    "workflow_agents/__init__.py": true,
+    "workflow_agents/diagnosis_contract.py": true,
+    "workflow_agents/event_packages.py": true,
+    "workflow_agents/evidence_builder.py": true,
+    "workflow_agents/evidence_package.py": true,
+    "workflow_agents/evidence_selection.py": true,
+    "workflow_agents/investigation.py": true,
+    "workflow_agents/investigation_flow.py": true,
+    "workflow_agents/orchestrator.py": true,
+    "workflow_agents/rainfall_context.py": true,
+    "workflow_agents/reference_checks.py": true,
+    "workflow_agents/reporting/__init__.py": true,
+    "workflow_agents/reporting/labels.py": true,
+    "workflow_agents/reporting/materials.py": true,
+    "workflow_agents/reporting/narrative.py": true,
+    "workflow_agents/reporting/pipeline.py": true,
+    "workflow_agents/reporting/plots.py": true,
+    "workflow_agents/reporting/prompts/causes_overview_v1.md": true,
+    "workflow_agents/reporting/prompts/event_example_lateral_v1.json": true,
+    "workflow_agents/reporting/prompts/event_example_outflow_v1.json": true,
+    "workflow_agents/reporting/prompts/event_example_P7_v1.json": true,
+    "workflow_agents/reporting/prompts/event_example_v1.json": true,
+    "workflow_agents/reporting/prompts/event_rewrite_v1.md": true,
+    "workflow_agents/reporting/prompts/event_rewrite_v2.md": true,
+    "workflow_agents/reporting/prompts/intro_rewrite_v1.md": true,
+    "workflow_agents/reporting/prompts/rain_fixed_v1.md": true,
+    "workflow_agents/reporting/prompts/rain_template_v1.json": true,
+    "workflow_agents/reporting/prompts/scene_fixed_v1.md": true,
+    "workflow_agents/reporting/prompts/scene_template_v1.json": true,
+    "workflow_agents/reporting/prompts/surface_basis_v1.json": true,
+    "workflow_agents/reporting/prompts/surface_basis_v1.md": true,
+    "workflow_agents/reporting/rain.py": true,
+    "workflow_agents/reporting/README.md": true,
+    "workflow_agents/reporting/render.py": true,
+    "workflow_agents/reporting/scene.py": true,
+    "workflow_agents/reporting/surface.py": true,
+    "workflow_agents/sampled_events.py": true,
+    "workflow_agents/saved_result_evidence.py": true,
+    "workflow_agents/scenario.py": true,
+    "workflow_agents/schemas.py": true,
+    "workflow_agents/state.py": true,
+    "workflow_agents/task_scope.py": true,
+    "workflow_agents/topology_scope.py": true,
+    "workflow_agents/web_presentation.py": true,
+    "workflow_agents/web_session.py": true
+  },
+  "case_count": 9,
+  "cases": [
+    {
+      "run_id": "s9_1011_01",
+      "event_file": "chicago_like_single_4h_80mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 80,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.7066435813903809,
+        "max_saved_link_flow_Ls": 6292.05322,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.216,
+        "flow_routing_continuity_error_percent": 0.003
+      },
+      "task_id": "66a0ad9df54e4ed4a0c67731d345c8c9",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 90.015,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_01\\diagnosis_tasks\\66a0ad9df54e4ed4a0c67731d345c8c9\\display_reports\\r1\\20261011_200817_efed4043\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_01\\diagnosis_tasks\\66a0ad9df54e4ed4a0c67731d345c8c9\\display_reports\\r1\\20261011_200817_efed4043\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_01\\diagnosis_tasks\\66a0ad9df54e4ed4a0c67731d345c8c9\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_01\\diagnosis_tasks\\66a0ad9df54e4ed4a0c67731d345c8c9\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_01\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_01\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "b0909fb4ff3b2e9150f289dc25482393ab6f63a7d6cc003b0379ba9fa7862725",
+        "swmm/model.rpt": "33f8d004d3798591456deeb4ce16e8036b0a708540f54c3c22ff404d992d4f4d",
+        "swmm/model.out": "b03e0bf533c43c39050bde2d70649d4bdfc46598486c7115beeb883ef59c7ce1",
+        "swmm/nodes.tsv": "840ed4ed46bb9fd7dd8bf7314d4d79005c9f58349a99210b7fe4907f68df0595",
+        "swmm/links.tsv": "30c35e705abfae0e381b5e408ac09eb514b34cc9e34befe18124d963a9cc7b46",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_02",
+      "event_file": "chicago_like_single_4h_120mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 120,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.8907379508018494,
+        "max_saved_link_flow_Ls": 10111.9365,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.206,
+        "flow_routing_continuity_error_percent": 0.014
+      },
+      "task_id": "7e73ea9abef24156ad905dcb475b14a8",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 60,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_02\\diagnosis_tasks\\7e73ea9abef24156ad905dcb475b14a8\\display_reports\\r1\\20261011_200947_5625195e\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_02\\diagnosis_tasks\\7e73ea9abef24156ad905dcb475b14a8\\display_reports\\r1\\20261011_200947_5625195e\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_02\\diagnosis_tasks\\7e73ea9abef24156ad905dcb475b14a8\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_02\\diagnosis_tasks\\7e73ea9abef24156ad905dcb475b14a8\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_02\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_02\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "792ad6933c7ebfbc7b241c289e0fb26ecce364975ed913634aab8a8e9229cfb4",
+        "swmm/model.rpt": "88af1e174f4e40d0239e78db0a8a762cec8ad55e961278dc763a987086ad5fe7",
+        "swmm/model.out": "4a63548d8d7ae22ce90182afa800bbc016b45d9d40de7872e3bf872684e6d182",
+        "swmm/nodes.tsv": "5a1d59c65322fb6e35b295af5c5e3116b2085a94318d014da4c35e9b998ad61c",
+        "swmm/links.tsv": "ee340698af69cce1103bf1090062abb3a72cc9fce967cc0ed8f39a5b3704f104",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_03",
+      "event_file": "chicago_like_single_4h_160mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 160,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 1.0493735074996948,
+        "max_saved_link_flow_Ls": 14077.3301,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.2,
+        "flow_routing_continuity_error_percent": 0.015
+      },
+      "task_id": "593d9a03acec402cbf9e4a63f25173a0",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 60,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_03\\diagnosis_tasks\\593d9a03acec402cbf9e4a63f25173a0\\display_reports\\r1\\20261011_201047_e337f15d\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_03\\diagnosis_tasks\\593d9a03acec402cbf9e4a63f25173a0\\display_reports\\r1\\20261011_201047_e337f15d\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_03\\diagnosis_tasks\\593d9a03acec402cbf9e4a63f25173a0\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_03\\diagnosis_tasks\\593d9a03acec402cbf9e4a63f25173a0\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_03\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_03\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "721a1fcd34a3efe6a1ea391d849391bb68bab2d1e5854bf2e8955b2aab6c5bf9",
+        "swmm/model.rpt": "8ccfa078a50f700a2ff944fceff9c51845d40768ff4f18fde4f1b65c6ab99a3d",
+        "swmm/model.out": "5b0d228f00e72ee973772101c8086370281c3185687ef0b20d47666b4187b731",
+        "swmm/nodes.tsv": "7008b9de5dd1cdbabe1dce565ed2db26bec7d104c78d539431dccaa55d50c9b5",
+        "swmm/links.tsv": "5bd6bd0338515353b032072df1e7150b0ea48860239a88dc5471c7fff0559aa5",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_04",
+      "event_file": "chicago_like_double_4h_80mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 80,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.5722039937973022,
+        "max_saved_link_flow_Ls": 4057.73511,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.34,
+        "flow_routing_continuity_error_percent": -0.007
+      },
+      "task_id": "cde54f56787e4f2b819474b57437a626",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 60.016,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_04\\diagnosis_tasks\\cde54f56787e4f2b819474b57437a626\\display_reports\\r1\\20261011_201147_38dc2234\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_04\\diagnosis_tasks\\cde54f56787e4f2b819474b57437a626\\display_reports\\r1\\20261011_201147_38dc2234\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_04\\diagnosis_tasks\\cde54f56787e4f2b819474b57437a626\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_04\\diagnosis_tasks\\cde54f56787e4f2b819474b57437a626\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_04\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_04\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "197cbaec4e509f0654f033930ed695cd985c3dd832341d16745e38127000f56d",
+        "swmm/model.rpt": "860680e27ba62b9db4a2fc0db08e8d5e8ae491c3b669f4a6f8d9b383fab5c8f7",
+        "swmm/model.out": "a8ad85ef4f336865c6fded369144e5430a140a2c9b31d359dfc0be3557c4d6a3",
+        "swmm/nodes.tsv": "654504d36def8cb51e56e88e710707e1abc71e1743f486f64bd97858b072d73a",
+        "swmm/links.tsv": "f255846d41c9343596d9df83ca4c9e4a316143dc759239426f86f94837c677da",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_05",
+      "event_file": "chicago_like_double_4h_120mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 120,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.7219772338867188,
+        "max_saved_link_flow_Ls": 6582.10938,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.33,
+        "flow_routing_continuity_error_percent": 0.014
+      },
+      "task_id": "cb984491fe4e40d386a96f581e97acc7",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 60,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_05\\diagnosis_tasks\\cb984491fe4e40d386a96f581e97acc7\\display_reports\\r1\\20261011_201248_d35d80a3\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_05\\diagnosis_tasks\\cb984491fe4e40d386a96f581e97acc7\\display_reports\\r1\\20261011_201248_d35d80a3\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_05\\diagnosis_tasks\\cb984491fe4e40d386a96f581e97acc7\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_05\\diagnosis_tasks\\cb984491fe4e40d386a96f581e97acc7\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_05\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_05\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "7942495b3fbab5a809618756fc568bb5c90194894aa0f157875ca8e50f11ac9f",
+        "swmm/model.rpt": "1b4c0cf3bc5069b750bb2741f162c1b828a774e0838947cf43afafd49124671b",
+        "swmm/model.out": "fb9333ddc0184982a577fca83514181ca96c39ce8243183ed13becf9b5b59154",
+        "swmm/nodes.tsv": "7f4547734f3781e730cdb4948d131ef3f228dc6150027bb8de57e3ff967ef04b",
+        "swmm/links.tsv": "6cd6ffd3d8ed61f982564023fb9e0ed90b947feef7aed0a6ed3a8a4f156a08dc",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_06",
+      "event_file": "chicago_like_double_4h_160mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 160,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.852220356464386,
+        "max_saved_link_flow_Ls": 9239.05957,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.323,
+        "flow_routing_continuity_error_percent": 0.018
+      },
+      "task_id": "671125f230d3401fa196527d03cad4cc",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 2,
+      "calls_by_role": {
+        "report": 2
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 90.016,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_06\\diagnosis_tasks\\671125f230d3401fa196527d03cad4cc\\display_reports\\r1\\20261011_201347_52dea2ee\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "failed",
+          "error": "Overall causes must synthesize explanations without repeated quantitative facts; leave numeric references to event analyses and other chapters"
+        },
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_06\\diagnosis_tasks\\671125f230d3401fa196527d03cad4cc\\display_reports\\r1\\20261011_201347_52dea2ee\\narrative_attempt_2.json",
+          "attempt": 2,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_06\\diagnosis_tasks\\671125f230d3401fa196527d03cad4cc\\display_reports\\r1\\20261011_201347_52dea2ee\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_06\\diagnosis_tasks\\671125f230d3401fa196527d03cad4cc\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_06\\diagnosis_tasks\\671125f230d3401fa196527d03cad4cc\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_06\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_06\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "38fbae7796d03b078c127455bb382942394d86f1df1082fca1f531b873ea2797",
+        "swmm/model.rpt": "df91e29b51e26ae2ba37d048a9ad5acdd6fbfd76df35870da27903a284cf8f54",
+        "swmm/model.out": "0e1b19fb794087dcf128e1a1df66470a8fb6e4d0da9656a3c215804ddb413f40",
+        "swmm/nodes.tsv": "fdc36cf9cc1606e9980b2d1105f5fceca6bd51b5f22adc67049c5e35112a1de7",
+        "swmm/links.tsv": "76ca7f631c45dd8750662d12ab75ac91dce8bf48d9993889c51ec5b623bd453b",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_07",
+      "event_file": "chicago_like_triple_4h_80mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 80,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.5537059307098389,
+        "max_saved_link_flow_Ls": 3791.97461,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.473,
+        "flow_routing_continuity_error_percent": -0.008
+      },
+      "task_id": "9646540cffd94e90b700f10bd112d5c6",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 60.016,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_07\\diagnosis_tasks\\9646540cffd94e90b700f10bd112d5c6\\display_reports\\r1\\20261011_201518_65de4c94\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_07\\diagnosis_tasks\\9646540cffd94e90b700f10bd112d5c6\\display_reports\\r1\\20261011_201518_65de4c94\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_07\\diagnosis_tasks\\9646540cffd94e90b700f10bd112d5c6\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_07\\diagnosis_tasks\\9646540cffd94e90b700f10bd112d5c6\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_07\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_07\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "77e1ea4fe61473d64341287b42e49c6a4d38847271cd7745174ea829b9d88cac",
+        "swmm/model.rpt": "6c5736ba1cc0864a8721208176432e01808349899d5e90351a2db50e312aeb40",
+        "swmm/model.out": "abfdac31f1d1bca21db8551bf44eb1019798fa874cdfb7de2e00d37575ede364",
+        "swmm/nodes.tsv": "ae61c262d7d008caaaf0cbd5ee238c7941d1f4a9192ee1ccb3e8cc5f9d518c45",
+        "swmm/links.tsv": "776e8ebd15b83be049a90802e20d52996b74496bf7260d0396afbe22f7c1547e",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_08",
+      "event_file": "chicago_like_triple_4h_120mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 120,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.6996772885322571,
+        "max_saved_link_flow_Ls": 6165.09863,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.465,
+        "flow_routing_continuity_error_percent": 0.007
+      },
+      "task_id": "4b6fa89c0aef4397882942d796795f55",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 90,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_08\\diagnosis_tasks\\4b6fa89c0aef4397882942d796795f55\\display_reports\\r1\\20261011_201618_d0db6814\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_08\\diagnosis_tasks\\4b6fa89c0aef4397882942d796795f55\\display_reports\\r1\\20261011_201618_d0db6814\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_08\\diagnosis_tasks\\4b6fa89c0aef4397882942d796795f55\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_08\\diagnosis_tasks\\4b6fa89c0aef4397882942d796795f55\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_08\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_08\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "1814b7db94651110e1544dc610beacbe9afadb30240a8e6f16f56617adbef479",
+        "swmm/model.rpt": "3e9f4767f7044795fe343904a1c76c09012b805db74ecee83adc4d813cbd2682",
+        "swmm/model.out": "d6b7487dc587e6876d889154e8938ec13f33845be4271a59e55d4cfb14ec352c",
+        "swmm/nodes.tsv": "012e0fe338c63e1904ba11661e241de4be3997ff07a785dc8a3fb9f6221f3815",
+        "swmm/links.tsv": "075a30a0c52a2ac2fa115fcbd81bf68e605dbdc82241dcadd9bc098bca96cc51",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    },
+    {
+      "run_id": "s9_1011_09",
+      "event_file": "chicago_like_triple_4h_160mm_5min.txt",
+      "status": "completed",
+      "simulation": {
+        "ca2d_status": "COMPLETED",
+        "native_rainfall_mm": 160,
+        "max_flooding_Ls": 0,
+        "sampled_overflow_volume_m3": 0,
+        "max_surface_depth_m": 0,
+        "max_node_depth_m": 0.8268488645553589,
+        "max_saved_link_flow_Ls": 8688.04688,
+        "raw_saved_positive_overflow_node_count": 0,
+        "runoff_quantity_continuity_error_percent": -0.465,
+        "flow_routing_continuity_error_percent": 0.015
+      },
+      "task_id": "62fdd1bca1c4455089b12d3ab6270a23",
+      "revision": 1,
+      "event_count": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "report": 1
+      },
+      "supplement_rounds": 0,
+      "elapsed_seconds": 60.015,
+      "stop_reason": "no_new_evidence",
+      "mechanism_statuses": {
+        "M1": "not_investigated",
+        "M2": "not_investigated",
+        "M3": "not_investigated",
+        "M4": "not_investigated",
+        "M5": "not_investigated",
+        "M6": "not_investigated"
+      },
+      "reference_summary": {
+        "total_claims": 1,
+        "references_verified": 1,
+        "references_missing": 0,
+        "no_references": 0,
+        "reference_failure_rate": 0
+      },
+      "artifact_checks": {
+        "rainfall_sha_matches_plan": true,
+        "native_rain_total_matches_event": true,
+        "snapshot_sha_matches_task": true,
+        "diagnosis_sha_matches_task": true,
+        "verification_sha_matches_task": true,
+        "evidence_binding_current": true,
+        "report_revision_current": true,
+        "display_revision_current": true,
+        "html_sha_matches_task": true,
+        "embedded_images_valid": true,
+        "all_references_verified": true
+      },
+      "embedded_images": 5,
+      "embedded_image_types": [
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/png",
+        "image/gif"
+      ],
+      "report_narrative_attempts": [
+        {
+          "file": "models\\Site_Drainage_Model\\runs\\s9_1011_09\\diagnosis_tasks\\62fdd1bca1c4455089b12d3ab6270a23\\display_reports\\r1\\20261011_201748_4e8a72f5\\narrative_attempt_1.json",
+          "attempt": 1,
+          "status": "passed",
+          "error": null
+        }
+      ],
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_09\\diagnosis_tasks\\62fdd1bca1c4455089b12d3ab6270a23\\display_reports\\r1\\20261011_201748_4e8a72f5\\模拟诊断报告.html",
+      "structured_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_09\\diagnosis_tasks\\62fdd1bca1c4455089b12d3ab6270a23\\report.json",
+      "verification_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_09\\diagnosis_tasks\\62fdd1bca1c4455089b12d3ab6270a23\\verification.json",
+      "summary_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_09\\summary.json",
+      "native_report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\Site_Drainage_Model\\runs\\s9_1011_09\\swmm\\model.rpt",
+      "attempt_audit_count": 1,
+      "simulation_artifact_sha256": {
+        "summary.json": "3d26ca75c7636fe4e866cf40ab72caeb76cc54e82189231aff7cafed2a42eff5",
+        "swmm/model.rpt": "faba8f89dd171e778d87aad28caa313861fa5ec13167a4ff7128ee352e8f3805",
+        "swmm/model.out": "0ecce37fd7126b177f535734916d339c7cf94e9b28636b5108b4a56abbf66039",
+        "swmm/nodes.tsv": "c141f21bf0cfdaf0e3b1649f81bcf2e6b28ec2ee9490412a007f495de68d2318",
+        "swmm/links.tsv": "06a78f17da5ac426e883612741359d083ec904a7988ec2c6e21aa9d156c451dd",
+        "swmm/node_flooding.tsv": "498672a510c19865b6fab84ca78ea5aecd375a94a1063dd44f67b347be126f56",
+        "ca2d/surface_depth.tsv": "f44306d87fa65f21c41d86916d32ddd39643699acbc961f991f87463725eefd6",
+        "ca2d/boundary_inflow_5min.tsv": "e8f4aad52b08a24ea5c4399751f86ed340e446d146ab0e12dd123fe39197bfc6"
+      }
+    }
+  ],
+  "execution_lock_exists": false
+}

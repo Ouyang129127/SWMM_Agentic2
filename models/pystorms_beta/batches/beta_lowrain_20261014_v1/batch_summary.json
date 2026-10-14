@@ -1,0 +1,479 @@
+{
+  "batch_id": "beta_lowrain_20261014_v1",
+  "cases": [
+    {
+      "status": "failed",
+      "run_id": "bl_1014_01",
+      "event_file": "chicago_like_single_4h_40mm_5min.txt",
+      "started_at": "2026-10-14T02:42:07.483814+00:00",
+      "pid": 31048,
+      "supplement_rounds": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "diagnosis": 1
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T02:42:07.483814+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T02:42:07.489102+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T02:42:33.892077+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T02:42:33.894585+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T02:43:24.275221+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "initial_diagnosis_verification_report",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 524.1875610351562,
+        "sampled_overflow_volume_m3": 2202.3663472405146,
+        "max_surface_depth_m": 0.7594054937362671
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "4596de6689544fe98c657b4cb654144a",
+      "stop_reason": "execution_failed",
+      "error_type": "RuntimeError",
+      "error_message": "Diagnosis/verification stopped before current delivery",
+      "finished_at": "2026-10-14T02:43:37.029503+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 120.016,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_01.log"
+    },
+    {
+      "status": "failed",
+      "run_id": "bl_1014_02",
+      "event_file": "chicago_like_single_4h_60mm_5min.txt",
+      "started_at": "2026-10-14T02:44:07.656336+00:00",
+      "pid": 35936,
+      "supplement_rounds": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "diagnosis": 1
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T02:44:07.656336+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T02:44:07.660910+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T02:44:35.200197+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T02:44:35.202196+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T02:45:27.470234+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "initial_diagnosis_verification_report",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 1627.3203125,
+        "sampled_overflow_volume_m3": 11217.260590902133,
+        "max_surface_depth_m": 2.524014711380005
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "375ada0aac754b038a883dd3866b8967",
+      "stop_reason": "execution_failed",
+      "error_type": "RuntimeError",
+      "error_message": "Diagnosis/verification stopped before current delivery",
+      "finished_at": "2026-10-14T02:45:50.969635+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 120.0,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_02.log"
+    },
+    {
+      "status": "completed_with_gaps",
+      "run_id": "bl_1014_03",
+      "event_file": "chicago_like_double_4h_20mm_5min.txt",
+      "started_at": "2026-10-14T02:46:07.825668+00:00",
+      "pid": 36584,
+      "supplement_rounds": 1,
+      "provider_calls": 5,
+      "calls_by_role": {
+        "diagnosis": 2,
+        "report": 3
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T02:46:07.825668+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T02:46:07.831479+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T02:46:32.573628+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T02:46:32.575628+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T02:47:23.676192+00:00"
+        },
+        {
+          "stage": "supplement_round_1",
+          "at": "2026-10-14T02:53:01.623602+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "supplement_round_1",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 114.99403381347656,
+        "sampled_overflow_volume_m3": 53.85133996800002,
+        "max_surface_depth_m": 0.13729387521743774
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "febae883014840fca7e1f060b73a90fb",
+      "stop_reason": "capability_gaps",
+      "task_state": "preliminary_delivered",
+      "revision": 2,
+      "event_count": 4,
+      "report_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\bl_1014_03\\diagnosis_tasks\\febae883014840fca7e1f060b73a90fb\\display_reports\\r2\\20261014_105435_be41db5e\\模拟诊断报告.html",
+      "evidence_closure": "capability_gaps",
+      "pending_evidence_requests": false,
+      "unresolved_evidence_requests": [
+        {
+          "request": {
+            "tool": "unavailable",
+            "object_type": "cell",
+            "metric_name": "surface_return_path",
+            "reason": "surface_association is not_built for all four events, and the current SWMM-to-CA2D transfer is one-way; without coupled two-way or mapped-cell source attribution, surface return into the pipe network cannot be inferred."
+          },
+          "status": "unavailable",
+          "matching_evidence_ids": [],
+          "new_evidence_ids": []
+        }
+      ],
+      "causal_validity_checked": false,
+      "finished_at": "2026-10-14T02:55:57.027099+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 600.016,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_03.log"
+    },
+    {
+      "status": "failed",
+      "run_id": "bl_1014_04",
+      "event_file": "chicago_like_double_4h_40mm_5min.txt",
+      "started_at": "2026-10-14T02:56:08.025242+00:00",
+      "pid": 38140,
+      "supplement_rounds": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "diagnosis": 1
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T02:56:08.025242+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T02:56:08.029332+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T02:56:32.706173+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T02:56:32.709252+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T02:57:23.157963+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "initial_diagnosis_verification_report",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 672.9371948242188,
+        "sampled_overflow_volume_m3": 3075.656110050647,
+        "max_surface_depth_m": 1.1483616828918457
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "3830c07ef52f430eaa733546f0138940",
+      "stop_reason": "execution_failed",
+      "error_type": "RuntimeError",
+      "error_message": "Diagnosis/verification stopped before current delivery",
+      "finished_at": "2026-10-14T02:57:32.444451+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 90.0,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_04.log"
+    },
+    {
+      "status": "failed",
+      "run_id": "bl_1014_05",
+      "event_file": "chicago_like_double_4h_60mm_5min.txt",
+      "started_at": "2026-10-14T02:57:38.149764+00:00",
+      "pid": 29960,
+      "supplement_rounds": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "diagnosis": 1
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T02:57:38.149764+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T02:57:38.154436+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T02:58:03.930403+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T02:58:03.932300+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T02:58:55.174501+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "initial_diagnosis_verification_report",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 1757.88671875,
+        "sampled_overflow_volume_m3": 11103.527253509124,
+        "max_surface_depth_m": 2.994999647140503
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "bd54fc260f2046a1893af386ae1521f9",
+      "stop_reason": "execution_failed",
+      "error_type": "RuntimeError",
+      "error_message": "Diagnosis/verification stopped before current delivery",
+      "finished_at": "2026-10-14T02:59:10.404793+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 120.016,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_05.log"
+    },
+    {
+      "status": "failed",
+      "run_id": "bl_1014_06",
+      "event_file": "chicago_like_triple_4h_20mm_5min.txt",
+      "started_at": "2026-10-14T02:59:38.312154+00:00",
+      "pid": 33620,
+      "supplement_rounds": 2,
+      "provider_calls": 6,
+      "calls_by_role": {
+        "diagnosis": 4,
+        "report": 2
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T02:59:38.312154+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T02:59:38.317300+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T03:00:01.385037+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T03:00:01.387232+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T03:00:50.728127+00:00"
+        },
+        {
+          "stage": "supplement_round_1",
+          "at": "2026-10-14T03:04:41.926866+00:00"
+        },
+        {
+          "stage": "supplement_round_2",
+          "at": "2026-10-14T03:07:34.044613+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "supplement_round_2",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 83.31378173828125,
+        "sampled_overflow_volume_m3": 35.630053173600004,
+        "max_surface_depth_m": 0.11877405643463135
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "ee9c7c4698a54d62afb984e779573d16",
+      "stop_reason": "capability_gaps",
+      "error_type": "RuntimeError",
+      "error_message": "Current HTML report did not pass delivery checks",
+      "finished_at": "2026-10-14T03:10:11.916806+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 660.016,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_06.log"
+    },
+    {
+      "status": "failed",
+      "run_id": "bl_1014_07",
+      "event_file": "chicago_like_triple_4h_40mm_5min.txt",
+      "started_at": "2026-10-14T03:10:38.516590+00:00",
+      "pid": 884,
+      "supplement_rounds": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "diagnosis": 1
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T03:10:38.516590+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T03:10:38.522112+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T03:11:04.912794+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T03:11:04.915829+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T03:11:56.864056+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "initial_diagnosis_verification_report",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 439.75921630859375,
+        "sampled_overflow_volume_m3": 1966.6916148370437,
+        "max_surface_depth_m": 0.7555943727493286
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "06e655630f4640d4a20fdbb46944b5d9",
+      "stop_reason": "execution_failed",
+      "error_type": "RuntimeError",
+      "error_message": "Diagnosis/verification stopped before current delivery",
+      "finished_at": "2026-10-14T03:12:08.161212+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 120.016,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_07.log"
+    },
+    {
+      "status": "failed",
+      "run_id": "bl_1014_08",
+      "event_file": "chicago_like_triple_4h_60mm_5min.txt",
+      "started_at": "2026-10-14T03:12:38.709597+00:00",
+      "pid": 37184,
+      "supplement_rounds": 0,
+      "provider_calls": 1,
+      "calls_by_role": {
+        "diagnosis": 1
+      },
+      "history": [
+        {
+          "stage": "scenario",
+          "at": "2026-10-14T03:12:38.709597+00:00"
+        },
+        {
+          "stage": "simulation",
+          "at": "2026-10-14T03:12:38.715627+00:00"
+        },
+        {
+          "stage": "simulation_handoff",
+          "at": "2026-10-14T03:13:05.917182+00:00"
+        },
+        {
+          "stage": "evidence",
+          "at": "2026-10-14T03:13:05.919149+00:00"
+        },
+        {
+          "stage": "initial_diagnosis_verification_report",
+          "at": "2026-10-14T03:14:05.523919+00:00"
+        }
+      ],
+      "simulation_reused": false,
+      "simulation_executed": true,
+      "stage": "initial_diagnosis_verification_report",
+      "actual_window_verified": true,
+      "simulation_summary": {
+        "max_flooding_Ls": 8413.0556640625,
+        "sampled_overflow_volume_m3": 10120.06054860781,
+        "max_surface_depth_m": 3.0586891174316406
+      },
+      "simulation_handoff": {
+        "previous_state": "SCENARIO_READY",
+        "target_state": "RUN_READY"
+      },
+      "task_id": "f1b7036f6ee04f2badc9de3e72c736c6",
+      "stop_reason": "execution_failed",
+      "error_type": "RuntimeError",
+      "error_message": "Diagnosis/verification stopped before current delivery",
+      "finished_at": "2026-10-14T03:14:20.571696+00:00",
+      "exit_code": 1,
+      "elapsed_seconds": 120.0,
+      "log_file": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\batches\\beta_lowrain_20261014_v1\\bl_1014_08.log"
+    }
+  ],
+  "updated_at": "2026-10-14T03:14:37.869765+00:00",
+  "causal_validity_checked": false
+}

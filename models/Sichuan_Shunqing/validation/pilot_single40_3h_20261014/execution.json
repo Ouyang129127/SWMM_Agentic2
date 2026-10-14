@@ -1,0 +1,184 @@
+{
+  "run_id": "sq40_3h_20261014_p1",
+  "model_name": "Sichuan_Shunqing",
+  "status": "failed",
+  "stage": "initial_diagnosis_verification_report",
+  "purpose": "same_rainfall_three_hour_tail_pilot",
+  "started_at": "2026-10-14T02:06:06.109976+00:00",
+  "pid": 34108,
+  "provider_calls": 1,
+  "calls_by_role": {
+    "diagnosis": 1
+  },
+  "supplement_rounds": 0,
+  "max_provider_calls": 21,
+  "max_supplement_rounds": 2,
+  "stage_timeout_seconds": 1800,
+  "simulation_timing": {
+    "swmm_save_interval_minutes": 1.0,
+    "boundary_interval_minutes": 5.0,
+    "ca2d_save_interval_minutes": 5.0,
+    "post_rainfall_hours": 3.0,
+    "boundary_method": "interval_mean",
+    "rainfall_time_convention": "interval_start",
+    "rationale": "Rainfall end plus 3 h, per user instruction; 4 h synthetic events run for 7 h and the 25 h source event for 28 h; fixed observation window, not validated as complete drainage"
+  },
+  "input_and_code_sha256": {
+    "models\\Sichuan_Shunqing\\shunqing.inp": "fc7c00fdb738de0adcbe93535b9cabdc72fef2fa1ea701bb3b937aade5cdf1ea",
+    "models\\Sichuan_Shunqing\\raw\\shunqing_original.inp": "fc7c00fdb738de0adcbe93535b9cabdc72fef2fa1ea701bb3b937aade5cdf1ea",
+    "models\\Sichuan_Shunqing\\swmm\\scenarios\\baseline\\model.inp": "3c7821e31eb10724b2db3cbdd49220f75606e0d3d806c20820295b8150479ec1",
+    "models\\Sichuan_Shunqing\\events\\chicago_like_single_4h_40mm_5min.txt": "acc8ea47e9754f4d70b330aabf9e781f9d92fe8c8192598223ee95d848ae33b3",
+    "models\\Sichuan_Shunqing\\simulation_timing.json": "6d7284396360902fced2253c21d046ad5b3be280940e17b5d6d2fc8b4350af49",
+    "models\\Sichuan_Shunqing\\events\\manifest.json": "826880a10696fe7545a2e77d795bcdbabf8335018b24029e4b437927cf878089",
+    "models\\Sichuan_Shunqing\\model.yaml": "6e49b3a4f53fca6313f4d4adc1f53c3792eab9e20ff28a806fde094c971dd87a",
+    "models\\Sichuan_Shunqing\\static\\building_mask.npy": "eba73e0cfcc9dfc62082dbead107df4071e875b018ec7127ea595e3b98e0403f",
+    "models\\Sichuan_Shunqing\\static\\ca2d_layout_preview.png": "85e793aab8aa988903672225bbed202abec8020c1716d4410613a29d57c8b256",
+    "models\\Sichuan_Shunqing\\static\\ca2d_roads_completed.png": "1f6744acf365eca10cecf4213e32610aecc12e05f190f3ad626dad841fadc5ad",
+    "models\\Sichuan_Shunqing\\static\\ca2d_smoke_test.png": "7e7dfe3d7c8a17fece378bb5c8ae5ae327759bb2f9c47799882babf56f829701",
+    "models\\Sichuan_Shunqing\\static\\catchment_mask.npy": "7eefddba82d7eb461a39b04ecc360c814d2909137e7b7a2f15ac772eba6872a9",
+    "models\\Sichuan_Shunqing\\static\\cell_id_grid.npy": "5af865e39cd4d02efddcfc9fb8c8ee853b9b37165e94a81740d4852d921f97d6",
+    "models\\Sichuan_Shunqing\\static\\cells.csv": "212fc4db69856a94b41abbd7d7c5430579cff45aaaef0338b359f0266aa73a14",
+    "models\\Sichuan_Shunqing\\static\\config.json": "5ae529acbe69e733deb39026580adfdda95c6ede07e6e344686ea36e145a711b",
+    "models\\Sichuan_Shunqing\\static\\domain_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "models\\Sichuan_Shunqing\\static\\elevation.npy": "a1665f0473a4f61ac7bd9232ce2fa3abff859e2783328a2fc490d85f19ae2958",
+    "models\\Sichuan_Shunqing\\static\\flow_mask.npy": "ad4585fc07a788f83b4f4d91a8528ba4ec56a6cc912a08e4d6ea484c2a981c8d",
+    "models\\Sichuan_Shunqing\\static\\node_anchor_mask.npy": "eded6aba0651fca91758a69a3d398854ee8e487c5694536e3b6a806dadd871a2",
+    "models\\Sichuan_Shunqing\\static\\node_to_cell_mapping.csv": "8f6b505abf4532c043551e6c36d1584339aeebdb21560034ecacde0d8ddcc65e",
+    "models\\Sichuan_Shunqing\\static\\README.md": "39b8f61180eeb77dfc0256b2a36084667355886d65417241f10d258df82c041a",
+    "models\\Sichuan_Shunqing\\static\\resistance.npy": "667ae0010239c4c7eb1a2f33436cb028d87a52653d7a25224e651ba915529d76",
+    "models\\Sichuan_Shunqing\\static\\road_lowering_mask.npy": "2072ab0dcba8df50636887b92d5e1e52f1f4fe9ea52f088736855d05568d4c39",
+    "models\\Sichuan_Shunqing\\static\\road_mask.npy": "6fe12dd4fee8bfbecfe632dde347e5d284bbe9e81a14c0c36ba8826af7dfaa2d",
+    "models\\Sichuan_Shunqing\\static\\smid_grid.npy": "92e913df84c7942fe0ac41c63ecdf0766ff0df05c8653011fff0a72e536ecc82",
+    "models\\Sichuan_Shunqing\\static\\synthetic_buildings.csv": "77094384ac7260a08469211c2cc279e4aa126d3f86a82a6069b9c3ce4f0d4c54",
+    "models\\Sichuan_Shunqing\\static\\synthetic_streets.csv": "6d62e1842041c5f92c0fca19b2a6f0ab533eda9d78e7fcd058ea4d320ffc540a",
+    "models\\Sichuan_Shunqing\\static\\terrain.npy": "6c40cd20abcfdb99cb49e6cabbe750d7feb5ced2685d11745755bd73de843e68",
+    "models\\Sichuan_Shunqing\\static\\valid_mask.npy": "4bf9f584407e0121c5353eec4e4a2ce544fd017a4994b28f9d41e409c532637c",
+    "tools.py": "cfa9c89d3135b69f04077c2069d62d22b88482790f755b512b4355a2a1fd8914",
+    "ca2d.py": "e6817bcac04a32d792c2076d569d4f96599c90bfb2d66b17b8b5dc4b5072d538",
+    "simulation_timing.py": "4e6039ae98f496c3fec23652dfabf9ed76f7ffa497b679c8c6d6474a573db850",
+    "workflow_agents\\investigation.py": "b9daa9221daf2f91cda039abe9c9eec68a5118e8f88cbac7d315d55559763f6e",
+    "workflow_agents\\investigation_flow.py": "e5cf0e41ef1329f78c12afa3acf772a7ac5684916d7191ba16fb87b90276efc6",
+    "workflow_agents\\evidence_builder.py": "3dced00242be7c22511c2475ec50c7e6dcfe9c0a530349d4bb5c29a34ffdc17b",
+    "workflow_agents\\event_packages.py": "6c9864fa2f69e277059ee8a61f4105f17864e1ada10b67b4e9156c62dbd715d9",
+    "workflow_agents\\sampled_events.py": "610371df52574ba6fb65c227bf79353393064880840d5579afa71320367f0c22",
+    "workflow_agents\\reporting\\narrative.py": "b4e3b8a9e1a529bea53a4de5d12c02d37841eebcf13abb1b9afd3f05547959da"
+  },
+  "old_run_protected_sha256": {
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\summary.json": "27f4fca713bd3315048c020eb44b7ba445735b2cd5d0f1ee3aec1cb84d68a0a6",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\run.yaml": "a8d20ff5d4e3b67a32ee4b2c9b67e17cd9cc55d79290b5a7b152ccb89ad06c8c",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\workflow_state.json": "b3b910897cb4a20b71f5245e858d38cc0b33afa6e6ee9d65ad8cb1204b797b26",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\swmm\\model_with_event.inp": "e352380f196575e359c2532a90f6426f0bcd1e70a9e5330f00dbb82dd1acf713",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\swmm\\model.rpt": "b9c1dca34c6ec29543cb91a673b32f71ffd697ecedcc75474d603fcfe02b83fc",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\swmm\\model.out": "3ccfc07aa5beaee51db508dd8bf593e79614206d5553189980e5a59dbe331930",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\ca2d\\surface_depth.tsv": "ca940b01b6a64fc1f76812c90cd8086720e2a4ea6edeaa75c2369faedbc57950",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\ca2d\\ca2d_animation.gif": "8a5c46c37f43221cf257d336329492f46e4a296213cd60dab5824180873cfbb2",
+    "models\\Sichuan_Shunqing\\runs\\sq40_20261013_p1\\evidence\\evidence_package.json": "a9af2bb614cc74ad60c94da31cd72157fbb1c544338c2d612520cabd1f97edb8"
+  },
+  "history": [
+    {
+      "stage": "simulation",
+      "at": "2026-10-14T02:06:06.109976+00:00"
+    },
+    {
+      "stage": "evidence_building",
+      "at": "2026-10-14T02:06:54.390582+00:00"
+    },
+    {
+      "stage": "diagnosis_preflight",
+      "at": "2026-10-14T02:09:21.232033+00:00"
+    },
+    {
+      "stage": "initial_diagnosis_verification_report",
+      "at": "2026-10-14T02:09:31.530448+00:00"
+    }
+  ],
+  "causal_validity_checked": false,
+  "simulation_elapsed_seconds": 42.95400000000018,
+  "simulation_end_utc": "2026-10-14T02:06:49.059102+00:00",
+  "simulation_summary": {
+    "max_flooding_Ls": 20710.513671875,
+    "sampled_overflow_m3": 1016537.8642300202,
+    "max_surface_depth_m": 12.970226287841797,
+    "swmm_timestamps": 421,
+    "surface_timestamps": 85
+  },
+  "simulation_handoff": {
+    "previous_state": "SCENARIO_READY",
+    "target_state": "RUN_READY"
+  },
+  "frozen_inputs_unchanged": true,
+  "old_run_unchanged": true,
+  "evidence_pid": 21172,
+  "evidence_overview": {
+    "event_count": 114,
+    "overflow_node_count": 87,
+    "event_scope_policy": "confluence_divergence_corridors_v1",
+    "node_count": 113,
+    "link_count": 131,
+    "storage_node_count": 0,
+    "facility_counts": {
+      "PUMPS": 0,
+      "ORIFICES": 0,
+      "WEIRS": 0,
+      "OUTLETS": 0
+    },
+    "facility_inventory_status": "available",
+    "native_status": {
+      "status": "available",
+      "units": {
+        "head": "m",
+        "flow": "L/s"
+      }
+    },
+    "surface_status": "available",
+    "evidence_count": 211917,
+    "metrics": {
+      "depth_above_section_reference_duration": 131,
+      "direct_source_composition": 114,
+      "event_context": 114,
+      "facilities_and_storage": 114,
+      "flooding_duration": 113,
+      "flow_direction_changes": 131,
+      "fullness_ge_0_8_duration": 131,
+      "fullness_ge_0_95_duration": 131,
+      "local_process_series": 114,
+      "local_structure": 114,
+      "max_depth": 104875,
+      "max_flooding_flow": 113,
+      "max_flow": 131,
+      "max_fullness": 131,
+      "max_link_depth": 131,
+      "max_node_depth": 113,
+      "overflow_event_count": 113,
+      "ponding_duration": 104875,
+      "rainfall_context": 1,
+      "surface_association": 114,
+      "total_flooding_volume": 113
+    }
+  },
+  "evidence_bytes": 206340953,
+  "evidence_elapsed_seconds": 106.13999999999987,
+  "diagnosis_pid": 820,
+  "analysis_scope": "current_7h_run_only_no_old_run_comparison",
+  "task_id": "ca85ff7b250244f49d53033d7522f5fd",
+  "request_characters": 36289088,
+  "stop_reason": "execution_failed",
+  "task_state": "ready_for_diagnosis",
+  "revision": 0,
+  "execution_error": "Error code: 400 - {'error': {'message': \"This model's maximum context length is 1048576 tokens. However, you requested 14219342 tokens (14219342 in the messages, 0 in the completion). Please reduce the length of the messages or completion. (request_id: d86dfe7e-3c93-433a-816a-b13df5a55f93)\", 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}",
+  "display_report": null,
+  "error_type": "RuntimeError",
+  "error_message": "Error code: 400 - {'error': {'message': \"This model's maximum context length is 1048576 tokens. However, you requested 14219342 tokens (14219342 in the messages, 0 in the completion). Please reduce the length of the messages or completion. (request_id: d86dfe7e-3c93-433a-816a-b13df5a55f93)\", 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}",
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 47, in main\nRuntimeError: Error code: 400 - {'error': {'message': \"This model's maximum context length is 1048576 tokens. However, you requested 14219342 tokens (14219342 in the messages, 0 in the completion). Please reduce the length of the messages or completion. (request_id: d86dfe7e-3c93-433a-816a-b13df5a55f93)\", 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}\n",
+  "last_attempt": {
+    "attempt_id": "8c9b2d4139b24b93ab3966b555b3cf0d",
+    "status": "failed",
+    "audit_file": "diagnosis_attempt_8c9b2d4139b24b93ab3966b555b3cf0d.json",
+    "error_type": "BadRequestError",
+    "phase": "completion",
+    "error_message": "Error code: 400 - {'error': {'message': \"This model's maximum context length is 1048576 tokens. However, you requested 14219342 tokens (14219342 in the messages, 0 in the completion). Please reduce the length of the messages or completion. (request_id: d86dfe7e-3c93-433a-816a-b13df5a55f93)\", 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}",
+    "http_status": 400
+  },
+  "diagnosis_elapsed_seconds": 41.98500000000013,
+  "finished_at": "2026-10-14T02:10:03.218996+00:00"
+}

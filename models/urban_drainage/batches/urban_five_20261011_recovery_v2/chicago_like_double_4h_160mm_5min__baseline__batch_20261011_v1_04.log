@@ -1,0 +1,6 @@
+{"event": "chicago_like_double_4h_160mm_5min.txt", "stage": "validate_saved_simulation"}
+{"event": "chicago_like_double_4h_160mm_5min.txt", "stage": "simulation_handoff"}
+{"event": "chicago_like_double_4h_160mm_5min.txt", "stage": "evidence"}
+{"event": "chicago_like_double_4h_160mm_5min.txt", "stage": "initial_diagnosis_verification_report"}
+{"event": "chicago_like_double_4h_160mm_5min.txt", "stage": "supplement_round_1"}
+{"stage": "supplement_round_1", "error_type": "RuntimeError"}

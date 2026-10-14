@@ -1,0 +1,1008 @@
+{
+  "source_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\bs40_20261012_p1\\swmm\\model_with_event.inp",
+  "source_inp_sha256": "9bb90bf220f5cf474b52538e61bdf1491f35fa557b5694ba9908b619aefd3512",
+  "new_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model_slope1_40mm.inp",
+  "new_inp_sha256": "5ac2647b76495106f6b9d84b05235d45768457b460984c9e5dafeec968e3e2a5",
+  "only_changed_section": "SUBCATCHMENTS",
+  "only_changed_field": "Slope (%)",
+  "changed_rows": [
+    {
+      "subcatchment": "S0",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S1",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S2",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S3",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S4",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S5",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S6",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S7",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S8",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S9",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S10",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S11",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S12",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S13",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S14",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S15",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S16",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S17",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S18",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S19",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S20",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S21",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S22",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S23",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S24",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S25",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S26",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S27",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S28",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S29",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S30",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S31",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S32",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S33",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S34",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S35",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S36",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S37",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S38",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S39",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S40",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S41",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S42",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S43",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S44",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S45",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S46",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S47",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S48",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S49",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S50",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S51",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S52",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S53",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S54",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S55",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S56",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S57",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S58",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S59",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S60",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S61",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S62",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S63",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S64",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S65",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S66",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S67",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S68",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S69",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S70",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S71",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S72",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S73",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S74",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S75",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S76",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S77",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S78",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S79",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S80",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S81",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S82",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S83",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S84",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S85",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S86",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S87",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S88",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S89",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S90",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S91",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S92",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S93",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S94",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S95",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S96",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S97",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S98",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S99",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S100",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S101",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S102",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S103",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S104",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S105",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S106",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S107",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S108",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S109",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S110",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S111",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S112",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S113",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S114",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S115",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S116",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S117",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S118",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S119",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S120",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S121",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S122",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S123",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S124",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S125",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S126",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S127",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S128",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S129",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S130",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S131",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S132",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S133",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S134",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S135",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S136",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S137",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S138",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S139",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S140",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S141",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S142",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S143",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S144",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S145",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S146",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S147",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S148",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S149",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S150",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S151",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S152",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S153",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S154",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S155",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S156",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S157",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S158",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S159",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S160",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S161",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S162",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S163",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    },
+    {
+      "subcatchment": "S164",
+      "field": "Slope (%)",
+      "old": 100.0,
+      "new": 1.0
+    }
+  ],
+  "all_other_fields_identical": true,
+  "protected_input_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\beta.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\raw\\beta_original.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\swmm\\scenarios\\baseline\\model.inp": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\bs40_20261012_p1\\swmm\\model_with_event.inp": "9bb90bf220f5cf474b52538e61bdf1491f35fa557b5694ba9908b619aefd3512",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\events\\chicago_like_single_4h_40mm_5min.txt": "68fdb55ff0485dd8edf0a93dc881108a06d91d5a688657d59fa826c612ee2be4"
+  }
+}

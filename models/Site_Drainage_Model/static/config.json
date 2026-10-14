@@ -1,0 +1,63 @@
+{
+  "source_inp": "swmm\\scenarios\\baseline\\model.inp",
+  "source_backdrop": "swmm\\Site-Post.jpg",
+  "layout_reference": "raw\\references\\site_layout_reference.json",
+  "backdrop_registration_source": "SWMM [BACKDROP] DIMENSIONS, falling back to local swmm/Model.inp",
+  "spatial_units": "metre",
+  "source_map_units": "feet",
+  "source_elevation_units": "feet",
+  "coordinate_conversion": "source feet multiplied by 0.3048",
+  "crs": null,
+  "bounds": [
+    0.0,
+    -0.4199999999999591,
+    435.0,
+    449.58000000000004
+  ],
+  "source_bounds_ft": [
+    0.0,
+    0.0,
+    1423.0,
+    1475.0
+  ],
+  "backdrop_bounds_m": [
+    0.0,
+    0.0,
+    433.73040000000003,
+    449.58000000000004
+  ],
+  "backdrop_image_size_px": [
+    1430,
+    1482
+  ],
+  "cell_size": 3.0,
+  "cell_size_ft": 9.84251968503937,
+  "grid_shape": [
+    150,
+    145
+  ],
+  "n_cells": 21750,
+  "n_valid_cells": 12974,
+  "n_flow_cells": 12008,
+  "n_building_cells": 966,
+  "n_road_cells": 2569,
+  "n_buildings": 56,
+  "n_streets": 6,
+  "n_nodes": 12,
+  "n_mapped_nodes": 12,
+  "node_mapping_distance_median": 1.2160117011772997,
+  "node_mapping_distance_95p": 6.400040720388974,
+  "node_mapping_distance_max": 11.993631985731778,
+  "building_raise_m": 15.0,
+  "road_lowering_m": 0.1,
+  "building_road_clearance_m": 3.0,
+  "building_node_clearance_m": 6.0,
+  "land_conveyance_coefficient": 0.62,
+  "road_conveyance_coefficient": 0.9,
+  "terrain_method": "IDW from SWMM node surfaces and original synthetic backdrop contour controls",
+  "domain_method": "unchanged union of SWMM subcatchment polygons at cell centres",
+  "road_method": "backdrop-inferred centre lines buffered to 8-10 m width and lowered by 0.10 m",
+  "building_method": "varied rotated synthetic footprints within backdrop-inferred parcels, raised by 15 m",
+  "assumption_status": "inferred roads and synthetic footprints; heights and widths are modelling assumptions",
+  "historical_runs": "Existing runs predate this static rebuild; rerun CA2D to apply the new layout."
+}

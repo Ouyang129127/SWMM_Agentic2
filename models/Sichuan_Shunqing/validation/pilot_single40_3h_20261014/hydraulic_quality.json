@@ -1,0 +1,32 @@
+{
+  "run_id": "sq40_3h_20261014_p1",
+  "simulation_start": "2020-07-15 00:00:00",
+  "rainfall_end": "2020-07-15 04:00:00",
+  "simulation_end": "2020-07-15 07:00:00",
+  "post_rainfall_hours": 3.0,
+  "runoff_continuity_error_percent": -0.221,
+  "routing_continuity_error_percent": 0.144,
+  "native_flooding_volume_m3_rounded": 1016410.0,
+  "sampled_surface_inflow_m3": 1016537.8642300202,
+  "sampling_difference_percent": 0.012579985440934718,
+  "actual_overflow_nodes_from_samples": 87,
+  "sampled_max_flooding_Ls": 20710.5137,
+  "peak_flood_node": "jd65",
+  "peak_flood_time": "2020-07-15 01:40:00",
+  "end_positive_overflow_nodes": 24,
+  "end_total_sampled_overflow_Ls": 70.77463404554001,
+  "max_internal_surface_depth_m": 12.970226287841797,
+  "surface_final_volume_m3": 1016537.875,
+  "coupling_interval_resample_error_m3": -2.3283064365386963e-10,
+  "swmm_timestamps": 421,
+  "surface_timestamps": 85,
+  "warnings": [],
+  "engine_errors": [],
+  "most_frequent_nonconverging_nodes": [
+    "Node psk1 (16.30%)",
+    "Node psk2 (16.30%)",
+    "Node psk3 (16.30%)",
+    "Node psk4 (16.30%)",
+    "Node psk5 (16.30%)"
+  ]
+}

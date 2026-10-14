@@ -1,0 +1,1340 @@
+{
+  "source_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model_slope1_40mm.inp",
+  "source_inp_sha256": "5ac2647b76495106f6b9d84b05235d45768457b460984c9e5dafeec968e3e2a5",
+  "new_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\width_screening_20261012\\swmm\\model_slope1_widthsqrtA_40mm.inp",
+  "new_inp_sha256": "be438d3e9dd9e8c7130dad71e311651f0460852f09ba8010d7b0809df01c0ebf",
+  "only_changed_section": "SUBCATCHMENTS",
+  "only_changed_field": "Width (m)",
+  "changed_rows": [
+    {
+      "subcatchment": "S0",
+      "area_ha": 0.770521462825,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 87.7793519,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S1",
+      "area_ha": 0.670968794834,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 81.9126849,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S2",
+      "area_ha": 0.933609776648,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 96.6234845,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S3",
+      "area_ha": 0.927944177656,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 96.3298592,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S4",
+      "area_ha": 0.526091334912,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 72.5321539,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S5",
+      "area_ha": 0.691607762588,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 83.1629583,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S6",
+      "area_ha": 0.481575914266,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 69.3956709,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S7",
+      "area_ha": 1.79801830847,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 134.090205,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S8",
+      "area_ha": 1.49086190601,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 122.100856,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S9",
+      "area_ha": 0.626453374188,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 79.1488076,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S10",
+      "area_ha": 0.20962716268,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 45.785059,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S11",
+      "area_ha": 1.28406754283,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 113.316704,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S12",
+      "area_ha": 1.04368427134,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 102.160867,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S13",
+      "area_ha": 0.488860255826,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 69.9185423,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S14",
+      "area_ha": 0.161469571254,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 40.1832765,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S15",
+      "area_ha": 0.62321588905,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 78.9440238,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S16",
+      "area_ha": 0.967603370596,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 98.3668323,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S17",
+      "area_ha": 0.985004853212,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 99.2474107,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S18",
+      "area_ha": 0.913375494536,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 95.5706804,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S19",
+      "area_ha": 1.67499387323,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 129.421554,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S20",
+      "area_ha": 1.09548403354,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 104.665373,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S21",
+      "area_ha": 1.00969067739,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 100.483366,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S22",
+      "area_ha": 0.089435526935,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 29.9057732,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S23",
+      "area_ha": 1.22903029548,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 110.861639,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S24",
+      "area_ha": 0.324557885076,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 56.969982,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S25",
+      "area_ha": 0.526900706196,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 72.5879264,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S26",
+      "area_ha": 0.797635400855,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 89.3104362,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S27",
+      "area_ha": 0.532161619546,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 72.9494085,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S28",
+      "area_ha": 0.133950947581,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 36.5993098,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S29",
+      "area_ha": 0.478338429128,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 69.1620148,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S30",
+      "area_ha": 1.10964803102,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 105.339832,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S31",
+      "area_ha": 0.141639974784,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 37.6350867,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S32",
+      "area_ha": 0.438679236188,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 66.2328647,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S33",
+      "area_ha": 0.111288551616,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 33.3599388,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S34",
+      "area_ha": 0.951820630548,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 97.5612951,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S35",
+      "area_ha": 0.473886887063,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 68.8394427,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S36",
+      "area_ha": 1.07039352372,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 103.459824,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S37",
+      "area_ha": 0.281256521357,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 53.0336234,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S38",
+      "area_ha": 0.942917546419,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 97.1039415,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S39",
+      "area_ha": 1.35691095843,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 116.486521,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S40",
+      "area_ha": 0.587603552532,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 76.6553033,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S41",
+      "area_ha": 0.811799398333,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 90.0999111,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S42",
+      "area_ha": 0.702129589286,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 83.7931733,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S43",
+      "area_ha": 0.948987831053,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 97.4160064,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S44",
+      "area_ha": 0.362598335447,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 60.2161387,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S45",
+      "area_ha": 0.918636407885,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 95.845522,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S46",
+      "area_ha": 0.109669809047,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 33.1164323,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S47",
+      "area_ha": 0.259808182318,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 50.9713824,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S48",
+      "area_ha": 0.578700468403,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 76.0723648,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S49",
+      "area_ha": 0.533780362115,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 73.0602739,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S50",
+      "area_ha": 0.605409720791,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 77.8080793,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S51",
+      "area_ha": 0.28004246443,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 52.9190386,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S52",
+      "area_ha": 0.83284305173,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 91.2602351,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S53",
+      "area_ha": 0.218934932452,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 46.7904833,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S54",
+      "area_ha": 4.40540790142,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 209.890636,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S55",
+      "area_ha": 0.253333212042,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 50.3322175,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S56",
+      "area_ha": 1.70979683846,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 130.7592,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S57",
+      "area_ha": 0.0675825022541,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 25.9966348,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S58",
+      "area_ha": 0.0821511853747,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 28.6620281,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S59",
+      "area_ha": 0.116549464965,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 34.1393417,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S60",
+      "area_ha": 0.546730302666,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 73.9412133,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S61",
+      "area_ha": 0.106432323909,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 32.6239672,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S62",
+      "area_ha": 0.23674110071,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 48.656048,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S63",
+      "area_ha": 0.496144597386,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 70.4375324,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S64",
+      "area_ha": 2.23265068824,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 149.42057,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S65",
+      "area_ha": 0.183322595935,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 42.8161881,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S66",
+      "area_ha": 0.653567312218,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 80.8435101,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S67",
+      "area_ha": 0.578295782761,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 76.0457614,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S68",
+      "area_ha": 0.730457584243,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 85.4668114,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S69",
+      "area_ha": 0.215292761672,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 46.399651,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S70",
+      "area_ha": 1.13595259777,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 106.581077,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S71",
+      "area_ha": 1.06270449652,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 103.08756,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S72",
+      "area_ha": 0.0570606755558,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 23.8873765,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S73",
+      "area_ha": 0.434227694124,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 65.8959554,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S74",
+      "area_ha": 0.403471585313,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 63.5194132,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S75",
+      "area_ha": 0.149733687629,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 38.6954374,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S76",
+      "area_ha": 2.81782612692,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 167.863818,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S77",
+      "area_ha": 0.233503615572,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 48.3222118,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S78",
+      "area_ha": 0.746240324291,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 86.3852027,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S79",
+      "area_ha": 3.16909326438,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 178.019473,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S80",
+      "area_ha": 1.11814642951,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 105.742443,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S81",
+      "area_ha": 0.945750345915,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 97.2496964,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S82",
+      "area_ha": 1.35691095843,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 116.486521,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S83",
+      "area_ha": 2.09343882731,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 144.687208,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S84",
+      "area_ha": 1.5204039579,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 123.304662,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S85",
+      "area_ha": 0.396591929395,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 62.9755452,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S86",
+      "area_ha": 1.05663421189,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 102.792714,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S87",
+      "area_ha": 2.98698472537,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 172.828954,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S88",
+      "area_ha": 2.02180946863,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 142.190347,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S89",
+      "area_ha": 0.359765535951,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 59.9804581,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S90",
+      "area_ha": 0.29622989012,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 54.4270053,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S91",
+      "area_ha": 1.62885971002,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 127.626788,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S92",
+      "area_ha": 1.47507916596,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 121.452837,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S93",
+      "area_ha": 1.68996724199,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 129.99874,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S94",
+      "area_ha": 0.786304202872,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 88.6737956,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S95",
+      "area_ha": 0.814632197829,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 90.2569774,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S96",
+      "area_ha": 0.148519630702,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 38.5382447,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S97",
+      "area_ha": 0.255761325896,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 50.572851,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S98",
+      "area_ha": 0.168753912814,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 41.0796681,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S99",
+      "area_ha": 0.331437540995,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 57.5706124,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S100",
+      "area_ha": 0.602576921295,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 77.6258283,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S101",
+      "area_ha": 1.20879601337,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 109.94526,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S102",
+      "area_ha": 0.622811203407,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 78.9183884,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S103",
+      "area_ha": 3.0456641435,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 174.518313,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S104",
+      "area_ha": 0.334675026132,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 57.8511042,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S105",
+      "area_ha": 1.2828534859,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 113.263122,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S106",
+      "area_ha": 0.150947744556,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 38.8519941,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S107",
+      "area_ha": 0.135974375793,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 36.8747035,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S108",
+      "area_ha": 0.508689852296,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 71.3224966,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S109",
+      "area_ha": 1.06877478116,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 103.381564,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S110",
+      "area_ha": 0.230266130435,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 47.9860532,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S111",
+      "area_ha": 2.31642061618,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 152.197918,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S112",
+      "area_ha": 0.332651597921,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 57.6759567,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S113",
+      "area_ha": 0.477933743485,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 69.1327523,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S114",
+      "area_ha": 0.495739911744,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 70.4088,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S115",
+      "area_ha": 0.329414112783,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 57.3946089,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S116",
+      "area_ha": 2.01250169886,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 141.862669,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S117",
+      "area_ha": 1.3556969015,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 116.434398,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S118",
+      "area_ha": 0.736932554519,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 85.8447759,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S119",
+      "area_ha": 0.736932554519,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 85.8447759,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S120",
+      "area_ha": 0.950606573622,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 97.4990551,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S121",
+      "area_ha": 0.46255568908,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 68.0114468,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S122",
+      "area_ha": 2.40585614312,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 155.108225,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S123",
+      "area_ha": 0.166325798961,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 40.7830601,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S124",
+      "area_ha": 0.534185047757,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 73.087964,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S125",
+      "area_ha": 0.726410727821,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 85.2297324,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S126",
+      "area_ha": 0.951820630548,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 97.5612951,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S127",
+      "area_ha": 0.705771760067,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 84.0102232,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S128",
+      "area_ha": 0.143663402995,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 37.9029554,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S129",
+      "area_ha": 0.10845575212,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 32.9326209,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S130",
+      "area_ha": 1.36419529999,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 116.798771,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S131",
+      "area_ha": 0.680276564605,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 82.47888,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S132",
+      "area_ha": 1.33586730503,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 115.579726,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S133",
+      "area_ha": 0.370692048292,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 60.8844847,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S134",
+      "area_ha": 1.83646344449,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 135.516178,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S135",
+      "area_ha": 0.445154206464,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 66.7198776,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S136",
+      "area_ha": 2.33665489829,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 152.861208,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S137",
+      "area_ha": 0.842960192786,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 91.8128636,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S138",
+      "area_ha": 1.92630365706,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 138.791342,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S139",
+      "area_ha": 0.1590414574,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 39.8800022,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S140",
+      "area_ha": 0.430990208986,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 65.6498446,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S141",
+      "area_ha": 0.138807175288,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 37.256835,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S142",
+      "area_ha": 0.239573900206,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 48.9462869,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S143",
+      "area_ha": 1.08536689249,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 104.180943,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S144",
+      "area_ha": 1.83767750141,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 135.560964,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S145",
+      "area_ha": 0.878167843661,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 93.7106101,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S146",
+      "area_ha": 0.182917910292,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 42.7689035,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S147",
+      "area_ha": 0.210436533965,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 45.873362,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S148",
+      "area_ha": 0.279637778788,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 52.8807885,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S149",
+      "area_ha": 0.514355451287,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 71.7185786,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S150",
+      "area_ha": 0.307965773745,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 55.494664,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S151",
+      "area_ha": 0.059084103767,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 24.3072219,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S152",
+      "area_ha": 0.192225680064,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 43.8435491,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S153",
+      "area_ha": 0.430990208986,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 65.6498446,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S154",
+      "area_ha": 1.84900869939,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 135.978259,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S155",
+      "area_ha": 0.827582138381,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 90.9715416,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S156",
+      "area_ha": 0.317273543516,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 56.32704,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S157",
+      "area_ha": 0.089435526935,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 29.9057732,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S158",
+      "area_ha": 0.0210436533965,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 14.5064308,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S159",
+      "area_ha": 0.320511028654,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 56.6136935,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S160",
+      "area_ha": 1.41963723298,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 119.148531,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S161",
+      "area_ha": 0.437060493619,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 66.1105509,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S162",
+      "area_ha": 0.327795370214,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 57.2534165,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S163",
+      "area_ha": 0.236336415068,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 48.6144438,
+      "rule": "sqrt(area_ha * 10000)"
+    },
+    {
+      "subcatchment": "S164",
+      "area_ha": 0.0258998811034,
+      "field": "Width (m)",
+      "old": 0.3048,
+      "new": 16.09344,
+      "rule": "sqrt(area_ha * 10000)"
+    }
+  ],
+  "all_other_fields_identical": true,
+  "geometry_assumption": "equal-area square equivalent plane; not measured geography",
+  "protected_input_hashes": {
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\beta.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\raw\\beta_original.inp": "1301355806f1b7926e34d27b753e12186e7602c7872ad5ddb8218654a4f0f8da",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\swmm\\scenarios\\baseline\\model.inp": "4bce7b4671673f30a57332d33d4cdedc168505b93f4a40639e5a6d0b0d362a2c",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\runs\\bs40_20261012_p1\\swmm\\model_with_event.inp": "9bb90bf220f5cf474b52538e61bdf1491f35fa557b5694ba9908b619aefd3512",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\validation\\slope_screening_20261012\\swmm\\model_slope1_40mm.inp": "5ac2647b76495106f6b9d84b05235d45768457b460984c9e5dafeec968e3e2a5",
+    "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\events\\chicago_like_single_4h_40mm_5min.txt": "68fdb55ff0485dd8edf0a93dc881108a06d91d5a688657d59fa826c612ee2be4"
+  }
+}

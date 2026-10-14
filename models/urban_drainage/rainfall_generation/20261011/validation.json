@@ -1,0 +1,100 @@
+{
+  "status": "passed",
+  "original_six_events_unchanged": true,
+  "simulation_executed": false,
+  "llm_called": false,
+  "events": [
+    {
+      "file": "events/chicago_like_single_4h_160mm_5min.txt",
+      "sha256": "d9f15226f05ae1c4c2afc3ff463209e1c33d0c50105c28102620fafe4950a629",
+      "total_rainfall_mm": 160,
+      "rows": 49,
+      "peak_count": 1,
+      "max_intensity_mm_h": 293.464,
+      "scaling_total_timing_peaks_dry_intervals_check": "passed",
+      "existing_rainfall_context_parser": "passed"
+    },
+    {
+      "file": "events/chicago_like_double_4h_120mm_5min.txt",
+      "sha256": "96ab57d1f84730fb8bf571083246c25f9c396bdc2d915473a79bae87cf5c4ef2",
+      "total_rainfall_mm": 120,
+      "rows": 49,
+      "peak_count": 2,
+      "max_intensity_mm_h": 141.25,
+      "scaling_total_timing_peaks_dry_intervals_check": "passed",
+      "existing_rainfall_context_parser": "passed"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_120mm_5min.txt",
+      "sha256": "c3624a238e1af8ff6dcb1ec6da216f6704b3458a786deeb7f88f99b0b3e1592e",
+      "total_rainfall_mm": 120,
+      "rows": 49,
+      "peak_count": 3,
+      "max_intensity_mm_h": 146.648,
+      "scaling_total_timing_peaks_dry_intervals_check": "passed",
+      "existing_rainfall_context_parser": "passed"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_160mm_5min.txt",
+      "sha256": "02b1196493ce03c05563a7fccbc992e07fa54b301f008d2b7418223902711c4d",
+      "total_rainfall_mm": 160,
+      "rows": 49,
+      "peak_count": 3,
+      "max_intensity_mm_h": 195.546,
+      "scaling_total_timing_peaks_dry_intervals_check": "passed",
+      "existing_rainfall_context_parser": "passed"
+    }
+  ],
+  "nine_scene_matrix": [
+    {
+      "file": "events/chicago_like_single_4h_80mm_5min.txt",
+      "total_rainfall_mm": 80,
+      "sha256": "3c40fb31a847e64379566d4f263c2c27b623ac199ae10ceb9e36a5feedd22c8a"
+    },
+    {
+      "file": "events/chicago_like_single_4h_120mm_5min.txt",
+      "total_rainfall_mm": 120,
+      "sha256": "54dc45f65384d45815cd2e23b548f562c4770a0f9591c31e8bdb6f7f635b7f50"
+    },
+    {
+      "file": "events/chicago_like_single_4h_160mm_5min.txt",
+      "total_rainfall_mm": 160,
+      "sha256": "d9f15226f05ae1c4c2afc3ff463209e1c33d0c50105c28102620fafe4950a629"
+    },
+    {
+      "file": "events/chicago_like_double_4h_80mm_5min.txt",
+      "total_rainfall_mm": 80,
+      "sha256": "e9c96ec2bb82a1873c01f4fbe13275583514597d0763d6095b83e73f811e88bf"
+    },
+    {
+      "file": "events/chicago_like_double_4h_120mm_5min.txt",
+      "total_rainfall_mm": 120,
+      "sha256": "96ab57d1f84730fb8bf571083246c25f9c396bdc2d915473a79bae87cf5c4ef2"
+    },
+    {
+      "file": "events/chicago_like_double_4h_160mm_5min.txt",
+      "total_rainfall_mm": 160,
+      "sha256": "e8940438003273d09331059cc9582a09a3aeaa33e41598e227aa1612d8fffce4"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_80mm_5min.txt",
+      "total_rainfall_mm": 80,
+      "sha256": "073dc313524d8913e8908e3b9273e6a44abab69da41c4716fe1b28fbfa9a4281"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_120mm_5min.txt",
+      "total_rainfall_mm": 120,
+      "sha256": "c3624a238e1af8ff6dcb1ec6da216f6704b3458a786deeb7f88f99b0b3e1592e"
+    },
+    {
+      "file": "events/chicago_like_triple_4h_160mm_5min.txt",
+      "total_rainfall_mm": 160,
+      "sha256": "02b1196493ce03c05563a7fccbc992e07fa54b301f008d2b7418223902711c4d"
+    }
+  ],
+  "plots": [
+    "rainfall_generation/20261011/additional_rainfall_curves.png",
+    "rainfall_generation/20261011/rainfall_comparison_nine_events.png",
+    "rainfall_generation/20261011/rainfall_comparison_nine_events.svg"
+  ]
+}

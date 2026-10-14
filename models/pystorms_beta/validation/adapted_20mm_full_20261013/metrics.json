@@ -1,0 +1,34 @@
+{
+  "rainfall_mm": 20,
+  "native_rpt_flooding_nodes": 11,
+  "positive_saved_flooding_nodes": 8,
+  "positive_saved_samples": 57,
+  "positive_node_ids": [
+    "J100",
+    "J101",
+    "J102",
+    "J103",
+    "J4",
+    "J7",
+    "J8",
+    "J9"
+  ],
+  "first_saved_overflow": "2016-10-08 01:36:00",
+  "last_saved_overflow": "2016-10-08 01:54:00",
+  "native_flooding_volume_m3_rounded": 271,
+  "sampled_surface_input_m3": 273.3259458504,
+  "max_surface_depth_m": 0.3263024687767029,
+  "continuity_errors_pct": [
+    -0.009,
+    -9.314
+  ],
+  "steps_not_converging_pct": 4.28,
+  "warnings": [
+    "WARNING 04: minimum elevation drop used for Conduit C33",
+    "WARNING 10: crest elevation raised to downstream invert for regulator Link R1",
+    "WARNING 02: maximum depth increased for Node J120"
+  ],
+  "ca2d_final_volume_m3": 273.3255615234375,
+  "ca2d_boundary_volume_error_m3": -2.2737367544323206e-13,
+  "note": "Native flood loss rounded to 0.001 million litres; saved-time counts are not native solver step counts."
+}

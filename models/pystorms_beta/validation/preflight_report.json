@@ -1,0 +1,280 @@
+{
+  "status": "PASS_WITH_DISCLOSED_SURFACE_WARNINGS",
+  "checked_on": "2026-10-12",
+  "original_source_unchanged": true,
+  "unit_conversion": "all populated hydraulic/hydrologic fields checked",
+  "project_layout": {
+    "schema_name": "SWMM-2D project layout",
+    "schema_version": "models-readme-2026-07-18",
+    "validator": "check_swmm_2d_project",
+    "model_name": "pystorms_beta",
+    "model_root": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta",
+    "ready": true,
+    "problems": [],
+    "baseline_inp": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\swmm\\scenarios\\baseline\\model.inp",
+    "static_model": {
+      "ok": true,
+      "model_dir": "E:\\SWMM_Agentic\\SWMM-Agentic2\\models\\pystorms_beta\\static",
+      "grid_shape": [
+        283,
+        283
+      ],
+      "cell_size": 5.0,
+      "mapped_nodes": 210,
+      "flow_cells": 47541
+    }
+  },
+  "prepared_inputs": 27,
+  "engine_initialization": [
+    {
+      "scenario": "baseline",
+      "status": "INITIALIZED_NO_TIME_STEPS",
+      "steps_executed": 0
+    },
+    {
+      "scenario": "free_outfall",
+      "status": "INITIALIZED_NO_TIME_STEPS",
+      "steps_executed": 0
+    },
+    {
+      "scenario": "tide_base00",
+      "status": "INITIALIZED_NO_TIME_STEPS",
+      "steps_executed": 0
+    }
+  ],
+  "formal_rainfall_simulations_executed": 0,
+  "diagnoses_executed": 0,
+  "rain_gage_integration": "generic rain1 default resolves the sole source gage RG1; verified for all 27 inputs",
+  "static_shape": [
+    283,
+    283
+  ],
+  "mapped_nodes": 210,
+  "shared_cell_rim_conflicts": [
+    {
+      "node_id": "J15",
+      "rim_cell_difference_m": 0.4130040407180786
+    },
+    {
+      "node_id": "J17",
+      "rim_cell_difference_m": -0.413003921508789
+    },
+    {
+      "node_id": "J163",
+      "rim_cell_difference_m": -0.068580150604248
+    },
+    {
+      "node_id": "J164",
+      "rim_cell_difference_m": 0.0685799121856689
+    },
+    {
+      "node_id": "J199",
+      "rim_cell_difference_m": 0.1539239883422851
+    },
+    {
+      "node_id": "J200",
+      "rim_cell_difference_m": -0.1539239883422851
+    }
+  ],
+  "surface_spatial_truth": "synthetic only; these 6 conflicting nodes are not precise rim-validation targets",
+  "artificial_injection": {
+    "duration_seconds": 600,
+    "flow_lps_per_junction": 2,
+    "input_volume_m3": 247.20000000000024,
+    "stored_volume_m3": 247.19998436865987,
+    "relative_mass_error": 6.323357756863418e-08,
+    "wet_cells": 9134,
+    "maximum_depth_m": 0.07355180382728577
+  },
+  "prepared_scenarios": [
+    {
+      "event": "chicago_like_single_4h_80mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_80mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_80mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_120mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_120mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_120mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_160mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_160mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_single_4h_160mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_80mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_80mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_80mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_120mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_120mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_120mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_160mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_160mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_double_4h_160mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_80mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_80mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_80mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_120mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_120mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_120mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_160mm_5min.txt",
+      "scenario": "baseline",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_160mm_5min.txt",
+      "scenario": "free_outfall",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    },
+    {
+      "event": "chicago_like_triple_4h_160mm_5min.txt",
+      "scenario": "tide_base00",
+      "status": "INPUT_READY_NOT_RUN",
+      "simulation_end": "2016-10-09 00:00:00",
+      "rain_gage": "RG1"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "run_id": "sq40_3h_20261014_p1",
+  "source_file": "ca2d/surface_depth.tsv",
+  "basis": "exported saved depths, rounded to 0.001 m; not surveyed inundation",
+  "cell_area_m2": 400,
+  "observation_times": 85,
+  "surface_boundary": "closed; one-way overflow input, no direct rainfall, no return to sewer or infiltration/evaporation",
+  "final_time": "2020-07-15 07:00:00",
+  "final_wet_area_ge_1cm_m2": 2811600,
+  "final_wet_area_ge_15cm_m2": 1511200,
+  "final_saved_max_depth_m": 2.983,
+  "max_wet_1cm_area_m2": 2977200,
+  "max_wet_1cm_area_first_time": "2020-07-15 04:45:00",
+  "max_wet_15cm_area_m2": 1511200,
+  "max_wet_15cm_area_first_time": "2020-07-15 07:00:00"
+}

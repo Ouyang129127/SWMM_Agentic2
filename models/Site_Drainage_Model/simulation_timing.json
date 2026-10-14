@@ -1,0 +1,8 @@
+{
+  "swmm_save_interval_minutes": 1.0,
+  "boundary_interval_minutes": 5.0,
+  "ca2d_save_interval_minutes": 5.0,
+  "post_rainfall_hours": 3.0,
+  "boundary_method": "interval_mean",
+  "rainfall_time_convention": "interval_start"
+}
